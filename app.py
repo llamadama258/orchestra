@@ -3,6 +3,8 @@ import uuid
 import glob
 import shutil
 import subprocess
+import threading
+import time
 
 from flask import Flask, request, jsonify, render_template, send_file
 from werkzeug.utils import secure_filename
@@ -122,8 +124,69 @@ _SETUP_MSG = (
 )
 
 
-def convert_pdf_to_mxl(pdf_path, output_dir):
-    """Run Audiveris OMR on pdf_path; return path of the produced .mxl file."""
+# ── Job store ─────────────────────────────────────────────────────────────────
+# job_id -> {progress, status, status_text, error, result}
+_jobs = {}
+_jobs_lock = threading.Lock()
+
+
+def _set_job(job_id, **kwargs):
+    with _jobs_lock:
+        if job_id in _jobs:
+            _jobs[job_id].update(kwargs)
+
+
+def _run_job(job_id, upload_path, ext, export_dir):
+    """Background thread: run conversion and update _jobs[job_id] with progress."""
+    def prog(pct, text=None):
+        update = {"progress": pct}
+        if text:
+            update["status_text"] = text
+        _set_job(job_id, **update)
+
+    try:
+        prog(5, "Saving file\u2026")
+        parse_path = upload_path
+
+        if ext == "pdf":
+            omr_dir = os.path.join(export_dir, "omr_out")
+            os.makedirs(omr_dir, exist_ok=True)
+            prog(10, "Launching OMR engine\u2026")
+            parse_path = convert_pdf_to_mxl(
+                upload_path, omr_dir,
+                progress_cb=lambda p: prog(p, "Recognising score\u2026")
+            )
+            prog(72, "Score detected\u2026")
+        else:
+            prog(25, "Reading score\u2026")
+
+        prog(75, "Parsing MusicXML\u2026")
+        score = converter.parse(parse_path)
+
+        prog(88, "Writing score\u2026")
+        xml_path = os.path.join(export_dir, "score.xml")
+        score.write("musicxml", fp=xml_path)
+
+        prog(94, "Generating MIDI\u2026")
+        midi_path = os.path.join(export_dir, f"{job_id}.mid")
+        score.write("midi", fp=midi_path)
+
+        _set_job(job_id,
+                 progress=100,
+                 status="done",
+                 status_text="Done!",
+                 result={"midi_url": f"/midi/{job_id}", "mxl_url": f"/mxl/{job_id}"})
+
+    except RuntimeError as exc:
+        _set_job(job_id, status="error", error=str(exc))
+    except Exception as exc:
+        _set_job(job_id, status="error", error=str(exc))
+
+
+def convert_pdf_to_mxl(pdf_path, output_dir, progress_cb=None):
+    """Run Audiveris OMR on pdf_path; return path of the produced .mxl file.
+    Optionally calls progress_cb(pct) with values 12–68 as output lines come in.
+    """
     if not java_available():
         raise RuntimeError(
             "Java is required for PDF conversion but was not found.\n"
@@ -152,24 +215,45 @@ def convert_pdf_to_mxl(pdf_path, output_dir):
         ]
 
     try:
-        result = subprocess.run(cmd, capture_output=True, text=True, timeout=300)
-    except subprocess.TimeoutExpired:
-        raise RuntimeError("Audiveris timed out after 5 minutes. Try a shorter PDF.")
+        proc = subprocess.Popen(
+            cmd,
+            stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+            text=True, errors="replace"
+        )
     except FileNotFoundError:
         raise RuntimeError("Could not launch Audiveris — make sure Java is on your PATH.")
 
-    # Audiveris sometimes exits with code 1 even after successfully writing output
-    # (export warnings get treated as errors in some builds).
-    # So: always check for output first, only raise if nothing was produced.
+    lines = []
+    deadline = time.monotonic() + 300
+    try:
+        for line in proc.stdout:
+            lines.append(line)
+            if time.monotonic() > deadline:
+                proc.kill()
+                raise RuntimeError("Audiveris timed out after 5 minutes. Try a shorter PDF.")
+            if progress_cb:
+                # asymptotic: each new line moves progress from 12% towards 68%
+                n = len(lines)
+                frac = 1.0 - 1.0 / (1.0 + n / 80.0)
+                pct = int(12 + frac * 56)
+                progress_cb(min(pct, 68))
+        proc.wait()
+    except RuntimeError:
+        raise
+    except Exception:
+        proc.kill()
+        raise
+
+    return_code = proc.returncode
+    combined_output = "".join(lines)
     pdf_stem = os.path.splitext(os.path.basename(pdf_path))[0]
-    combined_output = (result.stderr or "") + (result.stdout or "")
 
     # Search output_dir and also the directory next to the PDF (Audiveris default fallback)
     search_dirs = [output_dir, os.path.dirname(pdf_path)]
     found_music = None
     for search_root in search_dirs:
-        for ext in ("*.mxl", "*.xml"):
-            matches = glob.glob(os.path.join(search_root, "**", ext), recursive=True)
+        for file_ext in ("*.mxl", "*.xml"):
+            matches = glob.glob(os.path.join(search_root, "**", file_ext), recursive=True)
             # Prefer the file whose name matches the PDF stem
             for m in matches:
                 if pdf_stem.lower() in os.path.basename(m).lower():
@@ -251,37 +335,39 @@ def upload():
             )
         }), 400
 
-    ext        = file.filename.rsplit(".", 1)[1].lower()
-    job_id     = uuid.uuid4().hex[:12]
-    safe       = secure_filename(file.filename)
+    ext         = file.filename.rsplit(".", 1)[1].lower()
+    job_id      = uuid.uuid4().hex[:12]
+    safe        = secure_filename(file.filename)
     upload_path = os.path.join(app.config["UPLOAD_FOLDER"], f"{job_id}_{safe}")
     file.save(upload_path)
 
-    try:
-        export_dir = os.path.join(app.config["OUTPUT_FOLDER"], job_id)
-        os.makedirs(export_dir, exist_ok=True)
+    export_dir = os.path.join(app.config["OUTPUT_FOLDER"], job_id)
+    os.makedirs(export_dir, exist_ok=True)
 
-        parse_path = upload_path
+    with _jobs_lock:
+        _jobs[job_id] = {
+            "progress": 0,
+            "status": "processing",
+            "status_text": "Starting\u2026",
+            "error": None,
+            "result": None,
+        }
 
-        if ext == "pdf":
-            omr_dir = os.path.join(export_dir, "omr_out")
-            os.makedirs(omr_dir, exist_ok=True)
-            parse_path = convert_pdf_to_mxl(upload_path, omr_dir)
+    t = threading.Thread(target=_run_job, args=(job_id, upload_path, ext, export_dir), daemon=True)
+    t.start()
 
-        score = converter.parse(parse_path)
+    return jsonify({"job_id": job_id})
 
-        xml_path  = os.path.join(export_dir, "score.xml")
-        score.write("musicxml", fp=xml_path)
 
-        midi_path = os.path.join(export_dir, f"{job_id}.mid")
-        score.write("midi", fp=midi_path)
-
-        return jsonify({"midi_url": f"/midi/{job_id}", "mxl_url": f"/mxl/{job_id}"})
-
-    except RuntimeError as exc:
-        return jsonify({"error": str(exc)}), 500
-    except Exception as exc:
-        return jsonify({"error": str(exc)}), 500
+@app.route("/status/<job_id>")
+def job_status(job_id):
+    if not job_id.isalnum():
+        return jsonify({"error": "Invalid job ID"}), 400
+    with _jobs_lock:
+        job = dict(_jobs.get(job_id, {}))
+    if not job:
+        return jsonify({"error": "Job not found"}), 404
+    return jsonify(job)
 
 
 @app.route("/mxl/<job_id>")

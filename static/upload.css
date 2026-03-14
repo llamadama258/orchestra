@@ -9,8 +9,7 @@
   display: flex;
   align-items: stretch;
   justify-content: stretch;
-  overflow: hidden;
-}
+  overflow: hidden;  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Cline x1='10' y1='2' x2='10' y2='18' stroke='white' stroke-width='1.5'/%3E%3Cline x1='2' y1='10' x2='18' y2='10' stroke='white' stroke-width='1.5'/%3E%3C/svg%3E") 10 10, crosshair;}
 
 /* status + open-player float at the bottom-center */
 #screen-upload .status,
@@ -203,6 +202,22 @@
   overflow: hidden;
   background: rgba(255,255,255,0.015);
   font-family: 'Syne', sans-serif;
+  --mx: 50%;
+  --my: 50%;
+}
+
+/* mouse spotlight overlay */
+.ms-right::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle 380px at var(--mx) var(--my),
+    rgba(255,255,255,0.05) 0%,
+    rgba(255,255,255,0.015) 35%,
+    transparent 70%);
+  pointer-events: none;
+  z-index: 1;
+  transition: background 0.08s ease;
 }
 
 /* make the form fill the right panel */

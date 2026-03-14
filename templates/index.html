@@ -10,11 +10,44 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&display=swap" />
   <link rel="stylesheet" href="/static/style.css" />
   <link rel="stylesheet" href="/static/upload.css" />
+  <link rel="stylesheet" href="/static/loading.css" />
   <script src="/static/opensheetmusicdisplay.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/tone@14/build/Tone.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tonejs/midi@2/build/Midi.min.js"></script>
 </head>
 <body>
+
+  <!-- ─── Loading Screen ─── -->
+  <div id="screen-loading" class="hidden">
+    <div class="ls-note-float n1">&#9833;</div>
+    <div class="ls-note-float n2">&#9834;</div>
+    <div class="ls-note-float n3">&#9835;</div>
+    <div class="ls-note-float n4">&#9836;</div>
+    <div class="ls-note-float n5">&#9833;</div>
+    <div class="ls-note-float n6">&#119070;</div>
+    <div class="ls-note-float n7">&#9834;</div>
+    <div class="ls-note-float n8">&#9835;</div>
+    <div class="ls-note-float n9">&#9836;</div>
+    <div class="ls-note-float n10">&#9833;</div>
+    <div class="ls-note-float n11">&#119070;</div>
+    <div class="ls-note-float n12">&#9834;</div>
+    <div class="ls-content">
+      <div class="ls-status" id="ls-status">Reading file&hellip;</div>
+      <div class="ls-staff-wrap">
+        <svg class="ls-staff-svg" id="ls-svg" viewBox="0 0 480 110" xmlns="http://www.w3.org/2000/svg"></svg>
+      </div>
+      <div class="ls-bar-block">
+        <div class="ls-bar-track">
+          <div class="ls-bar-fill" id="ls-fill"></div>
+        </div>
+        <div class="ls-bar-footer">
+          <span class="ls-pct-num" id="ls-pct">0%</span>
+          <span class="ls-pct-label">Converting</span>
+        </div>
+      </div>
+      <button id="ls-open-btn" class="ls-open-btn hidden">&#9654;&nbsp; Open Score &amp; Play</button>
+    </div>
+  </div>
 
   <!-- ─── Screen 1: Upload ─── -->
   <div id="screen-upload" class="screen">
@@ -267,6 +300,24 @@
       });
     }
 
+    /* ── mouse tracking for .ms-right reactivity ──────────── */
+    let msMouseX = 0.5, msMouseY = 0.5;
+    const msRight = document.querySelector(".ms-right");
+    if (msRight) {
+      msRight.addEventListener("mousemove", e => {
+        const r = msRight.getBoundingClientRect();
+        msMouseX = (e.clientX - r.left) / r.width;
+        msMouseY = (e.clientY - r.top)  / r.height;
+        msRight.style.setProperty("--mx", (msMouseX * 100).toFixed(1) + "%");
+        msRight.style.setProperty("--my", (msMouseY * 100).toFixed(1) + "%");
+      });
+      msRight.addEventListener("mouseleave", () => {
+        msMouseX = 0.5; msMouseY = 0.5;
+        msRight.style.setProperty("--mx", "50%");
+        msRight.style.setProperty("--my", "50%");
+      });
+    }
+
     /* ── canvas waveform animation ───────────────────────── */
     (function initCanvas() {
       const canvas = document.getElementById("ms-canvas");
@@ -284,9 +335,14 @@
       function draw(t) {
         ctx.clearRect(0, 0, W, H);
         const cy = H * 0.5;
+        // mouse Y raises overall amplitude; mouse X creates a local peak
+        const ampBoost  = 1 + (1 - msMouseY) * 1.4;
+        const mxPx      = msMouseX * W;
         ctx.beginPath();
         bars.forEach((b, i) => {
-          const y = cy + Math.sin(t * 0.001 * b.speed + b.phase) * b.amp;
+          const proximity = Math.max(0, 1 - Math.abs(b.x - mxPx) / (W * 0.28));
+          const localAmp  = b.amp * ampBoost * (1 + proximity * 1.5);
+          const y = cy + Math.sin(t * 0.001 * b.speed + b.phase) * localAmp;
           i === 0 ? ctx.moveTo(b.x, y) : ctx.lineTo(b.x, y);
         });
         ctx.strokeStyle = "rgba(255,255,255,0.06)";
@@ -295,7 +351,9 @@
 
         ctx.beginPath();
         bars.forEach((b, i) => {
-          const y = cy + Math.sin(t * 0.0007 * b.speed + b.phase + 1.2) * b.amp * 0.6;
+          const proximity = Math.max(0, 1 - Math.abs(b.x - mxPx) / (W * 0.35));
+          const localAmp  = b.amp * 0.6 * ampBoost * (1 + proximity * 0.9);
+          const y = cy + Math.sin(t * 0.0007 * b.speed + b.phase + 1.2) * localAmp;
           i === 0 ? ctx.moveTo(b.x, y) : ctx.lineTo(b.x, y);
         });
         ctx.strokeStyle = "rgba(255,255,255,0.03)";
@@ -316,27 +374,64 @@
       fd.append("file", fileInput.files[0]);
       uploadBtn.disabled = true;
       openPlayerBtn.classList.add("hidden");
-      const isPdf = fileInput.files[0].name.toLowerCase().endsWith(".pdf");
-      showStatus(isPdf
-        ? "\uD83D\uDD0D Recognizing music notation\u2026 this may take 1\u20132 minutes."
-        : "Converting\u2026 please wait.");
       stopPlayback();
       osmdReady = false;
       measureBboxes = {};
+      showLoadingScreen();
+
       try {
-        const res  = await fetch("/upload", { method: "POST", body: fd });
-        const data = await res.json();
-        if (!res.ok) { showStatus(data.error || "Something went wrong.", true); return; }
-        currentMidiUrl = data.midi_url;
-        currentMxlUrl  = data.mxl_url;
+        // 1. Start the job — server returns immediately with a job_id
+        const startRes  = await fetch("/upload", { method: "POST", body: fd });
+        const startData = await startRes.json();
+        if (!startRes.ok) {
+          hideLoadingScreen();
+          showStatus(startData.error || "Something went wrong.", true);
+          return;
+        }
+        const jobId = startData.job_id;
+
+        // 2. Poll /status/<jobId> until done or error
+        await new Promise((resolve, reject) => {
+          const iv = setInterval(async () => {
+            try {
+              const sRes  = await fetch(`/status/${jobId}`);
+              const sData = await sRes.json();
+              if (sData.progress !== undefined) updateLoadingProgress(sData.progress);
+              if (sData.status === "done") {
+                clearInterval(iv);
+                currentMidiUrl = sData.result.midi_url;
+                currentMxlUrl  = sData.result.mxl_url;
+                resolve();
+              } else if (sData.status === "error") {
+                clearInterval(iv);
+                reject(new Error(sData.error || "Conversion failed."));
+              }
+            } catch (pollErr) {
+              clearInterval(iv);
+              reject(pollErr);
+            }
+          }, 500);
+        });
+
+        // 3. Show play button on the loading screen (don't hide it)
         trackTitle.textContent = fileInput.files[0].name.replace(/\.[^.]+$/, "");
-        showStatus("Done! Click the button below to open the score.");
-        openPlayerBtn.classList.remove("hidden");
+        document.getElementById("ls-open-btn").classList.remove("hidden");
+
       } catch (err) {
-        showStatus("Network error: " + err.message, true);
+        hideLoadingScreen();
+        showStatus("Error: " + err.message, true);
       } finally {
         uploadBtn.disabled = false;
       }
+    });
+
+    /* ── loading-screen play button ─────────────────────── */
+    document.getElementById("ls-open-btn").addEventListener("click", async () => {
+      hideLoadingScreen();
+      goTo("screen-player");
+      await new Promise(r => setTimeout(r, 80));
+      await initOSMD();
+
     });
 
     /* ── screen transition ──────────────────────────────── */
@@ -344,7 +439,7 @@
       goTo("screen-player");
       await new Promise(r => setTimeout(r, 80));
       await initOSMD();
-      await startPlayback();
+
     });
     backBtn.addEventListener("click", () => { stopPlayback(); goTo("screen-upload"); });
 
@@ -593,9 +688,12 @@
         }
       }
 
-      /* schedule cursor advances */
+      /* schedule cursor advances
+         Add outputLatency so the visual update fires when audio is
+         actually heard from the speakers, not when it enters the buffer. */
+      const latencyOffset = (Tone.context.outputLatency || 0) + 0.02;
       cursorPositions.forEach(({ time, measureIdx }, i) => {
-        const t = time * (baseBpm / effectiveBpm()) + countinSecs;
+        const t = time * (baseBpm / effectiveBpm()) + countinSecs + latencyOffset;
         Tone.Transport.schedule(() => {
           currentBeat = i;
           if (i > 0) osmd.cursor.next();
@@ -694,5 +792,6 @@
       loopRangeLbl.textContent = `${s} → ${e}`;
     }
   </script>
+  <script src="/static/loading.js"></script>
 </body>
 </html>

@@ -1,0 +1,149 @@
+2026-03-14 12:51:51,695 INFO [96904ba313e1_impresario_violin]                 Book.java:560  | 2 sheets in C:\Users\llama\OneDrive\Documents\orchestra\uploads\96904ba313e1_impresario_violin.pdf
+2026-03-14 12:51:51,778 INFO []                 Book.java:2565 | Stored /book.xml
+2026-03-14 12:51:51,778 INFO []                 Book.java:2525 | Book stored as C:\Users\llama\OneDrive\Documents\orchestra\outputs\96904ba313e1\omr_out\96904ba313e1_impresario_violin.omr
+2026-03-14 12:51:51,782 INFO []                 Book.java:1929 | Book reaching PAGE on sheets:[#1#2]
+2026-03-14 12:51:51,783 INFO [96904ba313e1_impresario_violin#1]       StepMonitoring.java:98   | LOAD
+2026-03-14 12:51:51,942 INFO [96904ba313e1_impresario_violin#1]            SheetStub.java:1278 | Loaded image #1 2550x3299 from C:\Users\llama\OneDrive\Documents\orchestra\uploads\96904ba313e1_impresario_violin.pdf
+2026-03-14 12:51:51,944 INFO [96904ba313e1_impresario_violin#1]       StepMonitoring.java:98   | BINARY
+2026-03-14 12:51:52,178 INFO [96904ba313e1_impresario_violin#1]       StepMonitoring.java:98   | SCALE
+2026-03-14 12:51:52,188 INFO [96904ba313e1_impresario_violin#1]         ScaleBuilder.java:241  | Beam  guessed height:  8 -- 0.50 of 17 interline
+2026-03-14 12:51:52,189 INFO [96904ba313e1_impresario_violin#1]         ScaleBuilder.java:264  | Beam measured height: 11 -- 0.45 of [6..17] range at 180% of needed quorum
+2026-03-14 12:51:52,189 INFO [96904ba313e1_impresario_violin#1]         ScaleBuilder.java:392  | Normalized black jitter: 10.53 %
+2026-03-14 12:51:52,189 INFO [96904ba313e1_impresario_violin#1]            ScaleStep.java:65   | Scale{ interline(18,19,20) line(4,5,6) beam(11)}
+2026-03-14 12:51:52,190 INFO [96904ba313e1_impresario_violin#1]       StepMonitoring.java:98   | GRID
+2026-03-14 12:51:52,562 INFO [96904ba313e1_impresario_violin#1]       LinesRetriever.java:1500 | Global slope: -0.00759
+2026-03-14 12:51:52,603 INFO [96904ba313e1_impresario_violin#1]    ClustersRetriever.java:326  | Retrieved raw line clusters: 10 of sizes [5] with interline(18,19,20)
+2026-03-14 12:51:52,742 INFO [96904ba313e1_impresario_violin#1]            PeakGraph.java:310  | Systems: #1[1] #2[2] #3[3] #4[4] #5[5] #6[6] #7[7] #8[8] #9[9] #10[10]
+2026-03-14 12:51:53,095 INFO [96904ba313e1_impresario_violin#1]        SystemManager.java:779  | 1 part along 10 systems
+2026-03-14 12:51:53,095 INFO [96904ba313e1_impresario_violin#1]                 Book.java:543  | Created scores: [{Score 1}]
+2026-03-14 12:51:53,095 INFO [96904ba313e1_impresario_violin#1]       StepMonitoring.java:98   | HEADERS
+2026-03-14 12:51:53,481 INFO [96904ba313e1_impresario_violin#1]       StepMonitoring.java:98   | STEM_SEEDS
+2026-03-14 12:51:53,510 INFO [96904ba313e1_impresario_violin#1]        StemSeedsStep.java:86   | stem(4 max:5)
+2026-03-14 12:51:53,547 INFO [96904ba313e1_impresario_violin#1]       StepMonitoring.java:98   | BEAMS
+2026-03-14 12:51:56,402 INFO [96904ba313e1_impresario_violin#1]       StepMonitoring.java:98   | LEDGERS
+2026-03-14 12:51:56,755 INFO [96904ba313e1_impresario_violin#1]       StepMonitoring.java:98   | HEADS
+2026-03-14 12:52:00,124 INFO [96904ba313e1_impresario_violin#1]        HeadSeedTally.java:235  | Scale information: HeadSeeds{NOTEHEAD_VOID[L:0.1] NOTEHEAD_BLACK[L:0.1,R:-0.5]}
+2026-03-14 12:52:00,125 INFO [96904ba313e1_impresario_violin#1]       StepMonitoring.java:98   | STEMS
+2026-03-14 12:52:00,469 INFO [96904ba313e1_impresario_violin#1]       StepMonitoring.java:98   | REDUCTION
+2026-03-14 12:52:00,546 INFO [96904ba313e1_impresario_violin#1]        ReductionStep.java:105  | Stems free length median value: 68 pixels, 3.6 interlines
+2026-03-14 12:52:00,552 INFO [96904ba313e1_impresario_violin#1]       StepMonitoring.java:98   | CUE_BEAMS
+2026-03-14 12:52:00,553 INFO [96904ba313e1_impresario_violin#1]         CueBeamsStep.java:81   | Step CUE_BEAMS is skipped because small heads switch is off
+2026-03-14 12:52:00,553 INFO [96904ba313e1_impresario_violin#1]       StepMonitoring.java:98   | TEXTS
+2026-03-14 12:52:03,070 INFO [96904ba313e1_impresario_violin#1]       MetronomeInter.java:1410 | Metronome. Non recognized note for glyph#5055
+2026-03-14 12:52:03,106 INFO [96904ba313e1_impresario_violin#1]       StepMonitoring.java:98   | MEASURES
+2026-03-14 12:52:03,116 INFO [96904ba313e1_impresario_violin#1]                 Page.java:307  | 40 raw measures: [4 in system#1, 4 in system#2, 4 in system#3, 4 in system#4, 4 in system#5, 4 in system#6, 4 in system#7, 4 in system#8, 4 in system#9, 4 in system#10]
+2026-03-14 12:52:03,116 INFO [96904ba313e1_impresario_violin#1]       StepMonitoring.java:98   | CHORDS
+2026-03-14 12:52:03,130 INFO [96904ba313e1_impresario_violin#1]       StepMonitoring.java:98   | CURVES
+2026-03-14 12:52:03,998 INFO [96904ba313e1_impresario_violin#1]         SlursBuilder.java:240  | Slurs: 28
+2026-03-14 12:52:04,013 INFO [96904ba313e1_impresario_violin#1]      SegmentsBuilder.java:155  | Segments: 9
+2026-03-14 12:52:04,152 INFO [96904ba313e1_impresario_violin#1]    RehearsalsBuilder.java:229  | RehearsalInter#5878{(0.930) staff:4 mFont:BS-41 Rehearsal enclosure:java.awt.Rectangle[x=279,y=1248,width=65,height=58]}
+2026-03-14 12:52:04,288 INFO [96904ba313e1_impresario_violin#1]    RehearsalsBuilder.java:199  | No text found in rehearsal enclosure java.awt.Rectangle[x=1359,y=2605,width=65,height=58]
+2026-03-14 12:52:04,289 INFO [96904ba313e1_impresario_violin#1]       StepMonitoring.java:98   | SYMBOLS
+2026-03-14 12:52:05,173 INFO [96904ba313e1_impresario_violin#1]       StepMonitoring.java:98   | LINKS
+2026-03-14 12:52:05,176 INFO [96904ba313e1_impresario_violin#1]        SymbolsLinker.java:258  | No chord linked to OctaveShiftInter#6818{(0.132) staff:1 QUINDICESIMA ALTA} at java.awt.Point[x=407,y=430]
+2026-03-14 12:52:05,198 INFO [96904ba313e1_impresario_violin#1]             KeyInter.java:1189 | No effective key before AlterInter#7063{(0.800) staff:5 NATURAL pitch:0.0}
+2026-03-14 12:52:05,207 INFO [96904ba313e1_impresario_violin#1]        SentenceInter.java:463  | No chord near SentenceInter#5188{(0.575) staff:8 mFont:47 Direction} 1z nondiv.
+2026-03-14 12:52:05,209 INFO [96904ba313e1_impresario_violin#1]             KeyInter.java:1189 | No effective key before AlterInter#7146{(0.800) staff:8 NATURAL pitch:-5.0}
+2026-03-14 12:52:05,213 INFO [96904ba313e1_impresario_violin#1]        SymbolsLinker.java:258  | No chord linked to OctaveShiftInter#7212{(0.571) staff:10 OTTAVA ALTA} at java.awt.Point[x=1439,y=2831]
+2026-03-14 12:52:05,217 INFO [96904ba313e1_impresario_violin#1]       StepMonitoring.java:98   | RHYTHMS
+2026-03-14 12:52:05,254 INFO [96904ba313e1_impresario_violin#1]        MeasureRhythm.java:1044 | Measure{#12} No timeOffset for RestChordInter#6984{(0.799/0.799) staff:3 slot#8 dur:1/8}
+2026-03-14 12:52:05,254 INFO [96904ba313e1_impresario_violin#1]          StackRhythm.java:224  | S3 MeasureStack#12 no correct rhythm
+2026-03-14 12:52:05,272 INFO [96904ba313e1_impresario_violin#1]       StepMonitoring.java:98   | PAGE
+2026-03-14 12:52:05,274 INFO [96904ba313e1_impresario_violin#1]       SheetReduction.java:154  | Gutter. Different glyphs 9/10 OctaveShiftInter#7174{(0.571/0.571) staff:9 OTTAVA BASSA} vs DynamicsInter#7210{(0.786/0.923) DYNAMICS_FP}
+2026-03-14 12:52:05,278 INFO [96904ba313e1_impresario_violin#1]                 Book.java:2584 | Book{96904ba313e1_impresario_violin} storing
+2026-03-14 12:52:05,354 INFO [96904ba313e1_impresario_violin#1]                 Book.java:2565 | Stored /book.xml
+2026-03-14 12:52:05,489 INFO [96904ba313e1_impresario_violin#1]           DataHolder.java:348  | Stored /sheet#1/BINARY.png
+2026-03-14 12:52:06,248 INFO [96904ba313e1_impresario_violin#1]                Sheet.java:1583 | Stored /sheet#1/sheet#1.xml
+2026-03-14 12:52:06,248 INFO [96904ba313e1_impresario_violin#1]                 Book.java:2525 | Book stored as C:\Users\llama\OneDrive\Documents\orchestra\outputs\96904ba313e1\omr_out\96904ba313e1_impresario_violin.omr
+2026-03-14 12:52:06,259 INFO [96904ba313e1_impresario_violin#1]            SheetStub.java:1654 | Sheet#1 disposed
+2026-03-14 12:52:06,289 INFO [96904ba313e1_impresario_violin#1]                 Book.java:2050 | End of Stub#1
+2026-03-14 12:52:06,292 INFO [96904ba313e1_impresario_violin#2]       StepMonitoring.java:98   | LOAD
+2026-03-14 12:52:06,660 INFO [96904ba313e1_impresario_violin#2]            SheetStub.java:1278 | Loaded image #2 2550x3299 from C:\Users\llama\OneDrive\Documents\orchestra\uploads\96904ba313e1_impresario_violin.pdf
+2026-03-14 12:52:06,661 INFO [96904ba313e1_impresario_violin#2]       StepMonitoring.java:98   | BINARY
+2026-03-14 12:52:07,128 INFO [96904ba313e1_impresario_violin#2]       StepMonitoring.java:98   | SCALE
+2026-03-14 12:52:07,147 INFO [96904ba313e1_impresario_violin#2]         ScaleBuilder.java:241  | Beam  guessed height:  9 -- 0.50 of 18 interline
+2026-03-14 12:52:07,147 INFO [96904ba313e1_impresario_violin#2]         ScaleBuilder.java:264  | Beam measured height: 11 -- 0.42 of [6..18] range at 222% of needed quorum
+2026-03-14 12:52:07,147 INFO [96904ba313e1_impresario_violin#2]         ScaleBuilder.java:392  | Normalized black jitter: 10.00 %
+2026-03-14 12:52:07,147 INFO [96904ba313e1_impresario_violin#2]            ScaleStep.java:65   | Scale{ interline(19,20,20) line(4,5,6) beam(11)}
+2026-03-14 12:52:07,148 INFO [96904ba313e1_impresario_violin#2]       StepMonitoring.java:98   | GRID
+2026-03-14 12:52:07,448 INFO [96904ba313e1_impresario_violin#2]       LinesRetriever.java:1500 | Global slope: -0.00452
+2026-03-14 12:52:07,460 INFO [96904ba313e1_impresario_violin#2]    ClustersRetriever.java:326  | Retrieved raw line clusters: 10 of sizes [5] with interline(19,20,20)
+2026-03-14 12:52:07,582 INFO [96904ba313e1_impresario_violin#2]            PeakGraph.java:310  | Systems: #1[1] #2[2] #3[3] #4[4] #5[5] #6[6] #7[7] #8[8] #9[9] #10[10]
+2026-03-14 12:52:07,944 INFO [96904ba313e1_impresario_violin#2]        SystemManager.java:779  | 1 part along 10 systems
+2026-03-14 12:52:07,945 INFO [96904ba313e1_impresario_violin#2]       StepMonitoring.java:98   | HEADERS
+2026-03-14 12:52:08,040 INFO [96904ba313e1_impresario_violin#2]       StepMonitoring.java:98   | STEM_SEEDS
+2026-03-14 12:52:08,082 INFO [96904ba313e1_impresario_violin#2]        StemSeedsStep.java:86   | stem(4 max:5)
+2026-03-14 12:52:08,100 INFO [96904ba313e1_impresario_violin#2]       StepMonitoring.java:98   | BEAMS
+2026-03-14 12:52:11,160 INFO [96904ba313e1_impresario_violin#2]       StepMonitoring.java:98   | LEDGERS
+2026-03-14 12:52:11,305 INFO [96904ba313e1_impresario_violin#2]       StepMonitoring.java:98   | HEADS
+2026-03-14 12:52:15,874 INFO [96904ba313e1_impresario_violin#2]        HeadSeedTally.java:235  | Scale information: HeadSeeds{NOTEHEAD_VOID[L:0.4] NOTEHEAD_BLACK[L:0.3,R:-0.8]}
+2026-03-14 12:52:15,875 INFO [96904ba313e1_impresario_violin#2]       StepMonitoring.java:98   | STEMS
+2026-03-14 12:52:16,157 INFO [96904ba313e1_impresario_violin#2]       StepMonitoring.java:98   | REDUCTION
+2026-03-14 12:52:16,193 INFO [96904ba313e1_impresario_violin#2]        ReductionStep.java:105  | Stems free length median value: 71 pixels, 3.6 interlines
+2026-03-14 12:52:16,196 INFO [96904ba313e1_impresario_violin#2]       StepMonitoring.java:98   | CUE_BEAMS
+2026-03-14 12:52:16,197 INFO [96904ba313e1_impresario_violin#2]         CueBeamsStep.java:81   | Step CUE_BEAMS is skipped because small heads switch is off
+2026-03-14 12:52:16,197 INFO [96904ba313e1_impresario_violin#2]       StepMonitoring.java:98   | TEXTS
+2026-03-14 12:52:16,779 INFO [96904ba313e1_impresario_violin#2]       StepMonitoring.java:98   | MEASURES
+2026-03-14 12:52:16,781 INFO [96904ba313e1_impresario_violin#2]                 Page.java:307  | 40 raw measures: [4 in system#1, 4 in system#2, 4 in system#3, 4 in system#4, 4 in system#5, 4 in system#6, 4 in system#7, 4 in system#8, 4 in system#9, 4 in system#10]
+2026-03-14 12:52:16,782 INFO [96904ba313e1_impresario_violin#2]       StepMonitoring.java:98   | CHORDS
+2026-03-14 12:52:16,785 INFO [96904ba313e1_impresario_violin#2]       StepMonitoring.java:98   | CURVES
+2026-03-14 12:52:17,655 INFO [96904ba313e1_impresario_violin#2]         SlursBuilder.java:240  | Slurs: 37
+2026-03-14 12:52:17,662 INFO [96904ba313e1_impresario_violin#2]      SegmentsBuilder.java:155  | Segments: 15
+2026-03-14 12:52:17,818 INFO [96904ba313e1_impresario_violin#2]    RehearsalsBuilder.java:229  | RehearsalInter#5688{(0.467) staff:3 mFont:85 Rehearsal enclosure:java.awt.Rectangle[x=1488,y=834,width=62,height=61]}
+2026-03-14 12:52:17,940 INFO [96904ba313e1_impresario_violin#2]    RehearsalsBuilder.java:229  | RehearsalInter#5691{(0.512) staff:8 mFont:B-115 Rehearsal enclosure:java.awt.Rectangle[x=249,y=2301,width=65,height=61]}
+2026-03-14 12:52:18,068 INFO [96904ba313e1_impresario_violin#2]    RehearsalsBuilder.java:199  | No text found in rehearsal enclosure java.awt.Rectangle[x=244,y=2900,width=65,height=61]
+2026-03-14 12:52:18,069 INFO [96904ba313e1_impresario_violin#2]       StepMonitoring.java:98   | SYMBOLS
+2026-03-14 12:52:18,734 INFO [96904ba313e1_impresario_violin#2]       StepMonitoring.java:98   | LINKS
+2026-03-14 12:52:18,735 INFO [96904ba313e1_impresario_violin#2]             KeyInter.java:1189 | No effective key before AlterInter#7186{(0.800) staff:1 NATURAL pitch:1.0}
+2026-03-14 12:52:18,742 INFO [96904ba313e1_impresario_violin#2]             KeyInter.java:1189 | No effective key before AlterInter#7218{(0.800) staff:2 NATURAL pitch:5.0}
+2026-03-14 12:52:18,743 INFO [96904ba313e1_impresario_violin#2]             KeyInter.java:1189 | No effective key before AlterInter#7228{(0.800) staff:2 NATURAL pitch:1.0}
+2026-03-14 12:52:18,743 INFO [96904ba313e1_impresario_violin#2]             KeyInter.java:1189 | No effective key before AlterInter#7250{(0.800) staff:2 NATURAL pitch:5.0}
+2026-03-14 12:52:18,744 INFO [96904ba313e1_impresario_violin#2]             KeyInter.java:1189 | No effective key before AlterInter#7292{(0.800) staff:2 NATURAL pitch:1.0}
+2026-03-14 12:52:18,752 INFO [96904ba313e1_impresario_violin#2]        SymbolsLinker.java:258  | No chord linked to OctaveShiftInter#7347{(0.631) staff:3 OTTAVA ALTA} at java.awt.Point[x=1491,y=743]
+2026-03-14 12:52:18,752 INFO [96904ba313e1_impresario_violin#2]             KeyInter.java:1189 | No effective key before AlterInter#7329{(0.800) staff:3 NATURAL pitch:-1.0}
+2026-03-14 12:52:18,753 INFO [96904ba313e1_impresario_violin#2]             KeyInter.java:1189 | No effective key before AlterInter#7340{(0.800) staff:3 NATURAL pitch:-2.0}
+2026-03-14 12:52:18,758 INFO [96904ba313e1_impresario_violin#2]        SymbolsLinker.java:258  | No chord linked to OctaveShiftInter#7372{(0.211) staff:4 OTTAVA ALTA} at java.awt.Point[x=446,y=1040]
+2026-03-14 12:52:18,770 INFO [96904ba313e1_impresario_violin#2]        SymbolsLinker.java:258  | No chord linked to OctaveShiftInter#7617{(0.168) staff:10 OTTAVA BASSA} at java.awt.Point[x=297,y=3222]
+2026-03-14 12:52:18,774 INFO [96904ba313e1_impresario_violin#2]       StepMonitoring.java:98   | RHYTHMS
+2026-03-14 12:52:18,774 INFO [96904ba313e1_impresario_violin#2]           PageRhythm.java:199  | {Page#2.1} Time value reused from sheet#1
+2026-03-14 12:52:18,778 INFO [96904ba313e1_impresario_violin#2]                Voice.java:257  | Measure{#3} Voice{#1 excess:1/4} too long
+2026-03-14 12:52:18,778 INFO [96904ba313e1_impresario_violin#2]          StackRhythm.java:224  | S1 MeasureStack#3 no correct rhythm
+2026-03-14 12:52:18,794 INFO [96904ba313e1_impresario_violin#2]        MeasureRhythm.java:1044 | Measure{#32} No timeOffset for RestChordInter#7519{(0.788/0.788) staff:8 slot#8 dur:1/8}
+2026-03-14 12:52:18,796 INFO [96904ba313e1_impresario_violin#2]          StackRhythm.java:224  | S8 MeasureStack#32 no correct rhythm
+2026-03-14 12:52:18,804 INFO [96904ba313e1_impresario_violin#2]       StepMonitoring.java:98   | PAGE
+2026-03-14 12:52:18,805 INFO [96904ba313e1_impresario_violin#2]       SheetReduction.java:154  | Gutter. Different glyphs 3/4 BeamInter#1279{(0.695/0.968) BEAM} vs DynamicsInter#7373{ REMOVED(0.800/0.800) DYNAMICS_P}
+2026-03-14 12:52:18,806 INFO [96904ba313e1_impresario_violin#2]                Voice.java:257  | Measure{#3} Voice{#1 excess:1/4} too long
+2026-03-14 12:52:18,807 INFO [96904ba313e1_impresario_violin#2]                 Book.java:2584 | Book{96904ba313e1_impresario_violin} storing
+2026-03-14 12:52:18,887 INFO [96904ba313e1_impresario_violin#2]                 Book.java:2565 | Stored /book.xml
+2026-03-14 12:52:19,010 INFO [96904ba313e1_impresario_violin#2]           DataHolder.java:348  | Stored /sheet#2/BINARY.png
+2026-03-14 12:52:19,579 INFO [96904ba313e1_impresario_violin#2]                Sheet.java:1583 | Stored /sheet#2/sheet#2.xml
+2026-03-14 12:52:19,579 INFO [96904ba313e1_impresario_violin#2]                 Book.java:2525 | Book stored as C:\Users\llama\OneDrive\Documents\orchestra\outputs\96904ba313e1\omr_out\96904ba313e1_impresario_violin.omr
+2026-03-14 12:52:19,589 INFO [96904ba313e1_impresario_violin#2]            SheetStub.java:1654 | Sheet#2 disposed
+2026-03-14 12:52:19,623 INFO [96904ba313e1_impresario_violin#2]                 Book.java:2050 | End of Stub#2
+2026-03-14 12:52:19,624 INFO [96904ba313e1_impresario_violin]                 Book.java:2057 | End of Book{96904ba313e1_impresario_violin}
+2026-03-14 12:52:20,116 INFO [96904ba313e1_impresario_violin]            SheetStub.java:1000 | Loaded /sheet#1/sheet#1.xml
+2026-03-14 12:52:20,414 INFO [96904ba313e1_impresario_violin]            SheetStub.java:1000 | Loaded /sheet#2/sheet#2.xml
+2026-03-14 12:52:20,786 INFO [96904ba313e1_impresario_violin]      PartwiseBuilder.java:2706 | Exporting sheet(s): [#1#2]
+2026-03-14 12:52:20,793 WARN [96904ba313e1_impresario_violin]      PartwiseBuilder.java:1615 | Error visiting MetronomeInter#5056{<invalid-internals>} in {Page#1.1}
+java.lang.NullPointerException: Cannot invoke "org.audiveris.omr.sig.inter.BeatUnitInter$Note.toMusicXml()" because "note" is null
+	at org.audiveris.omr.score.PartwiseBuilder.processDirection(PartwiseBuilder.java:1574)
+	at org.audiveris.omr.score.PartwiseBuilder.processNote(PartwiseBuilder.java:2267)
+	at org.audiveris.omr.score.PartwiseBuilder.processChord(PartwiseBuilder.java:1394)
+	at org.audiveris.omr.score.PartwiseBuilder.processMeasure(PartwiseBuilder.java:2135)
+	at org.audiveris.omr.score.PartwiseBuilder.processPart(PartwiseBuilder.java:2677)
+	at org.audiveris.omr.score.PartwiseBuilder.processSystem(PartwiseBuilder.java:3222)
+	at org.audiveris.omr.score.PartwiseBuilder.processLogicalPart(PartwiseBuilder.java:1874)
+	at org.audiveris.omr.score.PartwiseBuilder.processStub(PartwiseBuilder.java:3173)
+	at org.audiveris.omr.score.PartwiseBuilder.processPartList(PartwiseBuilder.java:2709)
+	at org.audiveris.omr.score.PartwiseBuilder.processScore(PartwiseBuilder.java:2984)
+	at org.audiveris.omr.score.PartwiseBuilder.build(PartwiseBuilder.java:3542)
+	at org.audiveris.omr.score.ScoreExporter.export(ScoreExporter.java:122)
+	at org.audiveris.omr.score.ScoreExporter.export(ScoreExporter.java:163)
+	at org.audiveris.omr.sheet.Book.export(Book.java:630)
+	at org.audiveris.omr.CLI$ProcessingTask.processBook(CLI.java:927)
+	at org.audiveris.omr.CLI$CliTask.call(CLI.java:513)
+	at org.audiveris.omr.Main.runBatchTasks(Main.java:361)
+	at org.audiveris.omr.Main.main(Main.java:263)
+	at Audiveris.main(Audiveris.java:50)
+2026-03-14 12:52:20,941 INFO [96904ba313e1_impresario_violin]        ScoreExporter.java:164  | Score 96904ba313e1_impresario_violin exported to C:\Users\llama\OneDrive\Documents\orchestra\outputs\96904ba313e1\omr_out\96904ba313e1_impresario_violin.mxl
+2026-03-14 12:52:20,999 INFO [96904ba313e1_impresario_violin]                Score.java:181  | Closing {Score 1}

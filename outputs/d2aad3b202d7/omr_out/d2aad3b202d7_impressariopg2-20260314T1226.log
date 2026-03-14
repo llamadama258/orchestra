@@ -1,0 +1,70 @@
+2026-03-14 12:26:05,111 INFO [d2aad3b202d7_impressariopg2]                 Book.java:560  | 1 sheet in C:\Users\llama\OneDrive\Documents\orchestra\uploads\d2aad3b202d7_impressariopg2.pdf
+2026-03-14 12:26:05,196 INFO []                 Book.java:2565 | Stored /book.xml
+2026-03-14 12:26:05,196 INFO []                 Book.java:2525 | Book stored as C:\Users\llama\OneDrive\Documents\orchestra\outputs\d2aad3b202d7\omr_out\d2aad3b202d7_impressariopg2.omr
+2026-03-14 12:26:05,199 INFO []                 Book.java:1929 | Book reaching PAGE on sheets:[#1]
+2026-03-14 12:26:05,200 INFO [d2aad3b202d7_impressariopg2]       StepMonitoring.java:98   | LOAD
+2026-03-14 12:26:05,434 INFO [d2aad3b202d7_impressariopg2]            SheetStub.java:1278 | Loaded image #1 2550x3299 from C:\Users\llama\OneDrive\Documents\orchestra\uploads\d2aad3b202d7_impressariopg2.pdf
+2026-03-14 12:26:05,436 INFO [d2aad3b202d7_impressariopg2]       StepMonitoring.java:98   | BINARY
+2026-03-14 12:26:05,677 INFO [d2aad3b202d7_impressariopg2]       StepMonitoring.java:98   | SCALE
+2026-03-14 12:26:05,688 INFO [d2aad3b202d7_impressariopg2]         ScaleBuilder.java:241  | Beam  guessed height: 10 -- 0.50 of 19 interline
+2026-03-14 12:26:05,688 INFO [d2aad3b202d7_impressariopg2]         ScaleBuilder.java:264  | Beam measured height: 12 -- 0.46 of [6..19] range at 175% of needed quorum
+2026-03-14 12:26:05,689 INFO [d2aad3b202d7_impressariopg2]         ScaleBuilder.java:392  | Normalized black jitter: 15.00 %
+2026-03-14 12:26:05,689 INFO [d2aad3b202d7_impressariopg2]            ScaleStep.java:65   | Scale{ interline(19,20,22) line(3,5,6) beam(12)}
+2026-03-14 12:26:05,689 INFO [d2aad3b202d7_impressariopg2]       StepMonitoring.java:98   | GRID
+2026-03-14 12:26:06,126 INFO [d2aad3b202d7_impressariopg2]       LinesRetriever.java:1500 | Global slope: -0.00949
+2026-03-14 12:26:06,154 INFO [d2aad3b202d7_impressariopg2]    ClustersRetriever.java:326  | Retrieved raw line clusters: 11 of sizes [5] with interline(19,20,22)
+2026-03-14 12:26:06,293 INFO [d2aad3b202d7_impressariopg2]            PeakGraph.java:310  | Systems: #1[1] #2[2] #3[3] #4[4] #5[5] #6[6] #7[7] #8[8] #9[9] #10[10] #11[11]
+2026-03-14 12:26:06,576 INFO [d2aad3b202d7_impressariopg2]        SystemManager.java:779  | 1 part along 11 systems
+2026-03-14 12:26:06,577 INFO [d2aad3b202d7_impressariopg2]                 Book.java:543  | Created scores: [{Score 1}]
+2026-03-14 12:26:06,577 INFO [d2aad3b202d7_impressariopg2]       StepMonitoring.java:98   | HEADERS
+2026-03-14 12:26:07,300 INFO [d2aad3b202d7_impressariopg2]       StepMonitoring.java:98   | STEM_SEEDS
+2026-03-14 12:26:07,360 INFO [d2aad3b202d7_impressariopg2]        StemSeedsStep.java:86   | stem(4 max:5)
+2026-03-14 12:26:07,423 INFO [d2aad3b202d7_impressariopg2]       StepMonitoring.java:98   | BEAMS
+2026-03-14 12:26:11,667 INFO [d2aad3b202d7_impressariopg2]       StepMonitoring.java:98   | LEDGERS
+2026-03-14 12:26:11,826 INFO [d2aad3b202d7_impressariopg2]       StepMonitoring.java:98   | HEADS
+2026-03-14 12:26:17,085 INFO [d2aad3b202d7_impressariopg2]        HeadSeedTally.java:235  | Scale information: HeadSeeds{NOTEHEAD_VOID[L:0.4] NOTEHEAD_BLACK[L:0.4,R:-0.2]}
+2026-03-14 12:26:17,086 INFO [d2aad3b202d7_impressariopg2]       StepMonitoring.java:98   | STEMS
+2026-03-14 12:26:17,435 INFO [d2aad3b202d7_impressariopg2]       StepMonitoring.java:98   | REDUCTION
+2026-03-14 12:26:17,514 INFO [d2aad3b202d7_impressariopg2]        ReductionStep.java:105  | Stems free length median value: 73 pixels, 3.7 interlines
+2026-03-14 12:26:17,516 INFO [d2aad3b202d7_impressariopg2]       StepMonitoring.java:98   | CUE_BEAMS
+2026-03-14 12:26:17,516 INFO [d2aad3b202d7_impressariopg2]         CueBeamsStep.java:81   | Step CUE_BEAMS is skipped because small heads switch is off
+2026-03-14 12:26:17,516 INFO [d2aad3b202d7_impressariopg2]       StepMonitoring.java:98   | TEXTS
+2026-03-14 12:26:18,150 INFO [d2aad3b202d7_impressariopg2]       StepMonitoring.java:98   | MEASURES
+2026-03-14 12:26:18,159 INFO [d2aad3b202d7_impressariopg2]                 Page.java:307  | 48 raw measures: [5 in system#1, 5 in system#2, 6 in system#3, 4 in system#4, 4 in system#5, 4 in system#6, 4 in system#7, 4 in system#8, 4 in system#9, 4 in system#10, 4 in system#11]
+2026-03-14 12:26:18,159 INFO [d2aad3b202d7_impressariopg2]       StepMonitoring.java:98   | CHORDS
+2026-03-14 12:26:18,174 INFO [d2aad3b202d7_impressariopg2]       StepMonitoring.java:98   | CURVES
+2026-03-14 12:26:19,458 INFO [d2aad3b202d7_impressariopg2]         SlursBuilder.java:240  | Slurs: 17
+2026-03-14 12:26:19,476 INFO [d2aad3b202d7_impressariopg2]      SegmentsBuilder.java:155  | Segments: 12
+2026-03-14 12:26:19,646 INFO [d2aad3b202d7_impressariopg2]    RehearsalsBuilder.java:229  | RehearsalInter#4403{(0.610) staff:4 mFont:I-89 Rehearsal enclosure:java.awt.Rectangle[x=1120,y=1024,width=64,height=64]}
+2026-03-14 12:26:19,822 INFO [d2aad3b202d7_impressariopg2]    RehearsalsBuilder.java:229  | RehearsalInter#4408{(0.474) staff:6 mFont:IMS-71 Rehearsal enclosure:java.awt.Rectangle[x=1515,y=1564,width=67,height=59]}
+2026-03-14 12:26:19,822 INFO [d2aad3b202d7_impressariopg2]       StepMonitoring.java:98   | SYMBOLS
+2026-03-14 12:26:20,300 INFO [d2aad3b202d7_impressariopg2]       StepMonitoring.java:98   | LINKS
+2026-03-14 12:26:20,304 INFO [d2aad3b202d7_impressariopg2]        SentenceInter.java:463  | No chord near SentenceInter#3847{(0.686) staff:1 mFont:46 Direction} Bass - 2
+2026-03-14 12:26:20,333 INFO [d2aad3b202d7_impressariopg2]             KeyInter.java:1189 | No effective key before AlterInter#6208{(0.525) staff:9 NATURAL pitch:5.0}
+2026-03-14 12:26:20,337 INFO [d2aad3b202d7_impressariopg2]             KeyInter.java:1189 | No effective key before AlterInter#6246{(0.126) staff:11 NATURAL pitch:2.0}
+2026-03-14 12:26:20,339 INFO [d2aad3b202d7_impressariopg2]       StepMonitoring.java:98   | RHYTHMS
+2026-03-14 12:26:20,398 INFO [d2aad3b202d7_impressariopg2]       StepMonitoring.java:98   | PAGE
+2026-03-14 12:26:20,404 WARN [d2aad3b202d7_impressariopg2]         MeasureFixer.java:343  | System#1 No target duration for measures local IDs [1, 2, 3, 4, 5], please check time signatures
+2026-03-14 12:26:20,405 WARN [d2aad3b202d7_impressariopg2]         MeasureFixer.java:343  | System#2 No target duration for measures local IDs [6, 7, 8, 9, 10], please check time signatures
+2026-03-14 12:26:20,405 WARN [d2aad3b202d7_impressariopg2]         MeasureFixer.java:343  | System#3 No target duration for measures local IDs [11, 12, 13, 14, 15, 16], please check time signatures
+2026-03-14 12:26:20,405 WARN [d2aad3b202d7_impressariopg2]         MeasureFixer.java:343  | System#4 No target duration for measures local IDs [17, 18, 19, 20], please check time signatures
+2026-03-14 12:26:20,405 WARN [d2aad3b202d7_impressariopg2]         MeasureFixer.java:343  | System#5 No target duration for measures local IDs [21, 22, 23, 24], please check time signatures
+2026-03-14 12:26:20,406 WARN [d2aad3b202d7_impressariopg2]         MeasureFixer.java:343  | System#6 No target duration for measures local IDs [25, 26, 27, 28], please check time signatures
+2026-03-14 12:26:20,406 WARN [d2aad3b202d7_impressariopg2]         MeasureFixer.java:343  | System#7 No target duration for measures local IDs [29, 30, 31, 32], please check time signatures
+2026-03-14 12:26:20,406 WARN [d2aad3b202d7_impressariopg2]         MeasureFixer.java:343  | System#8 No target duration for measures local IDs [33, 34, 35, 36], please check time signatures
+2026-03-14 12:26:20,406 WARN [d2aad3b202d7_impressariopg2]         MeasureFixer.java:343  | System#9 No target duration for measures local IDs [37, 38, 39, 40], please check time signatures
+2026-03-14 12:26:20,406 WARN [d2aad3b202d7_impressariopg2]         MeasureFixer.java:343  | System#10 No target duration for measures local IDs [41, 42, 43, 44], please check time signatures
+2026-03-14 12:26:20,406 WARN [d2aad3b202d7_impressariopg2]         MeasureFixer.java:343  | System#11 No target duration for measures local IDs [45, 46, 47, 48], please check time signatures
+2026-03-14 12:26:20,407 INFO [d2aad3b202d7_impressariopg2]                 Book.java:2584 | Book{d2aad3b202d7_impressariopg2} storing
+2026-03-14 12:26:20,481 INFO [d2aad3b202d7_impressariopg2]                 Book.java:2565 | Stored /book.xml
+2026-03-14 12:26:20,611 INFO [d2aad3b202d7_impressariopg2]           DataHolder.java:348  | Stored /sheet#1/BINARY.png
+2026-03-14 12:26:21,422 INFO [d2aad3b202d7_impressariopg2]                Sheet.java:1583 | Stored /sheet#1/sheet#1.xml
+2026-03-14 12:26:21,423 INFO [d2aad3b202d7_impressariopg2]                 Book.java:2525 | Book stored as C:\Users\llama\OneDrive\Documents\orchestra\outputs\d2aad3b202d7\omr_out\d2aad3b202d7_impressariopg2.omr
+2026-03-14 12:26:21,428 INFO [d2aad3b202d7_impressariopg2]            SheetStub.java:1654 | Sheet disposed
+2026-03-14 12:26:21,466 INFO [d2aad3b202d7_impressariopg2]                 Book.java:2050 | End of Stub#1
+2026-03-14 12:26:21,467 INFO [d2aad3b202d7_impressariopg2]                 Book.java:2057 | End of Book{d2aad3b202d7_impressariopg2}
+2026-03-14 12:26:22,103 INFO [d2aad3b202d7_impressariopg2]            SheetStub.java:1000 | Loaded /sheet#1/sheet#1.xml
+2026-03-14 12:26:22,480 INFO [d2aad3b202d7_impressariopg2]      PartwiseBuilder.java:2706 | Exporting sheet(s): [#1]
+2026-03-14 12:26:22,501 WARN [d2aad3b202d7_impressariopg2]      PartwiseBuilder.java:983  | Measure{#28} Multirest with no measure count, using default value 1
+2026-03-14 12:26:22,572 INFO [d2aad3b202d7_impressariopg2]        ScoreExporter.java:164  | Score d2aad3b202d7_impressariopg2 exported to C:\Users\llama\OneDrive\Documents\orchestra\outputs\d2aad3b202d7\omr_out\d2aad3b202d7_impressariopg2.mxl
+2026-03-14 12:26:22,615 INFO [d2aad3b202d7_impressariopg2]                Score.java:181  | Closing {Score 1}
