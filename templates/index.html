@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Orchestra &ndash; Sheet Music to Sound</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" />
+  <link rel="stylesheet" href="/static/style.css" />
+  <script src="/static/opensheetmusicdisplay.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tone@14/build/Tone.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tonejs/midi@2/build/Midi.min.js"></script>
+</head>
+<body>
+
+  <!-- ─── Screen 1: Upload ─── -->
+  <div id="screen-upload" class="screen">
+    <div class="container">
+      <h1>&#127932; Orchestra</h1>
+      <p class="subtitle">Turn sheet music into sound — instantly</p>
+      <p class="hint">Export from <strong>MuseScore</strong>: File &rarr; Export &rarr; MusicXML (.mxl)</p>
+
+      <form id="upload-form">
+        <label class="file-label">
+          <div class="file-label-icon">&#x1F3B5;</div>
+          <span id="file-name">Drop your file here or click to browse</span>
+          <span class="file-hint">.mxl &nbsp;/&nbsp; .xml &nbsp;/&nbsp; .musicxml</span>
+          <input type="file" id="file-input" accept=".mxl,.xml,.musicxml" />
+        </label>
+        <button type="submit" id="upload-btn" class="btn-primary" disabled>Convert to Audio</button>
+      </form>
+
+      <div id="status" class="status hidden"></div>
+      <button id="open-player-btn" class="open-player hidden">&#9654;&nbsp; Open Score &amp; Play</button>
+    </div>
+  </div>
+
+  <!-- ─── Screen 2: Player ─── -->
+  <div id="screen-player" class="screen hidden">
+    <header class="player-header">
+      <button id="back-btn" class="back-btn">&#8592; Back</button>
+      <span id="track-title" class="track-title"></span>
+      <div class="transport">
+        <button id="player-play-btn" class="tp-btn play">&#9654; Play</button>
+        <button id="player-stop-btn" class="tp-btn stop">&#9632; Stop</button>
+      </div>
+      <button id="sidebar-toggle" class="hamburger-btn" title="Controls">&#9776;</button>
+    </header>
+
+    <div class="player-body">
+      <div id="sheet-container">
+        <div id="loader" class="loader hidden">Loading score&hellip;</div>
+        <div id="score-wrapper"></div>
+      </div>
+
+      <!-- ─── Sidebar (pushes score left) ─── -->
+      <div id="sidebar" class="sidebar">
+        <div class="sidebar-section">
+          <span class="tb-label">Tempo &mdash; <span id="tempo-val">100</span>%</span>
+          <input type="range" id="tempo-slider" min="25" max="200" value="100" />
+        </div>
+        <div class="sidebar-section">
+          <span class="tb-label">Sound</span>
+          <select id="instrument-select">
+            <option value="sine">Piano (Sine)</option>
+            <option value="triangle">Mellow (Triangle)</option>
+            <option value="sawtooth">Strings (Saw)</option>
+            <option value="square">Organ (Square)</option>
+          </select>
+        </div>
+        <div class="sidebar-section">
+          <div class="tb-toggles">
+            <button id="metro-btn"   class="toggle-btn" title="Metronome">&#9201; Metro</button>
+            <button id="countin-btn" class="toggle-btn active" title="Count-in">&#9312; Count-in</button>
+            <button id="labels-btn"  class="toggle-btn" title="Note labels">&#119070; Labels</button>
+            <button id="loop-btn"    class="toggle-btn" title="Loop section">&#8635; Loop</button>
+          </div>
+        </div>
+        <div id="notes-panel" class="sidebar-section hidden">
+          <span class="tb-label">Now Playing</span>
+          <span id="notes-display" class="notes-display">&mdash;</span>
+        </div>
+        <div id="loop-controls" class="sidebar-section hidden">
+          <span class="tb-label">Loop</span>
+          <div class="loop-btns">
+            <button id="set-start-btn" class="sm-btn">Set Start</button>
+            <span id="loop-range-lbl" class="tb-label loop-range">&mdash;</span>
+            <button id="set-end-btn"   class="sm-btn">Set End</button>
+            <button id="clear-loop-btn" class="sm-btn danger">Clear</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ── state ─────────────────────────────────────────── */
+    let currentMidiUrl  = null;
+    let currentMxlUrl   = null;
+    let synths          = [];
+    let metroSynth      = null;
+    let osmd            = null;
+    let osmdReady       = false;
+    let baseBpm         = 120;
+    let midiData        = null;      // cached Midi object
+    let cursorPositions = [];        // [{time, measureIdx}]
+    let loopStartBeat   = null;      // beat index into cursorPositions
+    let loopEndBeat     = null;
+    let currentBeat     = 0;
+    let lastHighlightedMeasure = -1;
+    let measureBboxes   = {};        // measureIdx -> {left,top,width,height}
+    let showLabels      = false;
+    let labelEls        = [];
+    let highlightEl     = null;
+
+    /* ── element refs ───────────────────────────────────── */
+    const fileInput       = document.getElementById("file-input");
+    const fileNameEl      = document.getElementById("file-name");
+    const uploadBtn       = document.getElementById("upload-btn");
+    const statusDiv       = document.getElementById("status");
+    const openPlayerBtn   = document.getElementById("open-player-btn");
+    const backBtn         = document.getElementById("back-btn");
+    const trackTitle      = document.getElementById("track-title");
+    const playerPlayBtn   = document.getElementById("player-play-btn");
+    const playerStopBtn   = document.getElementById("player-stop-btn");
+    const sheetContainer  = document.getElementById("sheet-container");
+    const scoreWrapper    = document.getElementById("score-wrapper");
+    const loader          = document.getElementById("loader");
+    const sidebar         = document.getElementById("sidebar");
+    const sidebarToggle   = document.getElementById("sidebar-toggle");
+    const tempoSlider     = document.getElementById("tempo-slider");
+    const tempoVal        = document.getElementById("tempo-val");
+    const instrumentSel   = document.getElementById("instrument-select");
+    const metroBtn        = document.getElementById("metro-btn");
+    const countinBtn      = document.getElementById("countin-btn");
+    const labelsBtn       = document.getElementById("labels-btn");
+    const loopBtn         = document.getElementById("loop-btn");
+    const loopControls    = document.getElementById("loop-controls");
+    const setStartBtn     = document.getElementById("set-start-btn");
+    const setEndBtn       = document.getElementById("set-end-btn");
+    const clearLoopBtn    = document.getElementById("clear-loop-btn");
+    const loopRangeLbl    = document.getElementById("loop-range-lbl");
+
+    /* ── helpers ────────────────────────────────────────── */
+    function showStatus(msg, isError = false) {
+      statusDiv.textContent = msg;
+      statusDiv.className   = "status" + (isError ? " error" : "");
+      statusDiv.classList.remove("hidden");
+    }
+    function goTo(id) {
+      document.querySelectorAll(".screen").forEach(s => s.classList.add("hidden"));
+      document.getElementById(id).classList.remove("hidden");
+    }
+    function isActive(btn) { return btn.classList.contains("active"); }
+    function toggleActive(btn) { btn.classList.toggle("active"); }
+    function effectiveBpm() { return baseBpm * (parseInt(tempoSlider.value) / 100); }
+
+    /* ── upload ─────────────────────────────────────────── */
+    fileInput.addEventListener("change", () => {
+      if (fileInput.files.length) {
+        fileNameEl.textContent = fileInput.files[0].name;
+        uploadBtn.disabled = false;
+      }
+    });
+
+    document.getElementById("upload-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (!fileInput.files.length) return;
+      const fd = new FormData();
+      fd.append("file", fileInput.files[0]);
+      uploadBtn.disabled = true;
+      openPlayerBtn.classList.add("hidden");
+      showStatus("Converting\u2026 please wait.");
+      stopPlayback();
+      osmdReady = false;
+      measureBboxes = {};
+      try {
+        const res  = await fetch("/upload", { method: "POST", body: fd });
+        const data = await res.json();
+        if (!res.ok) { showStatus(data.error || "Something went wrong.", true); return; }
+        currentMidiUrl = data.midi_url;
+        currentMxlUrl  = data.mxl_url;
+        trackTitle.textContent = fileInput.files[0].name.replace(/\.[^.]+$/, "");
+        showStatus("Done! Click the button below to open the score.");
+        openPlayerBtn.classList.remove("hidden");
+      } catch (err) {
+        showStatus("Network error: " + err.message, true);
+      } finally {
+        uploadBtn.disabled = false;
+      }
+    });
+
+    /* ── screen transition ──────────────────────────────── */
+    openPlayerBtn.addEventListener("click", async () => {
+      goTo("screen-player");
+      await new Promise(r => setTimeout(r, 80));
+      await initOSMD();
+      await startPlayback();
+    });
+    backBtn.addEventListener("click", () => { stopPlayback(); goTo("screen-upload"); });
+
+    /* ── sidebar toggle ──────────────────────────────── */
+    function openSidebar()  { sidebar.classList.add("open"); }
+    function closeSidebar() { sidebar.classList.remove("open"); }
+    sidebarToggle.addEventListener("click", () => sidebar.classList.contains("open") ? closeSidebar() : openSidebar());
+
+    /* ── OSMD ───────────────────────────────────────────── */
+    async function initOSMD() {
+      if (osmdReady) return;
+      loader.classList.remove("hidden");
+      scoreWrapper.innerHTML = "";
+      try {
+        osmd = new opensheetmusicdisplay.OpenSheetMusicDisplay(scoreWrapper, {
+          autoResize: true,
+          drawTitle: true,
+          drawComposer: true,
+          followCursor: false,
+        });
+        await osmd.load(currentMxlUrl);
+        osmd.render();
+        osmd.cursor.show();
+        osmd.cursor.reset();
+        buildMeasureBboxes();   // precompute after render
+        osmdReady = true;
+      } catch (err) {
+        loader.textContent = "Could not load score: " + err.message;
+        loader.style.color = "#c0392b";
+        return;
+      }
+      loader.classList.add("hidden");
+    }
+
+    /* ── measure highlight ──────────────────────────────── */
+    function getHighlightEl() {
+      if (!highlightEl) {
+        highlightEl = document.createElement("div");
+        highlightEl.className = "measure-highlight";
+        scoreWrapper.style.position = "relative";
+        scoreWrapper.appendChild(highlightEl);
+      }
+      return highlightEl;
+    }
+
+    function buildMeasureBboxes() {
+      measureBboxes = {};
+      osmd.cursor.reset();
+      const wrapRect = scoreWrapper.getBoundingClientRect();
+      // First pass: collect all cursor rects per measure index
+      const raw = {}; // mi -> [{left, top, right, bottom}]
+      while (!osmd.cursor.iterator.EndReached) {
+        const mi = osmd.cursor.iterator.CurrentMeasureIndex ?? 0;
+        const c  = osmd.cursor.cursorElement;
+        if (c) {
+          const r = c.getBoundingClientRect();
+          const entry = {
+            left:   r.left   - wrapRect.left,
+            top:    r.top    - wrapRect.top,
+            right:  r.right  - wrapRect.left,
+            bottom: r.bottom - wrapRect.top,
+          };
+          if (!raw[mi]) raw[mi] = [];
+          raw[mi].push(entry);
+        }
+        osmd.cursor.next();
+      }
+      osmd.cursor.reset();
+
+      // Second pass: compute bbox per measure from all collected rects
+      const indices = Object.keys(raw).map(Number).sort((a, b) => a - b);
+      indices.forEach((mi, idx) => {
+        const rects  = raw[mi];
+        const left   = Math.min(...rects.map(r => r.left));
+        const top    = Math.min(...rects.map(r => r.top));
+        const bottom = Math.max(...rects.map(r => r.bottom));
+        const lastRight = Math.max(...rects.map(r => r.right));
+
+        // Use first cursor position of NEXT measure on same row as right edge (most accurate)
+        let right = lastRight + 10;
+        const nextMi = indices[idx + 1];
+        if (nextMi !== undefined && raw[nextMi].length) {
+          const nextFirst = raw[nextMi][0];
+          // Only use next measure's left if it's on roughly the same row
+          if (Math.abs(nextFirst.top - top) < 20) {
+            right = nextFirst.left - 2;
+          }
+        }
+
+        measureBboxes[mi] = { left: left - 6, top: top - 4, width: right - left + 6, height: bottom - top + 8 };
+      });
+    }
+
+    function highlightCurrentMeasure() {
+      try {
+        const mi   = osmd.cursor.iterator.CurrentMeasureIndex ?? 0;
+        const bbox = measureBboxes[mi];
+        if (!bbox) return;
+        const hl = getHighlightEl();
+        hl.style.left    = bbox.left   + "px";
+        hl.style.top     = bbox.top    + "px";
+        hl.style.width   = bbox.width  + "px";
+        hl.style.height  = bbox.height + "px";
+        hl.style.display = "block";
+      } catch (_) {}
+    }
+
+    const NOTE_NAMES = ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"]; // chromatic semitone 0–11
+    const notesPanel   = document.getElementById("notes-panel");
+    const notesDisplay = document.getElementById("notes-display");
+
+    function clearLabels() {
+      labelEls.forEach(el => el.remove());
+      labelEls = [];
+    }
+
+    function drawLabelsForCursor() {
+      clearLabels();
+      if (!showLabels) return;
+      try {
+        const notes = osmd.cursor.NotesUnderCursor();
+        if (!notes || !notes.length) { notesDisplay.textContent = "\u2014"; return; }
+
+        const ce = osmd.cursor.cursorElement;
+        if (!ce) { notesDisplay.textContent = "\u2014"; return; }
+
+        const wrapRect = scoreWrapper.getBoundingClientRect();
+        const cRect    = ce.getBoundingClientRect();
+        // Horizontal center of the cursor bar, relative to scoreWrapper
+        const cx = cRect.left - wrapRect.left + cRect.width / 2;
+        // Just below the bottom of the staff (cursor spans full staff height)
+        const cy = cRect.bottom - wrapRect.top + 6;
+
+        const seen  = new Set();
+        const names = [];
+        notes.forEach(note => {
+          const fn = note?.Pitch?.FundamentalNote;
+          if (typeof fn !== "number") return;
+          const label = NOTE_NAMES[fn] ?? "?";
+          if (!seen.has(fn)) { seen.add(fn); names.push(label); }
+        });
+
+        names.forEach((name, i) => {
+          const el = document.createElement("div");
+          el.className = "note-label";
+          el.textContent = name;
+          el.style.left = cx + "px";
+          el.style.top  = (cy + i * 20) + "px";
+          scoreWrapper.appendChild(el);
+          labelEls.push(el);
+        });
+
+        notesDisplay.textContent = names.length ? names.join("  ") : "\u2014";
+      } catch (_) { notesDisplay.textContent = "\u2014"; }
+    }
+
+    /* ── playback core ──────────────────────────────────── */
+    async function startPlayback() {
+      if (!currentMidiUrl || !osmdReady) return;
+      cleanupTone();
+      await Tone.start();
+
+      // Load MIDI (cache it)
+      if (!midiData) {
+        const buf = await fetch(currentMidiUrl).then(r => r.arrayBuffer());
+        midiData = new Midi(buf);
+      }
+      baseBpm = midiData.header.tempos[0]?.bpm ?? 120;
+      Tone.Transport.bpm.value = effectiveBpm();
+
+      const waveform    = instrumentSel.value;
+      const countinOn   = isActive(countinBtn);
+      const metroOn     = isActive(metroBtn);
+      const countinBeats = countinOn ? 4 : 0;
+      const beatDur      = 60 / effectiveBpm();   // seconds per beat
+      const countinSecs  = countinBeats * beatDur;
+
+      /* ── count-in + metronome synth ── */
+      if (metroOn || countinOn) {
+        metroSynth = new Tone.Synth({
+          oscillator: { type: "triangle" },
+          envelope: { attack: 0.001, decay: 0.05, sustain: 0, release: 0.05 },
+          volume: -10,
+        }).toDestination();
+      }
+
+      /* schedule count-in clicks */
+      if (countinOn) {
+        for (let i = 0; i < countinBeats; i++) {
+          const t = i * beatDur;
+          Tone.Transport.schedule(time => {
+            metroSynth.triggerAttackRelease(i === 0 ? "C5" : "A4", "32n", time);
+          }, t);
+        }
+      }
+
+      /* build cursor position list */
+      osmd.cursor.reset();
+      cursorPositions = [];
+      const secsPerWhole = 240 / baseBpm;
+      while (!osmd.cursor.iterator.EndReached) {
+        const ts  = osmd.cursor.iterator.currentTimeStamp.RealValue;
+        const mi  = osmd.cursor.iterator.CurrentMeasureIndex ?? 0;
+        cursorPositions.push({ time: ts * secsPerWhole, measureIdx: mi });
+        osmd.cursor.next();
+      }
+      osmd.cursor.reset();
+      currentBeat = 0;
+
+      /* ── loop setup ── */
+      const loopOn = isActive(loopBtn) && loopStartBeat !== null && loopEndBeat !== null;
+      if (loopOn) {
+        const ls = cursorPositions[loopStartBeat]?.time ?? 0;
+        const le = cursorPositions[loopEndBeat]?.time   ?? cursorPositions.at(-1)?.time ?? 1;
+        Tone.Transport.loop      = true;
+        Tone.Transport.loopStart = ls + countinSecs;
+        Tone.Transport.loopEnd   = le + countinSecs;
+      } else {
+        Tone.Transport.loop = false;
+      }
+
+      /* schedule notes */
+      midiData.tracks.forEach(track => {
+        const synth = new Tone.PolySynth(Tone.Synth, {
+          oscillator: { type: waveform },
+          envelope: { attack: 0.02, decay: 0.1, sustain: 0.3, release: 0.8 },
+        }).toDestination();
+        synths.push(synth);
+        track.notes.forEach(n => {
+          const noteTime = n.time * (baseBpm / effectiveBpm()) + countinSecs;
+          Tone.Transport.schedule(t => {
+            synth.triggerAttackRelease(n.name, n.duration * (baseBpm / effectiveBpm()), t, n.velocity);
+          }, noteTime);
+        });
+      });
+
+      /* schedule metronome if on */
+      if (metroOn) {
+        const totalSecs = (cursorPositions.at(-1)?.time ?? 30) + countinSecs;
+        const totalBeats = Math.ceil(totalSecs / beatDur);
+        for (let i = countinOn ? countinBeats : 0; i < totalBeats; i++) {
+          const t = i * beatDur;
+          Tone.Transport.schedule(time => {
+            metroSynth.triggerAttackRelease(i % 4 === 0 ? "C5" : "A4", "32n", time);
+          }, t);
+        }
+      }
+
+      /* schedule cursor advances */
+      cursorPositions.forEach(({ time, measureIdx }, i) => {
+        const t = time * (baseBpm / effectiveBpm()) + countinSecs;
+        Tone.Transport.schedule(() => {
+          currentBeat = i;
+          if (i > 0) osmd.cursor.next();
+          // Only repaint measure highlight when we enter a new measure
+          if (measureIdx !== lastHighlightedMeasure) {
+            lastHighlightedMeasure = measureIdx;
+            highlightCurrentMeasure();
+          }
+          drawLabelsForCursor();
+          const el = osmd.cursor.cursorElement;
+          if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+        }, t);
+      });
+
+      Tone.Transport.start();
+      playerPlayBtn.innerHTML = "&#9646;&#9646; Pause";
+    }
+
+    function cleanupTone() {
+      Tone.Transport.stop();
+      Tone.Transport.cancel();
+      Tone.Transport.loop = false;
+      synths.forEach(s => { try { s.dispose(); } catch (_) {} });
+      synths = [];
+      if (metroSynth) { try { metroSynth.dispose(); } catch (_) {} metroSynth = null; }
+    }
+
+    function stopPlayback() {
+      cleanupTone();
+      clearLabels();
+      lastHighlightedMeasure = -1;
+      if (highlightEl) highlightEl.style.display = "none";
+      if (osmdReady && osmd) osmd.cursor.reset();
+      playerPlayBtn.innerHTML = "&#9654; Play";
+    }
+
+    /* ── transport buttons ──────────────────────────────── */
+    playerPlayBtn.addEventListener("click", async () => {
+      const state = Tone.Transport.state;
+      if (state === "started") {
+        Tone.Transport.pause();
+        playerPlayBtn.innerHTML = "&#9654; Play";
+      } else if (state === "paused") {
+        await Tone.start();
+        Tone.Transport.start();
+        playerPlayBtn.innerHTML = "&#9646;&#9646; Pause";
+      } else {
+        await startPlayback();
+      }
+    });
+    playerStopBtn.addEventListener("click", stopPlayback);
+
+    /* ── tempo slider ───────────────────────────────────── */
+    tempoSlider.addEventListener("input", () => {
+      tempoVal.textContent = tempoSlider.value;
+      if (Tone.Transport.state !== "stopped") {
+        Tone.Transport.bpm.value = effectiveBpm();
+      }
+    });
+
+    /* ── toggle buttons ─────────────────────────────────── */
+    metroBtn.addEventListener("click",   () => toggleActive(metroBtn));
+    countinBtn.addEventListener("click", () => toggleActive(countinBtn));
+
+    labelsBtn.addEventListener("click", () => {
+      toggleActive(labelsBtn);
+      showLabels = isActive(labelsBtn);
+      notesPanel.classList.toggle("hidden", !showLabels);
+      if (!showLabels) { clearLabels(); notesDisplay.textContent = "\u2014"; }
+      else drawLabelsForCursor();
+    });
+
+    loopBtn.addEventListener("click", () => {
+      toggleActive(loopBtn);
+      loopControls.classList.toggle("hidden", !isActive(loopBtn));
+    });
+
+    /* ── loop markers ───────────────────────────────────── */
+    setStartBtn.addEventListener("click", () => {
+      loopStartBeat = currentBeat;
+      updateLoopLabel();
+    });
+    setEndBtn.addEventListener("click", () => {
+      loopEndBeat = currentBeat;
+      updateLoopLabel();
+    });
+    clearLoopBtn.addEventListener("click", () => {
+      loopStartBeat = null;
+      loopEndBeat   = null;
+      updateLoopLabel();
+      Tone.Transport.loop = false;
+    });
+    function updateLoopLabel() {
+      const s = loopStartBeat !== null ? `beat ${loopStartBeat}` : "?";
+      const e = loopEndBeat   !== null ? `beat ${loopEndBeat}`   : "?";
+      loopRangeLbl.textContent = `${s} → ${e}`;
+    }
+  </script>
+</body>
+</html>
