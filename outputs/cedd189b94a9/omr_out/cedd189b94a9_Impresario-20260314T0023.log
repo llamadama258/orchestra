@@ -1,0 +1,68 @@
+2026-03-14 00:23:04,480 INFO [cedd189b94a9_Impresario]                 Book.java:560  | 1 sheet in C:\Users\llama\OneDrive\Documents\orchestra\uploads\cedd189b94a9_Impresario.pdf
+2026-03-14 00:23:04,555 INFO []                 Book.java:2565 | Stored /book.xml
+2026-03-14 00:23:04,555 INFO []                 Book.java:2525 | Book stored as C:\Users\llama\OneDrive\Documents\orchestra\outputs\cedd189b94a9\omr_out\cedd189b94a9_Impresario.omr
+2026-03-14 00:23:04,558 INFO []                 Book.java:1929 | Book reaching PAGE on sheets:[#1]
+2026-03-14 00:23:04,559 INFO [cedd189b94a9_Impresario]       StepMonitoring.java:98   | LOAD
+2026-03-14 00:23:04,787 INFO [cedd189b94a9_Impresario]            SheetStub.java:1278 | Loaded image #1 2550x3299 from C:\Users\llama\OneDrive\Documents\orchestra\uploads\cedd189b94a9_Impresario.pdf
+2026-03-14 00:23:04,789 INFO [cedd189b94a9_Impresario]       StepMonitoring.java:98   | BINARY
+2026-03-14 00:23:05,015 INFO [cedd189b94a9_Impresario]       StepMonitoring.java:98   | SCALE
+2026-03-14 00:23:05,025 INFO [cedd189b94a9_Impresario]         ScaleBuilder.java:241  | Beam  guessed height:  9 -- 0.50 of 18 interline
+2026-03-14 00:23:05,025 INFO [cedd189b94a9_Impresario]         ScaleBuilder.java:264  | Beam measured height: 10 -- 0.33 of [6..18] range at 224% of needed quorum
+2026-03-14 00:23:05,026 INFO [cedd189b94a9_Impresario]         ScaleBuilder.java:392  | Normalized black jitter: 15.79 %
+2026-03-14 00:23:05,026 INFO [cedd189b94a9_Impresario]            ScaleStep.java:65   | Scale{ interline(18,19,21) line(3,5,6) beam(10)}
+2026-03-14 00:23:05,026 INFO [cedd189b94a9_Impresario]       StepMonitoring.java:98   | GRID
+2026-03-14 00:23:05,395 INFO [cedd189b94a9_Impresario]       LinesRetriever.java:1500 | Global slope: -0.01135
+2026-03-14 00:23:05,422 INFO [cedd189b94a9_Impresario]    ClustersRetriever.java:326  | Retrieved raw line clusters: 10 of sizes [5] with interline(18,19,21)
+2026-03-14 00:23:05,537 INFO [cedd189b94a9_Impresario]            PeakGraph.java:310  | Systems: #1[1] #2[2] #3[3] #4[4] #5[5] #6[6] #7[7] #8[8] #9[9] #10[10]
+2026-03-14 00:23:05,793 INFO [cedd189b94a9_Impresario]        SystemManager.java:779  | 1 part along 10 systems
+2026-03-14 00:23:05,793 INFO [cedd189b94a9_Impresario]                 Book.java:543  | Created scores: [{Score 1}]
+2026-03-14 00:23:05,793 INFO [cedd189b94a9_Impresario]       StepMonitoring.java:98   | HEADERS
+2026-03-14 00:23:06,389 INFO [cedd189b94a9_Impresario]       StepMonitoring.java:98   | STEM_SEEDS
+2026-03-14 00:23:06,420 INFO [cedd189b94a9_Impresario]        StemSeedsStep.java:86   | stem(3 max:6)
+2026-03-14 00:23:06,459 INFO [cedd189b94a9_Impresario]       StepMonitoring.java:98   | BEAMS
+2026-03-14 00:23:09,589 INFO [cedd189b94a9_Impresario]       StepMonitoring.java:98   | LEDGERS
+2026-03-14 00:23:09,740 INFO [cedd189b94a9_Impresario]       StepMonitoring.java:98   | HEADS
+2026-03-14 00:23:13,552 INFO [cedd189b94a9_Impresario]        HeadSeedTally.java:235  | Scale information: HeadSeeds{NOTEHEAD_BLACK[L:0.2,R:-0.4]}
+2026-03-14 00:23:13,553 INFO [cedd189b94a9_Impresario]       StepMonitoring.java:98   | STEMS
+2026-03-14 00:23:13,782 INFO [cedd189b94a9_Impresario]       StepMonitoring.java:98   | REDUCTION
+2026-03-14 00:23:13,845 INFO [cedd189b94a9_Impresario]        ReductionStep.java:105  | Stems free length median value: 70 pixels, 3.7 interlines
+2026-03-14 00:23:13,848 INFO [cedd189b94a9_Impresario]       StepMonitoring.java:98   | CUE_BEAMS
+2026-03-14 00:23:13,848 INFO [cedd189b94a9_Impresario]         CueBeamsStep.java:81   | Step CUE_BEAMS is skipped because small heads switch is off
+2026-03-14 00:23:13,849 INFO [cedd189b94a9_Impresario]       StepMonitoring.java:98   | TEXTS
+2026-03-14 00:23:15,373 INFO [cedd189b94a9_Impresario]       StepMonitoring.java:98   | MEASURES
+2026-03-14 00:23:15,382 INFO [cedd189b94a9_Impresario]                 Page.java:307  | 37 raw measures: [4 in system#1, 4 in system#2, 4 in system#3, 4 in system#4, 4 in system#5, 4 in system#6, 4 in system#7, 4 in system#8, 4 in system#9, 1 in system#10]
+2026-03-14 00:23:15,383 INFO [cedd189b94a9_Impresario]       StepMonitoring.java:98   | CHORDS
+2026-03-14 00:23:15,398 INFO [cedd189b94a9_Impresario]       StepMonitoring.java:98   | CURVES
+2026-03-14 00:23:16,487 INFO [cedd189b94a9_Impresario]         SlursBuilder.java:240  | Slurs: 5
+2026-03-14 00:23:16,527 INFO [cedd189b94a9_Impresario]      SegmentsBuilder.java:155  | Segments: 9
+2026-03-14 00:23:16,698 INFO [cedd189b94a9_Impresario]    RehearsalsBuilder.java:199  | No text found in rehearsal enclosure java.awt.Rectangle[x=1274,y=1581,width=66,height=60]
+2026-03-14 00:23:16,851 INFO [cedd189b94a9_Impresario]    RehearsalsBuilder.java:199  | No text found in rehearsal enclosure java.awt.Rectangle[x=1372,y=2409,width=65,height=58]
+2026-03-14 00:23:16,852 INFO [cedd189b94a9_Impresario]       StepMonitoring.java:98   | SYMBOLS
+2026-03-14 00:23:17,351 INFO [cedd189b94a9_Impresario]       StepMonitoring.java:98   | LINKS
+2026-03-14 00:23:17,357 INFO [cedd189b94a9_Impresario]        SymbolsLinker.java:258  | No chord linked to OctaveShiftInter#4639{(0.171) staff:1 VENTIDUESIMA ALTA} at java.awt.Point[x=286,y=302]
+2026-03-14 00:23:17,384 INFO [cedd189b94a9_Impresario]             KeyInter.java:1189 | No effective key before AlterInter#4737{(0.800) staff:7 NATURAL pitch:-3.0}
+2026-03-14 00:23:17,389 INFO [cedd189b94a9_Impresario]             KeyInter.java:1189 | No effective key before AlterInter#4778{(0.696) staff:9 NATURAL pitch:1.0}
+2026-03-14 00:23:17,391 INFO [cedd189b94a9_Impresario]        SymbolsLinker.java:258  | No chord linked to OctaveShiftInter#4787{(0.266) staff:10 OTTAVA ALTA} at java.awt.Point[x=1413,y=2896]
+2026-03-14 00:23:17,392 INFO [cedd189b94a9_Impresario]       StepMonitoring.java:98   | RHYTHMS
+2026-03-14 00:23:17,427 INFO [cedd189b94a9_Impresario]                Voice.java:257  | Measure{#23} Voice{#1 excess:1/8} too long
+2026-03-14 00:23:17,427 INFO [cedd189b94a9_Impresario]          StackRhythm.java:224  | S6 MeasureStack#23 no correct rhythm
+2026-03-14 00:23:17,429 INFO [cedd189b94a9_Impresario]                Voice.java:257  | Measure{#24} Voice{#1 excess:1/8} too long
+2026-03-14 00:23:17,430 INFO [cedd189b94a9_Impresario]          StackRhythm.java:224  | S6 MeasureStack#24 no correct rhythm
+2026-03-14 00:23:17,437 INFO [cedd189b94a9_Impresario]       StepMonitoring.java:98   | PAGE
+2026-03-14 00:23:17,442 INFO [cedd189b94a9_Impresario]                Voice.java:257  | Measure{#23} Voice{#1 excess:1/8} too long
+2026-03-14 00:23:17,442 INFO [cedd189b94a9_Impresario]                Voice.java:257  | Measure{#24} Voice{#1 excess:1/8} too long
+2026-03-14 00:23:17,443 INFO [cedd189b94a9_Impresario]                 Book.java:2584 | Book{cedd189b94a9_Impresario} storing
+2026-03-14 00:23:17,501 INFO [cedd189b94a9_Impresario]                 Book.java:2565 | Stored /book.xml
+2026-03-14 00:23:17,627 INFO [cedd189b94a9_Impresario]           DataHolder.java:348  | Stored /sheet#1/BINARY.png
+2026-03-14 00:23:18,285 INFO [cedd189b94a9_Impresario]                Sheet.java:1583 | Stored /sheet#1/sheet#1.xml
+2026-03-14 00:23:18,285 INFO [cedd189b94a9_Impresario]                 Book.java:2525 | Book stored as C:\Users\llama\OneDrive\Documents\orchestra\outputs\cedd189b94a9\omr_out\cedd189b94a9_Impresario.omr
+2026-03-14 00:23:18,291 INFO [cedd189b94a9_Impresario]            SheetStub.java:1654 | Sheet disposed
+2026-03-14 00:23:18,328 INFO [cedd189b94a9_Impresario]                 Book.java:2050 | End of Stub#1
+2026-03-14 00:23:18,329 INFO [cedd189b94a9_Impresario]                 Book.java:2057 | End of Book{cedd189b94a9_Impresario}
+2026-03-14 00:23:18,748 INFO [cedd189b94a9_Impresario]            SheetStub.java:1000 | Loaded /sheet#1/sheet#1.xml
+2026-03-14 00:23:19,074 INFO [cedd189b94a9_Impresario]      PartwiseBuilder.java:2706 | Exporting sheet(s): [#1]
+2026-03-14 00:23:19,085 WARN [cedd189b94a9_Impresario]      PartwiseBuilder.java:983  | Measure{#7} Multirest with no measure count, using default value 1
+2026-03-14 00:23:19,094 WARN [cedd189b94a9_Impresario]      PartwiseBuilder.java:983  | Measure{#29} Multirest with no measure count, using default value 1
+2026-03-14 00:23:19,096 WARN [cedd189b94a9_Impresario]      PartwiseBuilder.java:983  | Measure{#35} Multirest with no measure count, using default value 1
+2026-03-14 00:23:19,155 INFO [cedd189b94a9_Impresario]        ScoreExporter.java:164  | Score cedd189b94a9_Impresario exported to C:\Users\llama\OneDrive\Documents\orchestra\outputs\cedd189b94a9\omr_out\cedd189b94a9_Impresario.mxl
+2026-03-14 00:23:19,199 INFO [cedd189b94a9_Impresario]                Score.java:181  | Closing {Score 1}

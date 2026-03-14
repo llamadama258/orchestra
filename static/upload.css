@@ -1,0 +1,436 @@
+/* ═══════════════════════════════════════════════════
+   Orchestra — Upload Screen  (upload.css)
+   ═══════════════════════════════════════════════════ */
+
+/* ── Override screen-upload base styles ─────────── */
+#screen-upload {
+  background: #07090d;
+  padding: 0;
+  display: flex;
+  align-items: stretch;
+  justify-content: stretch;
+  overflow: hidden;
+}
+
+/* status + open-player float at the bottom-center */
+#screen-upload .status,
+#screen-upload .open-player {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  width: auto;
+  min-width: 320px;
+  max-width: 90vw;
+}
+
+/* override light-theme status colours for dark bg */
+#screen-upload .status {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.75);
+}
+#screen-upload .status.error {
+  background: rgba(220,38,38,0.15);
+  border-color: rgba(220,38,38,0.35);
+  color: #fca5a5;
+}
+#screen-upload .open-player {
+  background: #f0ece4;
+  color: #07090d;
+  border: none;
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: 0.82rem;
+  border-radius: 4px;
+  padding: 0.85rem 2rem;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+#screen-upload .open-player:hover {
+  background: #ffffff;
+  transform: translateY(-1px) translateX(-50%);
+}
+
+/* ── Dot grid background ─────────────────────────── */
+#screen-upload::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(255,255,255,0.035) 1px, transparent 1px);
+  background-size: 28px 28px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Floating music notes ────────────────────────── */
+.ms-note-float {
+  position: fixed;
+  opacity: 0;
+  pointer-events: none;
+  animation: msFloatNote linear infinite;
+  z-index: 1;
+  color: rgba(255,255,255,0.12);
+  line-height: 1;
+  font-family: serif;
+}
+
+@keyframes msFloatNote {
+  0%   { transform: translateY(0) rotate(-8deg);   opacity: 0;    }
+  8%   { opacity: 1; }
+  88%  { opacity: 0.45; }
+  100% { transform: translateY(-580px) rotate(18deg); opacity: 0; }
+}
+
+.ms-note-float.n1  { left: 4%;  bottom: -20px; font-size: 18px; animation-duration: 10s; animation-delay: 0s;   }
+.ms-note-float.n2  { left: 11%; bottom: -20px; font-size: 28px; animation-duration: 13s; animation-delay: 2s;   }
+.ms-note-float.n3  { left: 22%; bottom: -20px; font-size: 14px; animation-duration: 8s;  animation-delay: 1s;   }
+.ms-note-float.n4  { left: 34%; bottom: -20px; font-size: 22px; animation-duration: 15s; animation-delay: 4.5s; }
+.ms-note-float.n5  { left: 45%; bottom: -20px; font-size: 16px; animation-duration: 9s;  animation-delay: 0.5s; }
+.ms-note-float.n6  { left: 55%; bottom: -20px; font-size: 26px; animation-duration: 12s; animation-delay: 3s;   }
+.ms-note-float.n7  { left: 64%; bottom: -20px; font-size: 13px; animation-duration: 7s;  animation-delay: 1.5s; }
+.ms-note-float.n8  { left: 73%; bottom: -20px; font-size: 20px; animation-duration: 11s; animation-delay: 5.5s; }
+.ms-note-float.n9  { left: 82%; bottom: -20px; font-size: 15px; animation-duration: 14s; animation-delay: 6s;   }
+.ms-note-float.n10 { left: 90%; bottom: -20px; font-size: 24px; animation-duration: 9s;  animation-delay: 2.8s; }
+.ms-note-float.n11 { left: 17%; bottom: -20px; font-size: 12px; animation-duration: 16s; animation-delay: 7s;   }
+.ms-note-float.n12 { left: 96%; bottom: -20px; font-size: 19px; animation-duration: 10s; animation-delay: 8.5s; }
+
+/* ── Layout grid ─────────────────────────────────── */
+.ms-layout {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+/* ── LEFT panel ──────────────────────────────────── */
+.ms-left {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 4rem 3.5rem;
+  position: relative;
+  font-family: 'Syne', sans-serif;
+}
+
+.ms-eyebrow {
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.25);
+  margin-bottom: 1.1rem;
+}
+
+.ms-logo {
+  font-family: 'Syne', sans-serif;
+  font-size: 3.6rem;
+  font-weight: 800;
+  line-height: 1.0;
+  letter-spacing: -0.03em;
+  color: #f0ece4;
+  margin-bottom: 1.2rem;
+  /* override gradient text from style.css h1 rule */
+  background: none;
+  -webkit-background-clip: unset;
+  -webkit-text-fill-color: #f0ece4;
+  background-clip: unset;
+}
+
+.ms-tagline {
+  font-size: 0.95rem;
+  font-weight: 400;
+  color: rgba(255,255,255,0.38);
+  line-height: 1.75;
+  max-width: 310px;
+  margin-bottom: 2.75rem;
+  letter-spacing: 0.01em;
+}
+
+.ms-features {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.ms-feat {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: rgba(255,255,255,0.48);
+  text-transform: uppercase;
+}
+
+.ms-feat-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.09);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 13px;
+  text-transform: none;
+}
+
+/* staff decoration */
+.ms-staff-deco {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 90px;
+  opacity: 0.05;
+  pointer-events: none;
+  width: 100%;
+}
+
+/* ── RIGHT panel ─────────────────────────────────── */
+.ms-right {
+  position: relative;
+  z-index: 2;
+  border-left: 1px solid rgba(255,255,255,0.06);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: rgba(255,255,255,0.015);
+  font-family: 'Syne', sans-serif;
+}
+
+/* make the form fill the right panel */
+.ms-right > form#upload-form {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+}
+
+/* animated canvas */
+#ms-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Drop zone ───────────────────────────────────── */
+.ms-dropzone {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: background 0.3s ease;
+  background: transparent;
+  margin: 0;
+  border: none;
+}
+
+.ms-dropzone input[type="file"] {
+  display: none;
+}
+
+.ms-dropzone:hover {
+  background: rgba(255,255,255,0.02);
+}
+
+/* sharp inset dashed border */
+.ms-dropzone::after {
+  content: '';
+  position: absolute;
+  inset: 20px;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 4px;
+  pointer-events: none;
+  transition: border-color 0.25s ease;
+  z-index: 1;
+}
+
+.ms-dropzone:hover::after     { border-color: rgba(255,255,255,0.22); }
+.ms-dropzone.ms-active::after { border-color: rgba(255,255,255,0.5);  }
+
+/* pulsing rings */
+.ms-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.07);
+  animation: msPulseRing 3s ease-in-out infinite;
+  pointer-events: none;
+}
+.ms-ring:nth-child(1) { width: 260px; height: 260px; animation-delay: 0s;   }
+.ms-ring:nth-child(2) { width: 340px; height: 340px; animation-delay: 0.8s; border-color: rgba(255,255,255,0.04); }
+.ms-ring:nth-child(3) { width: 420px; height: 420px; animation-delay: 1.6s; border-color: rgba(255,255,255,0.02); }
+
+@keyframes msPulseRing {
+  0%,100% { transform: scale(1);    opacity: 1;   }
+  50%      { transform: scale(1.07); opacity: 0.4; }
+}
+
+/* drop zone inner content */
+.ms-dz-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.1rem;
+  position: relative;
+  z-index: 2;
+  padding: 2rem;
+  text-align: center;
+}
+
+.ms-dz-icon {
+  width: 76px;
+  height: 76px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 34px;
+  transition: transform 0.25s ease, background 0.25s ease;
+  animation: msBreathing 4s ease-in-out infinite;
+}
+
+@keyframes msBreathing {
+  0%,100% { box-shadow: 0 0 0px  rgba(255,255,255,0);    }
+  50%      { box-shadow: 0 0 28px rgba(255,255,255,0.07); }
+}
+
+.ms-dropzone:hover .ms-dz-icon {
+  transform: scale(1.07);
+  background: rgba(255,255,255,0.09);
+}
+
+.ms-dz-heading {
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: rgba(255,255,255,0.85);
+}
+
+.ms-dz-sub {
+  font-size: 0.78rem;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  color: rgba(255,255,255,0.28);
+  line-height: 1.6;
+  max-width: 210px;
+  text-transform: uppercase;
+}
+
+.ms-formats {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 0.15rem;
+}
+
+.ms-fmt {
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.3);
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 3px;
+  padding: 0.22rem 0.65rem;
+}
+
+/* ── Bottom bar ──────────────────────────────────── */
+.ms-bottom {
+  padding: 1.4rem 2rem;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  background: rgba(255,255,255,0.015);
+  position: relative;
+  z-index: 2;
+}
+
+.ms-filename-row {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.28);
+  margin-bottom: 0.85rem;
+  min-height: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.ms-filename-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.3);
+  flex-shrink: 0;
+  display: none;
+}
+.ms-filename-dot.visible { display: block; }
+
+/* ── Convert button ──────────────────────────────── */
+.ms-btn {
+  width: 100%;
+  padding: 0.88rem;
+  border-radius: 4px;
+  border: none;
+  background: #f0ece4;
+  color: #07090d;
+  font-family: 'Syne', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  box-shadow: none;
+}
+.ms-btn:hover:not(:disabled) {
+  background: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: none;
+}
+.ms-btn:disabled {
+  opacity: 0.18;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* dep badge on dark bg */
+#screen-upload .dep-badge {
+  font-family: 'Syne', sans-serif;
+}
+#screen-upload .dep-ok      { background: rgba(16,185,129,0.15); color: #6ee7b7; }
+#screen-upload .dep-warn    { background: rgba(245,158,11,0.15);  color: #fcd34d; }
+#screen-upload .dep-checking{ background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.3); }
+
+/* ── Responsive ──────────────────────────────────── */
+@media (max-width: 768px) {
+  .ms-layout { grid-template-columns: 1fr; }
+  .ms-left   { padding: 3rem 2rem; }
+  .ms-right  { border-left: none; border-top: 1px solid rgba(255,255,255,0.06); min-height: 60vh; }
+  .ms-logo   { font-size: 2.8rem; }
+}
+
+@media (max-width: 480px) {
+  .ms-left   { padding: 2rem 1.5rem; }
+  .ms-logo   { font-size: 2.2rem; }
+  .ms-bottom { padding: 1.2rem 1.5rem; }
+}

@@ -6,8 +6,10 @@
   <title>Orchestra &ndash; Sheet Music to Sound</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&display=swap" />
   <link rel="stylesheet" href="/static/style.css" />
+  <link rel="stylesheet" href="/static/upload.css" />
   <script src="/static/opensheetmusicdisplay.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/tone@14/build/Tone.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tonejs/midi@2/build/Midi.min.js"></script>
@@ -16,34 +18,88 @@
 
   <!-- ─── Screen 1: Upload ─── -->
   <div id="screen-upload" class="screen">
-    <div class="blob blob-1"></div>
-    <div class="blob blob-2"></div>
-    <div class="blob blob-3"></div>
-    <div class="container">
-      <h1>&#127932; Orchestra</h1>
-      <p class="subtitle">Turn sheet music into sound — instantly</p>
-      <div class="feature-pills">
-        <span class="pill">🎵 Follow-along cursor</span>
-        <span class="pill">🎚️ Tempo control</span>
-        <span class="pill">🔁 Loop sections</span>
+
+    <!-- floating music notes -->
+    <span class="ms-note-float n1">&#9833;</span>
+    <span class="ms-note-float n2">&#9834;</span>
+    <span class="ms-note-float n3">&#9835;</span>
+    <span class="ms-note-float n4">&#9836;</span>
+    <span class="ms-note-float n5">&#9833;</span>
+    <span class="ms-note-float n6">&#9834;</span>
+    <span class="ms-note-float n7">&#9835;</span>
+    <span class="ms-note-float n8">&#9836;</span>
+    <span class="ms-note-float n9">&#9833;</span>
+    <span class="ms-note-float n10">&#9834;</span>
+    <span class="ms-note-float n11">&#9835;</span>
+    <span class="ms-note-float n12">&#9836;</span>
+
+    <div class="ms-layout">
+
+      <!-- LEFT -->
+      <div class="ms-left">
+        <p class="ms-eyebrow">Sheet Music &rarr; Sound</p>
+        <h1 class="ms-logo">Orchestra</h1>
+        <p class="ms-tagline">Upload a PDF or MusicXML file and hear your score come to life with a follow-along cursor.</p>
+        <div class="ms-features">
+          <div class="ms-feat"><span class="ms-feat-icon">🎵</span>Follow-along cursor</div>
+          <div class="ms-feat"><span class="ms-feat-icon">🎚️</span>Tempo &amp; instrument control</div>
+          <div class="ms-feat"><span class="ms-feat-icon">🔁</span>Loop any section</div>
+          <div class="ms-feat"><span class="ms-feat-icon">📷</span>PDF sheet music (via Audiveris)</div>
+        </div>
+        <!-- staff lines decoration -->
+        <svg class="ms-staff-deco" viewBox="0 0 800 90" preserveAspectRatio="none" aria-hidden="true">
+          <line x1="0" y1="18" x2="800" y2="18" stroke="white" stroke-width="1"/>
+          <line x1="0" y1="34" x2="800" y2="34" stroke="white" stroke-width="1"/>
+          <line x1="0" y1="50" x2="800" y2="50" stroke="white" stroke-width="1"/>
+          <line x1="0" y1="66" x2="800" y2="66" stroke="white" stroke-width="1"/>
+          <line x1="0" y1="82" x2="800" y2="82" stroke="white" stroke-width="1"/>
+        </svg>
       </div>
-      <p class="hint">Upload a <strong>PDF</strong> of printed sheet music, or export <strong>MusicXML</strong> from MuseScore.</p>
 
-      <div id="pdf-badge" class="dep-badge dep-checking">&#128203; PDF: checking&hellip;</div>
+      <!-- RIGHT -->
+      <div class="ms-right">
+        <canvas id="ms-canvas"></canvas>
 
-      <form id="upload-form">
-        <label class="file-label">
-          <div class="file-label-icon">&#x1F3B5;</div>
-          <span id="file-name">Drop your file here or click to browse</span>
-          <span class="file-hint">.pdf &nbsp;/&nbsp; .mxl &nbsp;/&nbsp; .xml &nbsp;/&nbsp; .musicxml</span>
-          <input type="file" id="file-input" accept=".pdf,.mxl,.xml,.musicxml" />
-        </label>
-        <button type="submit" id="upload-btn" class="btn-primary" disabled>Convert to Audio</button>
-      </form>
+        <!-- dep badge -->
+        <div id="pdf-badge" class="dep-badge dep-checking" style="position:absolute;top:1rem;right:1rem;z-index:3;">&#128203; PDF: checking&hellip;</div>
 
-      <div id="status" class="status hidden"></div>
-      <button id="open-player-btn" class="open-player hidden">&#9654;&nbsp; Open Score &amp; Play</button>
-    </div>
+        <!-- drop zone -->
+        <form id="upload-form">
+          <label class="ms-dropzone" id="ms-dropzone-label">
+            <div class="ms-ring"></div>
+            <div class="ms-ring"></div>
+            <div class="ms-ring"></div>
+            <input type="file" id="file-input" accept=".pdf,.mxl,.xml,.musicxml" />
+            <div class="ms-dz-inner">
+              <div class="ms-dz-icon">🎼</div>
+              <p class="ms-dz-heading">Drop your file here</p>
+              <p class="ms-dz-sub">or click to browse</p>
+              <div class="ms-formats">
+                <span class="ms-fmt">PDF</span>
+                <span class="ms-fmt">MXL</span>
+                <span class="ms-fmt">XML</span>
+                <span class="ms-fmt">MusicXML</span>
+              </div>
+            </div>
+          </label>
+
+          <!-- bottom bar -->
+          <div class="ms-bottom">
+            <div class="ms-filename-row">
+              <span class="ms-filename-dot" id="ms-fn-dot"></span>
+              <span id="file-name">No file selected</span>
+            </div>
+            <button type="submit" id="upload-btn" class="ms-btn" disabled>Convert to Audio</button>
+          </div>
+        </form>
+      </div><!-- /ms-right -->
+
+    </div><!-- /ms-layout -->
+
+    <!-- status + open-player float at bottom -->
+    <div id="status" class="status hidden"></div>
+    <button id="open-player-btn" class="open-player hidden">&#9654;&nbsp; Open Score &amp; Play</button>
+
   </div>
 
   <!-- ─── Screen 2: Player ─── -->
@@ -191,9 +247,67 @@
     fileInput.addEventListener("change", () => {
       if (fileInput.files.length) {
         fileNameEl.textContent = fileInput.files[0].name;
+        document.getElementById("ms-fn-dot").classList.add("visible");
         uploadBtn.disabled = false;
       }
     });
+
+    /* drag-over highlight on the drop zone */
+    const dzLabel = document.getElementById("ms-dropzone-label");
+    if (dzLabel) {
+      dzLabel.addEventListener("dragover",  e => { e.preventDefault(); dzLabel.classList.add("ms-active"); });
+      dzLabel.addEventListener("dragleave", ()  => dzLabel.classList.remove("ms-active"));
+      dzLabel.addEventListener("drop",      e  => {
+        e.preventDefault();
+        dzLabel.classList.remove("ms-active");
+        if (e.dataTransfer.files.length) {
+          fileInput.files = e.dataTransfer.files;
+          fileInput.dispatchEvent(new Event("change"));
+        }
+      });
+    }
+
+    /* ── canvas waveform animation ───────────────────────── */
+    (function initCanvas() {
+      const canvas = document.getElementById("ms-canvas");
+      if (!canvas) return;
+      const ctx = canvas.getContext("2d");
+      let W, H, raf;
+      const bars = Array.from({length: 60}, (_, i) => ({
+        x: 0, speed: 0.3 + Math.random() * 0.5, phase: Math.random() * Math.PI * 2, amp: 18 + Math.random() * 28
+      }));
+      function resize() {
+        W = canvas.width  = canvas.offsetWidth;
+        H = canvas.height = canvas.offsetHeight;
+        bars.forEach((b, i) => { b.x = (i / (bars.length - 1)) * W; });
+      }
+      function draw(t) {
+        ctx.clearRect(0, 0, W, H);
+        const cy = H * 0.5;
+        ctx.beginPath();
+        bars.forEach((b, i) => {
+          const y = cy + Math.sin(t * 0.001 * b.speed + b.phase) * b.amp;
+          i === 0 ? ctx.moveTo(b.x, y) : ctx.lineTo(b.x, y);
+        });
+        ctx.strokeStyle = "rgba(255,255,255,0.06)";
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        ctx.beginPath();
+        bars.forEach((b, i) => {
+          const y = cy + Math.sin(t * 0.0007 * b.speed + b.phase + 1.2) * b.amp * 0.6;
+          i === 0 ? ctx.moveTo(b.x, y) : ctx.lineTo(b.x, y);
+        });
+        ctx.strokeStyle = "rgba(255,255,255,0.03)";
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        raf = requestAnimationFrame(draw);
+      }
+      resize();
+      new ResizeObserver(resize).observe(canvas.parentElement);
+      raf = requestAnimationFrame(draw);
+    })();
 
     document.getElementById("upload-form").addEventListener("submit", async (e) => {
       e.preventDefault();
