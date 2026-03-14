@@ -466,15 +466,28 @@ select:focus { outline: none; border-color: var(--c-primary); box-shadow: 0 0 0 
    ═══════════════════════════════════════════════════════ */
 .measure-highlight {
   position: absolute;
-  background: rgba(58,134,255,.05);
-  border: 2px solid rgba(58,134,255,.3);
+  background: transparent;
+  border: none;
   border-radius: var(--r-sm);
   pointer-events: none;
   transition: left .1s var(--ease-std), top .1s var(--ease-std);
   z-index: 5;
-  box-shadow: 0 0 0 4px rgba(58,134,255,.04);
+  box-shadow: none;
 }
-
+/* click-to-jump flash on score-wrapper */
+.measure-flash {
+  position: absolute;
+  background: rgba(58,134,255,.18);
+  border: 2px solid rgba(58,134,255,.55);
+  border-radius: var(--r-sm);
+  pointer-events: none;
+  z-index: 10;
+  animation: measureFlashFade 0.5s ease forwards;
+}
+@keyframes measureFlashFade {
+  0%   { opacity: 1; }
+  100% { opacity: 0; }
+}
 /* ═══════════════════════════════════════════════════════
    Note Labels
    ═══════════════════════════════════════════════════════ */

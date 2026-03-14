@@ -156,7 +156,7 @@
       <!-- ─── Sidebar (pushes score left) ─── -->
       <div id="sidebar" class="sidebar">
         <div class="sidebar-section">
-          <span class="tb-label">Tempo &mdash; <span id="tempo-val">100</span>%</span>
+          <span class="tb-label">Tempo &mdash; <span id="tempo-val">120</span> BPM</span>
           <input type="range" id="tempo-slider" min="25" max="200" value="100" />
         </div>
         <div class="sidebar-section">
@@ -199,6 +199,7 @@
     let currentMxlUrl   = null;
     let synths          = [];
     let metroSynth      = null;
+    let metroSeq        = null;   // live Tone.Sequence for mid-song toggle
     let osmd            = null;
     let osmdReady       = false;
     let baseBpm         = 120;
@@ -465,6 +466,7 @@
         osmd.cursor.show();
         osmd.cursor.reset();
         buildMeasureBboxes();   // precompute after render
+        attachScoreClickHandler(); // click-to-jump
         osmdReady = true;
       } catch (err) {
         loader.textContent = "Could not load score: " + err.message;
@@ -547,6 +549,158 @@
       } catch (_) {}
     }
 
+    /* ── click-to-jump ─────────────────────────────────── */
+    function attachScoreClickHandler() {
+      scoreWrapper.addEventListener("click", async (e) => {
+        if (!osmdReady || !currentMidiUrl) return;
+        const wrapRect = scoreWrapper.getBoundingClientRect();
+        const cx = e.clientX - wrapRect.left;
+        const cy = e.clientY - wrapRect.top;
+
+        // Find which measure was clicked
+        let clickedMi = null;
+        for (const [mi, bbox] of Object.entries(measureBboxes)) {
+          if (cx >= bbox.left && cx <= bbox.left + bbox.width &&
+              cy >= bbox.top  && cy <= bbox.top  + bbox.height) {
+            clickedMi = Number(mi);
+            break;
+          }
+        }
+        if (clickedMi === null) return;
+
+        // Find the first beat index matching that measure
+        const beatIdx = cursorPositions.findIndex(p => p.measureIdx === clickedMi);
+        if (beatIdx < 0) return;
+
+        // Flash the clicked measure
+        const bbox = measureBboxes[clickedMi];
+        const flash = document.createElement("div");
+        flash.className = "measure-flash";
+        flash.style.left   = bbox.left   + "px";
+        flash.style.top    = bbox.top    + "px";
+        flash.style.width  = bbox.width  + "px";
+        flash.style.height = bbox.height + "px";
+        scoreWrapper.appendChild(flash);
+        flash.addEventListener("animationend", () => flash.remove());
+
+        await startPlaybackFrom(beatIdx);
+      });
+    }
+
+    /* Start playback from a specific beat index, skipping earlier notes */
+    async function startPlaybackFrom(beatIdx) {
+      if (!currentMidiUrl || !osmdReady) return;
+      cleanupTone();
+      await Tone.start();
+
+      if (!midiData) {
+        const buf = await fetch(currentMidiUrl).then(r => r.arrayBuffer());
+        midiData = new Midi(buf);
+      }
+      baseBpm = midiData.header.tempos[0]?.bpm ?? 120;
+      Tone.Transport.bpm.value = effectiveBpm();
+      tempoVal.textContent = Math.round(effectiveBpm());
+
+      const waveform    = instrumentSel.value;
+      const metroOn     = isActive(metroBtn);
+      const beatDur     = 60 / effectiveBpm();
+
+      if (metroOn) {
+        metroSynth = new Tone.Synth({
+          oscillator: { type: "triangle" },
+          envelope: { attack: 0.001, decay: 0.05, sustain: 0, release: 0.05 },
+          volume: -10,
+        }).toDestination();
+      }
+
+      // Rebuild cursor positions if needed
+      if (!cursorPositions.length) {
+        osmd.cursor.reset();
+        const secsPerWhole = 240 / baseBpm;
+        while (!osmd.cursor.iterator.EndReached) {
+          const ts = osmd.cursor.iterator.currentTimeStamp.RealValue;
+          const mi = osmd.cursor.iterator.CurrentMeasureIndex ?? 0;
+          cursorPositions.push({ time: ts * secsPerWhole, measureIdx: mi });
+          osmd.cursor.next();
+        }
+      }
+
+      const startTime = cursorPositions[beatIdx]?.time ?? 0;
+      const tempoRatio = baseBpm / effectiveBpm();
+
+      // Advance OSMD cursor to beatIdx
+      osmd.cursor.reset();
+      for (let i = 0; i < beatIdx; i++) osmd.cursor.next();
+      currentBeat = beatIdx;
+      lastHighlightedMeasure = cursorPositions[beatIdx]?.measureIdx ?? -1;
+      highlightCurrentMeasure();
+
+      Tone.Transport.loop = false;
+
+      // Schedule only notes that start at or after startTime
+      midiData.tracks.forEach(track => {
+        const synth = new Tone.PolySynth(Tone.Synth, {
+          oscillator: { type: waveform },
+          envelope: { attack: 0.02, decay: 0.1, sustain: 0.3, release: 0.8 },
+        }).toDestination();
+        synths.push(synth);
+        track.notes.forEach(n => {
+          if (n.time < startTime) return;  // skip past notes
+          const t = (n.time - startTime) * tempoRatio;
+          Tone.Transport.schedule(time => {
+            synth.triggerAttackRelease(n.name, n.duration * tempoRatio, time, n.velocity);
+          }, t);
+        });
+      });
+
+      /* ── metronome synth (always created for live toggle) ── */
+      metroSynth = new Tone.Synth({
+        oscillator: { type: "triangle" },
+        envelope: { attack: 0.001, decay: 0.05, sustain: 0, release: 0.05 },
+        volume: -10,
+      }).toDestination();
+
+      // Schedule metronome from start position
+      if (metroOn) {
+        const totalSecs = ((cursorPositions.at(-1)?.time ?? 30) - startTime) * tempoRatio;
+        const totalBeats = Math.ceil(totalSecs / beatDur);
+        for (let i = 0; i < totalBeats; i++) {
+          Tone.Transport.schedule(time => {
+            metroSynth.triggerAttackRelease(i % 4 === 0 ? "C5" : "A4", "32n", time);
+          }, i * beatDur);
+        }
+      }
+
+      /* live-toggle metronome sequence */
+      let _metroBeat2 = 0;
+      metroSeq = new Tone.Sequence((time) => {
+        if (!isActive(metroBtn)) { _metroBeat2++; return; }
+        metroSynth.triggerAttackRelease(_metroBeat2 % 4 === 0 ? "C5" : "A4", "32n", time);
+        _metroBeat2++;
+      }, [0], "4n");
+      metroSeq.start(0);
+
+      // Schedule cursor advances from beatIdx onwards
+      const latencyOffset = (Tone.context.outputLatency || 0) + 0.02;
+      cursorPositions.slice(beatIdx).forEach(({ time, measureIdx }, i) => {
+        const t = (time - startTime) * tempoRatio + latencyOffset;
+        Tone.Transport.schedule(() => {
+          currentBeat = beatIdx + i;
+          if (i > 0) osmd.cursor.next();
+          if (measureIdx !== lastHighlightedMeasure) {
+            lastHighlightedMeasure = measureIdx;
+            highlightCurrentMeasure();
+          }
+          drawLabelsForCursor();
+          const el = osmd.cursor.cursorElement;
+          if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+        }, t);
+      });
+
+      Tone.Transport.start();
+      playerPlayBtn.innerHTML = "&#9646;&#9646; Pause";
+    }
+
     const NOTE_NAMES = ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"]; // chromatic semitone 0–11
     const notesPanel   = document.getElementById("notes-panel");
     const notesDisplay = document.getElementById("notes-display");
@@ -609,6 +763,7 @@
       }
       baseBpm = midiData.header.tempos[0]?.bpm ?? 120;
       Tone.Transport.bpm.value = effectiveBpm();
+      tempoVal.textContent = Math.round(effectiveBpm());
 
       const waveform    = instrumentSel.value;
       const countinOn   = isActive(countinBtn);
@@ -618,13 +773,12 @@
       const countinSecs  = countinBeats * beatDur;
 
       /* ── count-in + metronome synth ── */
-      if (metroOn || countinOn) {
-        metroSynth = new Tone.Synth({
-          oscillator: { type: "triangle" },
-          envelope: { attack: 0.001, decay: 0.05, sustain: 0, release: 0.05 },
-          volume: -10,
-        }).toDestination();
-      }
+      // Always create metroSynth — the live sequence checks the button state each beat
+      metroSynth = new Tone.Synth({
+        oscillator: { type: "triangle" },
+        envelope: { attack: 0.001, decay: 0.05, sustain: 0, release: 0.05 },
+        volume: -10,
+      }).toDestination();
 
       /* schedule count-in clicks */
       if (countinOn) {
@@ -688,6 +842,15 @@
         }
       }
 
+      /* live-toggle metronome sequence — fires every beat, respects button state */
+      let _metroBeat = 0;
+      metroSeq = new Tone.Sequence((time) => {
+        if (!isActive(metroBtn)) { _metroBeat++; return; }
+        metroSynth.triggerAttackRelease(_metroBeat % 4 === 0 ? "C5" : "A4", "32n", time);
+        _metroBeat++;
+      }, [0], "4n");
+      metroSeq.start(countinSecs);
+
       /* schedule cursor advances
          Add outputLatency so the visual update fires when audio is
          actually heard from the speakers, not when it enters the buffer. */
@@ -716,6 +879,7 @@
       Tone.Transport.stop();
       Tone.Transport.cancel();
       Tone.Transport.loop = false;
+      if (metroSeq)  { try { metroSeq.dispose();  } catch (_) {} metroSeq  = null; }
       synths.forEach(s => { try { s.dispose(); } catch (_) {} });
       synths = [];
       if (metroSynth) { try { metroSynth.dispose(); } catch (_) {} metroSynth = null; }
@@ -748,14 +912,24 @@
 
     /* ── tempo slider ───────────────────────────────────── */
     tempoSlider.addEventListener("input", () => {
-      tempoVal.textContent = tempoSlider.value;
+      // Update BPM display in real-time while dragging
+      tempoVal.textContent = Math.round(effectiveBpm());
+    });
+    tempoSlider.addEventListener("change", () => {
+      // On release: if playing, restart from current beat at new BPM so the
+      // pre-scheduled note/cursor events are rebuilt at the correct speed.
       if (Tone.Transport.state !== "stopped") {
-        Tone.Transport.bpm.value = effectiveBpm();
+        startPlaybackFrom(currentBeat);
       }
     });
 
     /* ── toggle buttons ─────────────────────────────────── */
-    metroBtn.addEventListener("click",   () => toggleActive(metroBtn));
+    metroBtn.addEventListener("click", () => {
+      toggleActive(metroBtn);
+      // If transport is already running and we just turned metro ON,
+      // make sure metroSynth exists (it always should after startPlayback)
+      // The live Tone.Sequence will pick up the new state automatically on the next beat.
+    });
     countinBtn.addEventListener("click", () => toggleActive(countinBtn));
 
     labelsBtn.addEventListener("click", () => {
