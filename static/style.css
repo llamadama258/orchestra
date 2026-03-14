@@ -174,6 +174,9 @@ button:disabled { opacity: .38; cursor: not-allowed; }
   font-size: 0.88rem;
   color: var(--c-text-med);
   text-align: left;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-family: inherit;
 }
 .status.error { background: #fce4ec; border-color: #ef9a9a; color: #b71c1c; }
 
@@ -491,6 +494,51 @@ select:focus { outline: none; border-color: var(--c-primary); box-shadow: 0 0 0 
   box-shadow: var(--shadow-1);
   letter-spacing: 0.04em;
 }
+
+/* ── Dependency readiness badge ─────────────────────── */
+.dep-badge {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.25rem 0.7rem;
+  border-radius: 999px;
+  margin-bottom: 0.75rem;
+  cursor: default;
+}
+.dep-checking { background: #f0f0f0; color: var(--c-text-lo); }
+.dep-ok       { background: #d1fae5; color: #065f46; }
+.dep-warn     { background: #fef9c3; color: #854d0e; }
+
+/* ── Feature Pills ────────────────────────────────── */
+.feature-pills {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.4rem;
+  margin-bottom: 1.25rem;
+}
+.pill {
+  background: #f0f4ff;
+  color: var(--c-text-med);
+  border: 1px solid #dde4ff;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.3rem 0.75rem;
+  white-space: nowrap;
+}
+
+/* ── Upload screen decorative blobs ─────────────────── */
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.15;
+  filter: blur(80px);
+  pointer-events: none;
+}
+.blob-1 { width: 400px; height: 400px; background: var(--c-primary); top: -100px; left: -80px; }
+.blob-2 { width: 320px; height: 320px; background: var(--c-primary); bottom: -80px; right: -60px; }
+.blob-3 { width: 240px; height: 240px; background: #818cf8; top: 35%; right: 8%; }
 
 /* ═══════════════════════════════════════════════════════
    Responsive Breakpoints

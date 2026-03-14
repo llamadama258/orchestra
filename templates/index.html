@@ -16,17 +16,27 @@
 
   <!-- ─── Screen 1: Upload ─── -->
   <div id="screen-upload" class="screen">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
     <div class="container">
       <h1>&#127932; Orchestra</h1>
       <p class="subtitle">Turn sheet music into sound — instantly</p>
-      <p class="hint">Export from <strong>MuseScore</strong>: File &rarr; Export &rarr; MusicXML (.mxl)</p>
+      <div class="feature-pills">
+        <span class="pill">🎵 Follow-along cursor</span>
+        <span class="pill">🎚️ Tempo control</span>
+        <span class="pill">🔁 Loop sections</span>
+      </div>
+      <p class="hint">Upload a <strong>PDF</strong> of printed sheet music, or export <strong>MusicXML</strong> from MuseScore.</p>
+
+      <div id="pdf-badge" class="dep-badge dep-checking">&#128203; PDF: checking&hellip;</div>
 
       <form id="upload-form">
         <label class="file-label">
           <div class="file-label-icon">&#x1F3B5;</div>
           <span id="file-name">Drop your file here or click to browse</span>
-          <span class="file-hint">.mxl &nbsp;/&nbsp; .xml &nbsp;/&nbsp; .musicxml</span>
-          <input type="file" id="file-input" accept=".mxl,.xml,.musicxml" />
+          <span class="file-hint">.pdf &nbsp;/&nbsp; .mxl &nbsp;/&nbsp; .xml &nbsp;/&nbsp; .musicxml</span>
+          <input type="file" id="file-input" accept=".pdf,.mxl,.xml,.musicxml" />
         </label>
         <button type="submit" id="upload-btn" class="btn-primary" disabled>Convert to Audio</button>
       </form>
@@ -144,10 +154,31 @@
 
     /* ── helpers ────────────────────────────────────────── */
     function showStatus(msg, isError = false) {
-      statusDiv.textContent = msg;
+      statusDiv.textContent = msg;   // preserves newlines via CSS pre-wrap
       statusDiv.className   = "status" + (isError ? " error" : "");
       statusDiv.classList.remove("hidden");
     }
+
+    /* ── PDF readiness badge ────────────────────────────── */
+    const pdfBadge = document.getElementById("pdf-badge");
+    (async () => {
+      try {
+        const r = await fetch("/check");
+        const d = await r.json();
+        if (d.pdf_ready) {
+          pdfBadge.textContent = "\u2705 PDF ready";
+          pdfBadge.className   = "dep-badge dep-ok";
+        } else if (!d.java) {
+          pdfBadge.textContent = "\u26A0\uFE0F PDF needs Java";
+          pdfBadge.className   = "dep-badge dep-warn";
+          pdfBadge.title       = "Install Java 11+ from https://adoptium.net/ then restart the server.";
+        } else {
+          pdfBadge.textContent = "\u26A0\uFE0F PDF needs Audiveris";
+          pdfBadge.className   = "dep-badge dep-warn";
+          pdfBadge.title       = "See the error shown after uploading a PDF for setup instructions.";
+        }
+      } catch { pdfBadge.classList.add("hidden"); }
+    })();
     function goTo(id) {
       document.querySelectorAll(".screen").forEach(s => s.classList.add("hidden"));
       document.getElementById(id).classList.remove("hidden");
@@ -171,7 +202,10 @@
       fd.append("file", fileInput.files[0]);
       uploadBtn.disabled = true;
       openPlayerBtn.classList.add("hidden");
-      showStatus("Converting\u2026 please wait.");
+      const isPdf = fileInput.files[0].name.toLowerCase().endsWith(".pdf");
+      showStatus(isPdf
+        ? "\uD83D\uDD0D Recognizing music notation\u2026 this may take 1\u20132 minutes."
+        : "Converting\u2026 please wait.");
       stopPlayback();
       osmdReady = false;
       measureBboxes = {};

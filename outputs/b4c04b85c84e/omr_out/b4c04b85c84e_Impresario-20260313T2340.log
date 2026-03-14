@@ -1,0 +1,68 @@
+2026-03-13 23:40:03,395 INFO [b4c04b85c84e_Impresario]                 Book.java:560  | 1 sheet in C:\Users\llama\OneDrive\Documents\orchestra\uploads\b4c04b85c84e_Impresario.pdf
+2026-03-13 23:40:03,464 INFO []                 Book.java:2565 | Stored /book.xml
+2026-03-13 23:40:03,465 INFO []                 Book.java:2525 | Book stored as C:\Users\llama\OneDrive\Documents\orchestra\outputs\b4c04b85c84e\omr_out\b4c04b85c84e_Impresario.omr
+2026-03-13 23:40:03,469 INFO []                 Book.java:1929 | Book reaching PAGE on sheets:[#1]
+2026-03-13 23:40:03,470 INFO [b4c04b85c84e_Impresario]       StepMonitoring.java:98   | LOAD
+2026-03-13 23:40:03,696 INFO [b4c04b85c84e_Impresario]            SheetStub.java:1278 | Loaded image #1 2550x3299 from C:\Users\llama\OneDrive\Documents\orchestra\uploads\b4c04b85c84e_Impresario.pdf
+2026-03-13 23:40:03,698 INFO [b4c04b85c84e_Impresario]       StepMonitoring.java:98   | BINARY
+2026-03-13 23:40:03,934 INFO [b4c04b85c84e_Impresario]       StepMonitoring.java:98   | SCALE
+2026-03-13 23:40:03,944 INFO [b4c04b85c84e_Impresario]         ScaleBuilder.java:241  | Beam  guessed height:  9 -- 0.50 of 18 interline
+2026-03-13 23:40:03,945 INFO [b4c04b85c84e_Impresario]         ScaleBuilder.java:264  | Beam measured height: 10 -- 0.33 of [6..18] range at 224% of needed quorum
+2026-03-13 23:40:03,945 INFO [b4c04b85c84e_Impresario]         ScaleBuilder.java:392  | Normalized black jitter: 15.79 %
+2026-03-13 23:40:03,945 INFO [b4c04b85c84e_Impresario]            ScaleStep.java:65   | Scale{ interline(18,19,21) line(3,5,6) beam(10)}
+2026-03-13 23:40:03,946 INFO [b4c04b85c84e_Impresario]       StepMonitoring.java:98   | GRID
+2026-03-13 23:40:04,327 INFO [b4c04b85c84e_Impresario]       LinesRetriever.java:1500 | Global slope: -0.01135
+2026-03-13 23:40:04,356 INFO [b4c04b85c84e_Impresario]    ClustersRetriever.java:326  | Retrieved raw line clusters: 10 of sizes [5] with interline(18,19,21)
+2026-03-13 23:40:04,476 INFO [b4c04b85c84e_Impresario]            PeakGraph.java:310  | Systems: #1[1] #2[2] #3[3] #4[4] #5[5] #6[6] #7[7] #8[8] #9[9] #10[10]
+2026-03-13 23:40:04,740 INFO [b4c04b85c84e_Impresario]        SystemManager.java:779  | 1 part along 10 systems
+2026-03-13 23:40:04,741 INFO [b4c04b85c84e_Impresario]                 Book.java:543  | Created scores: [{Score 1}]
+2026-03-13 23:40:04,742 INFO [b4c04b85c84e_Impresario]       StepMonitoring.java:98   | HEADERS
+2026-03-13 23:40:06,286 INFO [b4c04b85c84e_Impresario]       StepMonitoring.java:98   | STEM_SEEDS
+2026-03-13 23:40:06,346 INFO [b4c04b85c84e_Impresario]        StemSeedsStep.java:86   | stem(3 max:6)
+2026-03-13 23:40:06,407 INFO [b4c04b85c84e_Impresario]       StepMonitoring.java:98   | BEAMS
+2026-03-13 23:40:09,158 INFO [b4c04b85c84e_Impresario]       StepMonitoring.java:98   | LEDGERS
+2026-03-13 23:40:09,289 INFO [b4c04b85c84e_Impresario]       StepMonitoring.java:98   | HEADS
+2026-03-13 23:40:12,669 INFO [b4c04b85c84e_Impresario]        HeadSeedTally.java:235  | Scale information: HeadSeeds{NOTEHEAD_BLACK[L:0.2,R:-0.4]}
+2026-03-13 23:40:12,669 INFO [b4c04b85c84e_Impresario]       StepMonitoring.java:98   | STEMS
+2026-03-13 23:40:12,886 INFO [b4c04b85c84e_Impresario]       StepMonitoring.java:98   | REDUCTION
+2026-03-13 23:40:12,932 INFO [b4c04b85c84e_Impresario]        ReductionStep.java:105  | Stems free length median value: 70 pixels, 3.7 interlines
+2026-03-13 23:40:12,936 INFO [b4c04b85c84e_Impresario]       StepMonitoring.java:98   | CUE_BEAMS
+2026-03-13 23:40:12,936 INFO [b4c04b85c84e_Impresario]         CueBeamsStep.java:81   | Step CUE_BEAMS is skipped because small heads switch is off
+2026-03-13 23:40:12,936 INFO [b4c04b85c84e_Impresario]       StepMonitoring.java:98   | TEXTS
+2026-03-13 23:40:14,306 INFO [b4c04b85c84e_Impresario]       StepMonitoring.java:98   | MEASURES
+2026-03-13 23:40:14,313 INFO [b4c04b85c84e_Impresario]                 Page.java:307  | 37 raw measures: [4 in system#1, 4 in system#2, 4 in system#3, 4 in system#4, 4 in system#5, 4 in system#6, 4 in system#7, 4 in system#8, 4 in system#9, 1 in system#10]
+2026-03-13 23:40:14,314 INFO [b4c04b85c84e_Impresario]       StepMonitoring.java:98   | CHORDS
+2026-03-13 23:40:14,325 INFO [b4c04b85c84e_Impresario]       StepMonitoring.java:98   | CURVES
+2026-03-13 23:40:15,224 INFO [b4c04b85c84e_Impresario]         SlursBuilder.java:240  | Slurs: 5
+2026-03-13 23:40:15,248 INFO [b4c04b85c84e_Impresario]      SegmentsBuilder.java:155  | Segments: 9
+2026-03-13 23:40:15,353 INFO [b4c04b85c84e_Impresario]    RehearsalsBuilder.java:199  | No text found in rehearsal enclosure java.awt.Rectangle[x=1274,y=1581,width=66,height=60]
+2026-03-13 23:40:15,474 INFO [b4c04b85c84e_Impresario]    RehearsalsBuilder.java:199  | No text found in rehearsal enclosure java.awt.Rectangle[x=1372,y=2409,width=65,height=58]
+2026-03-13 23:40:15,474 INFO [b4c04b85c84e_Impresario]       StepMonitoring.java:98   | SYMBOLS
+2026-03-13 23:40:15,863 INFO [b4c04b85c84e_Impresario]       StepMonitoring.java:98   | LINKS
+2026-03-13 23:40:15,866 INFO [b4c04b85c84e_Impresario]        SymbolsLinker.java:258  | No chord linked to OctaveShiftInter#4638{(0.171) staff:1 VENTIDUESIMA ALTA} at java.awt.Point[x=286,y=302]
+2026-03-13 23:40:15,893 INFO [b4c04b85c84e_Impresario]             KeyInter.java:1189 | No effective key before AlterInter#4736{(0.800) staff:7 NATURAL pitch:-3.0}
+2026-03-13 23:40:15,899 INFO [b4c04b85c84e_Impresario]             KeyInter.java:1189 | No effective key before AlterInter#4777{(0.696) staff:9 NATURAL pitch:1.0}
+2026-03-13 23:40:15,902 INFO [b4c04b85c84e_Impresario]        SymbolsLinker.java:258  | No chord linked to OctaveShiftInter#4786{(0.266) staff:10 OTTAVA ALTA} at java.awt.Point[x=1413,y=2896]
+2026-03-13 23:40:15,903 INFO [b4c04b85c84e_Impresario]       StepMonitoring.java:98   | RHYTHMS
+2026-03-13 23:40:15,945 INFO [b4c04b85c84e_Impresario]                Voice.java:257  | Measure{#23} Voice{#1 excess:1/8} too long
+2026-03-13 23:40:15,945 INFO [b4c04b85c84e_Impresario]          StackRhythm.java:224  | S6 MeasureStack#23 no correct rhythm
+2026-03-13 23:40:15,947 INFO [b4c04b85c84e_Impresario]                Voice.java:257  | Measure{#24} Voice{#1 excess:1/8} too long
+2026-03-13 23:40:15,948 INFO [b4c04b85c84e_Impresario]          StackRhythm.java:224  | S6 MeasureStack#24 no correct rhythm
+2026-03-13 23:40:15,956 INFO [b4c04b85c84e_Impresario]       StepMonitoring.java:98   | PAGE
+2026-03-13 23:40:15,962 INFO [b4c04b85c84e_Impresario]                Voice.java:257  | Measure{#23} Voice{#1 excess:1/8} too long
+2026-03-13 23:40:15,962 INFO [b4c04b85c84e_Impresario]                Voice.java:257  | Measure{#24} Voice{#1 excess:1/8} too long
+2026-03-13 23:40:15,963 INFO [b4c04b85c84e_Impresario]                 Book.java:2584 | Book{b4c04b85c84e_Impresario} storing
+2026-03-13 23:40:16,020 INFO [b4c04b85c84e_Impresario]                 Book.java:2565 | Stored /book.xml
+2026-03-13 23:40:16,144 INFO [b4c04b85c84e_Impresario]           DataHolder.java:348  | Stored /sheet#1/BINARY.png
+2026-03-13 23:40:16,766 INFO [b4c04b85c84e_Impresario]                Sheet.java:1583 | Stored /sheet#1/sheet#1.xml
+2026-03-13 23:40:16,767 INFO [b4c04b85c84e_Impresario]                 Book.java:2525 | Book stored as C:\Users\llama\OneDrive\Documents\orchestra\outputs\b4c04b85c84e\omr_out\b4c04b85c84e_Impresario.omr
+2026-03-13 23:40:16,771 INFO [b4c04b85c84e_Impresario]            SheetStub.java:1654 | Sheet disposed
+2026-03-13 23:40:16,806 INFO [b4c04b85c84e_Impresario]                 Book.java:2050 | End of Stub#1
+2026-03-13 23:40:16,806 INFO [b4c04b85c84e_Impresario]                 Book.java:2057 | End of Book{b4c04b85c84e_Impresario}
+2026-03-13 23:40:17,170 INFO [b4c04b85c84e_Impresario]            SheetStub.java:1000 | Loaded /sheet#1/sheet#1.xml
+2026-03-13 23:40:17,526 INFO [b4c04b85c84e_Impresario]      PartwiseBuilder.java:2706 | Exporting sheet(s): [#1]
+2026-03-13 23:40:17,536 WARN [b4c04b85c84e_Impresario]      PartwiseBuilder.java:983  | Measure{#7} Multirest with no measure count, using default value 1
+2026-03-13 23:40:17,544 WARN [b4c04b85c84e_Impresario]      PartwiseBuilder.java:983  | Measure{#29} Multirest with no measure count, using default value 1
+2026-03-13 23:40:17,546 WARN [b4c04b85c84e_Impresario]      PartwiseBuilder.java:983  | Measure{#35} Multirest with no measure count, using default value 1
+2026-03-13 23:40:17,603 INFO [b4c04b85c84e_Impresario]        ScoreExporter.java:164  | Score b4c04b85c84e_Impresario exported to C:\Users\llama\OneDrive\Documents\orchestra\outputs\b4c04b85c84e\omr_out\b4c04b85c84e_Impresario.mxl
+2026-03-13 23:40:17,644 INFO [b4c04b85c84e_Impresario]                Score.java:181  | Closing {Score 1}
