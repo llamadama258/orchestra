@@ -76,7 +76,7 @@
         <div class="ms-features">
           <div class="ms-feat"><span class="ms-feat-icon">🎵</span>Follow-along cursor</div>
           <div class="ms-feat"><span class="ms-feat-icon">🎚️</span>Tempo &amp; instrument control</div>
-          <div class="ms-feat"><span class="ms-feat-icon">🔁</span>Loop any section</div>
+          <div class="ms-feat"><span class="ms-feat-icon">🎵</span>Cursor-synced playback</div>
           <div class="ms-feat"><span class="ms-feat-icon">📷</span>PDF sheet music (via Audiveris)</div>
         </div>
         <!-- staff lines decoration -->
@@ -173,21 +173,11 @@
             <button id="metro-btn"   class="toggle-btn" title="Metronome">&#9201; Metro</button>
             <button id="countin-btn" class="toggle-btn active" title="Count-in">&#9312; Count-in</button>
             <button id="labels-btn"  class="toggle-btn" title="Note labels">&#119070; Labels</button>
-            <button id="loop-btn"    class="toggle-btn" title="Loop section">&#8635; Loop</button>
           </div>
         </div>
         <div id="notes-panel" class="sidebar-section hidden">
           <span class="tb-label">Now Playing</span>
           <span id="notes-display" class="notes-display">&mdash;</span>
-        </div>
-        <div id="loop-controls" class="sidebar-section hidden">
-          <span class="tb-label">Loop</span>
-          <div class="loop-btns">
-            <button id="set-start-btn" class="sm-btn">Set Start</button>
-            <span id="loop-range-lbl" class="tb-label loop-range">&mdash;</span>
-            <button id="set-end-btn"   class="sm-btn">Set End</button>
-            <button id="clear-loop-btn" class="sm-btn danger">Clear</button>
-          </div>
         </div>
       </div>
     </div>
@@ -205,8 +195,6 @@
     let baseBpm         = 120;
     let midiData        = null;      // cached Midi object
     let cursorPositions = [];        // [{time, measureIdx}]
-    let loopStartBeat   = null;      // beat index into cursorPositions
-    let loopEndBeat     = null;
     let currentBeat     = 0;
     let lastHighlightedMeasure = -1;
     let measureBboxes   = {};        // measureIdx -> {left,top,width,height}
@@ -235,12 +223,6 @@
     const metroBtn        = document.getElementById("metro-btn");
     const countinBtn      = document.getElementById("countin-btn");
     const labelsBtn       = document.getElementById("labels-btn");
-    const loopBtn         = document.getElementById("loop-btn");
-    const loopControls    = document.getElementById("loop-controls");
-    const setStartBtn     = document.getElementById("set-start-btn");
-    const setEndBtn       = document.getElementById("set-end-btn");
-    const clearLoopBtn    = document.getElementById("clear-loop-btn");
-    const loopRangeLbl    = document.getElementById("loop-range-lbl");
 
     /* ── helpers ────────────────────────────────────────── */
     function showStatus(msg, isError = false) {
@@ -803,18 +785,6 @@
       osmd.cursor.reset();
       currentBeat = 0;
 
-      /* ── loop setup ── */
-      const loopOn = isActive(loopBtn) && loopStartBeat !== null && loopEndBeat !== null;
-      if (loopOn) {
-        const ls = cursorPositions[loopStartBeat]?.time ?? 0;
-        const le = cursorPositions[loopEndBeat]?.time   ?? cursorPositions.at(-1)?.time ?? 1;
-        Tone.Transport.loop      = true;
-        Tone.Transport.loopStart = ls + countinSecs;
-        Tone.Transport.loopEnd   = le + countinSecs;
-      } else {
-        Tone.Transport.loop = false;
-      }
-
       /* schedule notes */
       midiData.tracks.forEach(track => {
         const synth = new Tone.PolySynth(Tone.Synth, {
@@ -940,31 +910,7 @@
       else drawLabelsForCursor();
     });
 
-    loopBtn.addEventListener("click", () => {
-      toggleActive(loopBtn);
-      loopControls.classList.toggle("hidden", !isActive(loopBtn));
-    });
 
-    /* ── loop markers ───────────────────────────────────── */
-    setStartBtn.addEventListener("click", () => {
-      loopStartBeat = currentBeat;
-      updateLoopLabel();
-    });
-    setEndBtn.addEventListener("click", () => {
-      loopEndBeat = currentBeat;
-      updateLoopLabel();
-    });
-    clearLoopBtn.addEventListener("click", () => {
-      loopStartBeat = null;
-      loopEndBeat   = null;
-      updateLoopLabel();
-      Tone.Transport.loop = false;
-    });
-    function updateLoopLabel() {
-      const s = loopStartBeat !== null ? `beat ${loopStartBeat}` : "?";
-      const e = loopEndBeat   !== null ? `beat ${loopEndBeat}`   : "?";
-      loopRangeLbl.textContent = `${s} → ${e}`;
-    }
   </script>
   <script src="/static/loading.js"></script>
 </body>
