@@ -1,0 +1,126 @@
+2026-03-14 19:42:41,231 INFO [646b889bbdd3_Impresario_violin2]                 Book.java:560  | 2 sheets in C:\Users\llama\OneDrive\Documents\orchestra\uploads\646b889bbdd3_Impresario_violin2.pdf
+2026-03-14 19:42:41,301 INFO []                 Book.java:2565 | Stored /book.xml
+2026-03-14 19:42:41,302 INFO []                 Book.java:2525 | Book stored as C:\Users\llama\OneDrive\Documents\orchestra\outputs\185e8b8149aa\omr_out\646b889bbdd3_Impresario_violin2.omr
+2026-03-14 19:42:41,304 INFO []                 Book.java:1929 | Book reaching PAGE on sheets:[#1#2]
+2026-03-14 19:42:41,305 INFO [646b889bbdd3_Impresario_violin2#1]       StepMonitoring.java:98   | LOAD
+2026-03-14 19:42:41,537 INFO [646b889bbdd3_Impresario_violin2#1]            SheetStub.java:1278 | Loaded image #1 2550x3299 from C:\Users\llama\OneDrive\Documents\orchestra\uploads\646b889bbdd3_Impresario_violin2.pdf
+2026-03-14 19:42:41,539 INFO [646b889bbdd3_Impresario_violin2#1]       StepMonitoring.java:98   | BINARY
+2026-03-14 19:42:41,776 INFO [646b889bbdd3_Impresario_violin2#1]       StepMonitoring.java:98   | SCALE
+2026-03-14 19:42:41,789 INFO [646b889bbdd3_Impresario_violin2#1]         ScaleBuilder.java:241  | Beam  guessed height:  8 -- 0.50 of 17 interline
+2026-03-14 19:42:41,790 INFO [646b889bbdd3_Impresario_violin2#1]         ScaleBuilder.java:264  | Beam measured height: 11 -- 0.45 of [6..17] range at 266% of needed quorum
+2026-03-14 19:42:41,790 INFO [646b889bbdd3_Impresario_violin2#1]         ScaleBuilder.java:392  | Normalized black jitter: 10.53 %
+2026-03-14 19:42:41,790 INFO [646b889bbdd3_Impresario_violin2#1]            ScaleStep.java:65   | Scale{ interline(18,19,20) line(4,5,6) beam(11)}
+2026-03-14 19:42:41,790 INFO [646b889bbdd3_Impresario_violin2#1]       StepMonitoring.java:98   | GRID
+2026-03-14 19:42:42,169 INFO [646b889bbdd3_Impresario_violin2#1]       LinesRetriever.java:1500 | Global slope: 0.00113
+2026-03-14 19:42:42,202 INFO [646b889bbdd3_Impresario_violin2#1]    ClustersRetriever.java:326  | Retrieved raw line clusters: 11 of sizes [5] with interline(18,19,20)
+2026-03-14 19:42:42,346 INFO [646b889bbdd3_Impresario_violin2#1]            PeakGraph.java:310  | Systems: #1[1] #2[2] #3[3] #4[4] #5[5] #6[6] #7[7] #8[8] #9[9] #10[10] #11[11]
+2026-03-14 19:42:42,618 INFO [646b889bbdd3_Impresario_violin2#1]        SystemManager.java:779  | 1 part along 11 systems
+2026-03-14 19:42:42,619 INFO [646b889bbdd3_Impresario_violin2#1]                 Book.java:543  | Created scores: [{Score 1}]
+2026-03-14 19:42:42,619 INFO [646b889bbdd3_Impresario_violin2#1]       StepMonitoring.java:98   | HEADERS
+2026-03-14 19:42:42,958 INFO [646b889bbdd3_Impresario_violin2#1]       StepMonitoring.java:98   | STEM_SEEDS
+2026-03-14 19:42:42,993 INFO [646b889bbdd3_Impresario_violin2#1]        StemSeedsStep.java:86   | stem(4 max:5)
+2026-03-14 19:42:43,045 INFO [646b889bbdd3_Impresario_violin2#1]       StepMonitoring.java:98   | BEAMS
+2026-03-14 19:42:46,105 INFO [646b889bbdd3_Impresario_violin2#1]       StepMonitoring.java:98   | LEDGERS
+2026-03-14 19:42:46,410 INFO [646b889bbdd3_Impresario_violin2#1]       StepMonitoring.java:98   | HEADS
+2026-03-14 19:42:49,614 INFO [646b889bbdd3_Impresario_violin2#1]        HeadSeedTally.java:235  | Scale information: HeadSeeds{NOTEHEAD_VOID[L:0.1] NOTEHEAD_BLACK[L:0.0,R:-1.2]}
+2026-03-14 19:42:49,615 INFO [646b889bbdd3_Impresario_violin2#1]       StepMonitoring.java:98   | STEMS
+2026-03-14 19:42:49,885 INFO [646b889bbdd3_Impresario_violin2#1]       StepMonitoring.java:98   | REDUCTION
+2026-03-14 19:42:49,925 INFO [646b889bbdd3_Impresario_violin2#1]        ReductionStep.java:105  | Stems free length median value: 68 pixels, 3.6 interlines
+2026-03-14 19:42:49,927 INFO [646b889bbdd3_Impresario_violin2#1]       StepMonitoring.java:98   | CUE_BEAMS
+2026-03-14 19:42:49,927 INFO [646b889bbdd3_Impresario_violin2#1]         CueBeamsStep.java:81   | Step CUE_BEAMS is skipped because small heads switch is off
+2026-03-14 19:42:49,928 INFO [646b889bbdd3_Impresario_violin2#1]       StepMonitoring.java:98   | TEXTS
+2026-03-14 19:42:50,678 INFO [646b889bbdd3_Impresario_violin2#1]       StepMonitoring.java:98   | MEASURES
+2026-03-14 19:42:50,683 INFO [646b889bbdd3_Impresario_violin2#1]                 Page.java:307  | 44 raw measures: [4 in system#1, 4 in system#2, 4 in system#3, 4 in system#4, 4 in system#5, 4 in system#6, 4 in system#7, 4 in system#8, 4 in system#9, 4 in system#10, 4 in system#11]
+2026-03-14 19:42:50,683 INFO [646b889bbdd3_Impresario_violin2#1]       StepMonitoring.java:98   | CHORDS
+2026-03-14 19:42:50,692 INFO [646b889bbdd3_Impresario_violin2#1]       StepMonitoring.java:98   | CURVES
+2026-03-14 19:42:51,458 INFO [646b889bbdd3_Impresario_violin2#1]         SlursBuilder.java:240  | Slurs: 32
+2026-03-14 19:42:51,464 INFO [646b889bbdd3_Impresario_violin2#1]      SegmentsBuilder.java:155  | Segments: 10
+2026-03-14 19:42:51,545 INFO [646b889bbdd3_Impresario_violin2#1]    RehearsalsBuilder.java:199  | No text found in rehearsal enclosure java.awt.Rectangle[x=1448,y=1659,width=62,height=58]
+2026-03-14 19:42:51,547 INFO [646b889bbdd3_Impresario_violin2#1]       StepMonitoring.java:98   | SYMBOLS
+2026-03-14 19:42:51,865 INFO [646b889bbdd3_Impresario_violin2#1]       StepMonitoring.java:98   | LINKS
+2026-03-14 19:42:51,882 INFO [646b889bbdd3_Impresario_violin2#1]             KeyInter.java:1189 | No effective key before AlterInter#8717{(0.800) staff:5 NATURAL pitch:5.0}
+2026-03-14 19:42:51,887 INFO [646b889bbdd3_Impresario_violin2#1]             KeyInter.java:1189 | No effective key before AlterInter#8776{(0.800) staff:8 NATURAL pitch:-5.0}
+2026-03-14 19:42:51,892 INFO [646b889bbdd3_Impresario_violin2#1]        SymbolsLinker.java:258  | No chord linked to OctaveShiftInter#8809{(0.227) staff:11 OTTAVA BASSA} at java.awt.Point[x=297,y=3161]
+2026-03-14 19:42:51,897 INFO [646b889bbdd3_Impresario_violin2#1]       StepMonitoring.java:98   | RHYTHMS
+2026-03-14 19:42:51,912 INFO [646b889bbdd3_Impresario_violin2#1]        MeasureRhythm.java:1044 | Measure{#4} No timeOffset for HeadChordInter#6635{(0.934/0.934) staff:1 slot#7 dur:1/8}
+2026-03-14 19:42:51,912 INFO [646b889bbdd3_Impresario_violin2#1]   AbstractChordInter.java:627  | Measure{#4} No timeOffset for HeadChordInter#6635{(0.934/0.934) staff:1 slot#7 dur:1/8}
+2026-03-14 19:42:51,912 INFO [646b889bbdd3_Impresario_violin2#1]          StackRhythm.java:224  | S1 MeasureStack#4 no correct rhythm
+2026-03-14 19:42:51,935 INFO [646b889bbdd3_Impresario_violin2#1]       StepMonitoring.java:98   | PAGE
+2026-03-14 19:42:51,936 INFO [646b889bbdd3_Impresario_violin2#1]       SheetReduction.java:154  | Gutter. Different glyphs 4/5 ArticulationInter#8686{(0.792/0.925) STACCATO} vs DynamicsInter#8706{ REMOVED(0.798/0.798) DYNAMICS_SF}
+2026-03-14 19:42:51,937 INFO [646b889bbdd3_Impresario_violin2#1]       SheetReduction.java:154  | Gutter. Different glyphs 5/6 LyricItemInter#6255{(0.843/0.843) staff:5 LYRICS "1" font:BS-34 Number} vs WordInter#6282{(0.675/0.675) staff:6 TEXT "1" font:BS-34}
+2026-03-14 19:42:51,937 INFO [646b889bbdd3_Impresario_violin2#1]       SheetReduction.java:154  | Gutter. Different glyphs 5/6 BowInter#8727{(0.749/0.780) BOW_UP} vs SlurInter#6944{(0.548/0.903) SLUR_ABOVE}
+2026-03-14 19:42:51,938 INFO [646b889bbdd3_Impresario_violin2#1]       SheetReduction.java:154  | Gutter. Different glyphs 10/11 BowInter#8805{(0.565/0.608) BOW_DOWN} vs WordInter#6541{(0.724/0.724) staff:11 TEXT "H" font:BC-42}
+2026-03-14 19:42:51,942 INFO [646b889bbdd3_Impresario_violin2#1]                 Book.java:2584 | Book{646b889bbdd3_Impresario_violin2} storing
+2026-03-14 19:42:51,995 INFO [646b889bbdd3_Impresario_violin2#1]                 Book.java:2565 | Stored /book.xml
+2026-03-14 19:42:52,047 INFO [646b889bbdd3_Impresario_violin2#1]           DataHolder.java:348  | Stored /sheet#1/BINARY.png
+2026-03-14 19:42:52,516 INFO [646b889bbdd3_Impresario_violin2#1]                Sheet.java:1583 | Stored /sheet#1/sheet#1.xml
+2026-03-14 19:42:52,517 INFO [646b889bbdd3_Impresario_violin2#1]                 Book.java:2525 | Book stored as C:\Users\llama\OneDrive\Documents\orchestra\outputs\185e8b8149aa\omr_out\646b889bbdd3_Impresario_violin2.omr
+2026-03-14 19:42:52,519 INFO [646b889bbdd3_Impresario_violin2#1]            SheetStub.java:1654 | Sheet#1 disposed
+2026-03-14 19:42:52,539 INFO [646b889bbdd3_Impresario_violin2#1]                 Book.java:2050 | End of Stub#1
+2026-03-14 19:42:52,539 INFO [646b889bbdd3_Impresario_violin2#2]       StepMonitoring.java:98   | LOAD
+2026-03-14 19:42:52,653 INFO [646b889bbdd3_Impresario_violin2#2]            SheetStub.java:1278 | Loaded image #2 2550x3299 from C:\Users\llama\OneDrive\Documents\orchestra\uploads\646b889bbdd3_Impresario_violin2.pdf
+2026-03-14 19:42:52,654 INFO [646b889bbdd3_Impresario_violin2#2]       StepMonitoring.java:98   | BINARY
+2026-03-14 19:42:52,851 INFO [646b889bbdd3_Impresario_violin2#2]       StepMonitoring.java:98   | SCALE
+2026-03-14 19:42:52,861 INFO [646b889bbdd3_Impresario_violin2#2]         ScaleBuilder.java:241  | Beam  guessed height:  9 -- 0.50 of 18 interline
+2026-03-14 19:42:52,861 INFO [646b889bbdd3_Impresario_violin2#2]         ScaleBuilder.java:264  | Beam measured height: 11 -- 0.42 of [6..18] range at 285% of needed quorum
+2026-03-14 19:42:52,861 INFO [646b889bbdd3_Impresario_violin2#2]         ScaleBuilder.java:392  | Normalized black jitter: 10.00 %
+2026-03-14 19:42:52,861 INFO [646b889bbdd3_Impresario_violin2#2]            ScaleStep.java:65   | Scale{ interline(19,20,21) line(4,5,6) beam(11)}
+2026-03-14 19:42:52,861 INFO [646b889bbdd3_Impresario_violin2#2]       StepMonitoring.java:98   | GRID
+2026-03-14 19:42:53,119 INFO [646b889bbdd3_Impresario_violin2#2]       LinesRetriever.java:1500 | Global slope: 0.00252
+2026-03-14 19:42:53,128 INFO [646b889bbdd3_Impresario_violin2#2]    ClustersRetriever.java:326  | Retrieved raw line clusters: 11 of sizes [5] with interline(19,20,21)
+2026-03-14 19:42:53,228 INFO [646b889bbdd3_Impresario_violin2#2]            PeakGraph.java:310  | Systems: #1[1] #2[2] #3[3] #4[4] #5[5] #6[6] #7[7] #8[8] #9[9] #10[10] #11[11]
+2026-03-14 19:42:53,432 INFO [646b889bbdd3_Impresario_violin2#2]        SystemManager.java:779  | 1 part along 11 systems
+2026-03-14 19:42:53,432 INFO [646b889bbdd3_Impresario_violin2#2]       StepMonitoring.java:98   | HEADERS
+2026-03-14 19:42:53,485 INFO [646b889bbdd3_Impresario_violin2#2]       StepMonitoring.java:98   | STEM_SEEDS
+2026-03-14 19:42:53,502 INFO [646b889bbdd3_Impresario_violin2#2]        StemSeedsStep.java:86   | stem(4 max:5)
+2026-03-14 19:42:53,509 INFO [646b889bbdd3_Impresario_violin2#2]       StepMonitoring.java:98   | BEAMS
+2026-03-14 19:42:54,888 INFO [646b889bbdd3_Impresario_violin2#2]       StepMonitoring.java:98   | LEDGERS
+2026-03-14 19:42:54,991 INFO [646b889bbdd3_Impresario_violin2#2]       StepMonitoring.java:98   | HEADS
+2026-03-14 19:42:57,468 INFO [646b889bbdd3_Impresario_violin2#2]        HeadSeedTally.java:235  | Scale information: HeadSeeds{NOTEHEAD_VOID[L:0.3,R:-0.8] NOTEHEAD_BLACK[L:0.3,R:-0.7]}
+2026-03-14 19:42:57,468 INFO [646b889bbdd3_Impresario_violin2#2]       StepMonitoring.java:98   | STEMS
+2026-03-14 19:42:57,604 INFO [646b889bbdd3_Impresario_violin2#2]       StepMonitoring.java:98   | REDUCTION
+2026-03-14 19:42:57,627 INFO [646b889bbdd3_Impresario_violin2#2]        ReductionStep.java:105  | Stems free length median value: 71 pixels, 3.6 interlines
+2026-03-14 19:42:57,629 INFO [646b889bbdd3_Impresario_violin2#2]       StepMonitoring.java:98   | CUE_BEAMS
+2026-03-14 19:42:57,629 INFO [646b889bbdd3_Impresario_violin2#2]         CueBeamsStep.java:81   | Step CUE_BEAMS is skipped because small heads switch is off
+2026-03-14 19:42:57,629 INFO [646b889bbdd3_Impresario_violin2#2]       StepMonitoring.java:98   | TEXTS
+2026-03-14 19:42:58,124 INFO [646b889bbdd3_Impresario_violin2#2]       StepMonitoring.java:98   | MEASURES
+2026-03-14 19:42:58,126 INFO [646b889bbdd3_Impresario_violin2#2]                 Page.java:307  | 49 raw measures: [4 in system#1, 4 in system#2, 4 in system#3, 4 in system#4, 5 in system#5, 5 in system#6, 4 in system#7, 4 in system#8, 5 in system#9, 5 in system#10, 5 in system#11]
+2026-03-14 19:42:58,127 INFO [646b889bbdd3_Impresario_violin2#2]       StepMonitoring.java:98   | CHORDS
+2026-03-14 19:42:58,131 INFO [646b889bbdd3_Impresario_violin2#2]       StepMonitoring.java:98   | CURVES
+2026-03-14 19:42:59,228 INFO [646b889bbdd3_Impresario_violin2#2]         SlursBuilder.java:240  | Slurs: 42
+2026-03-14 19:42:59,237 INFO [646b889bbdd3_Impresario_violin2#2]      SegmentsBuilder.java:155  | Segments: 13
+2026-03-14 19:42:59,352 INFO [646b889bbdd3_Impresario_violin2#2]    RehearsalsBuilder.java:229  | RehearsalInter#6578{(0.496) staff:2 mFont:S-93 Rehearsal enclosure:java.awt.Rectangle[x=1440,y=502,width=64,height=62]}
+2026-03-14 19:42:59,470 INFO [646b889bbdd3_Impresario_violin2#2]    RehearsalsBuilder.java:229  | RehearsalInter#6581{(0.485) staff:6 mFont:IS-131 Rehearsal enclosure:java.awt.Rectangle[x=1533,y=1561,width=64,height=62]}
+2026-03-14 19:42:59,605 INFO [646b889bbdd3_Impresario_violin2#2]    RehearsalsBuilder.java:229  | RehearsalInter#6586{(0.759) staff:8 mFont:BS-48 Rehearsal enclosure:java.awt.Rectangle[x=1302,y=2114,width=64,height=61]}
+2026-03-14 19:42:59,742 INFO [646b889bbdd3_Impresario_violin2#2]    RehearsalsBuilder.java:199  | No text found in rehearsal enclosure java.awt.Rectangle[x=1943,y=2917,width=65,height=60]
+2026-03-14 19:42:59,743 INFO [646b889bbdd3_Impresario_violin2#2]       StepMonitoring.java:98   | SYMBOLS
+2026-03-14 19:43:00,658 INFO [646b889bbdd3_Impresario_violin2#2]       StepMonitoring.java:98   | LINKS
+2026-03-14 19:43:00,662 INFO [646b889bbdd3_Impresario_violin2#2]             KeyInter.java:1189 | No effective key before AlterInter#8189{(0.800) staff:1 NATURAL pitch:2.0}
+2026-03-14 19:43:00,672 INFO [646b889bbdd3_Impresario_violin2#2]             KeyInter.java:1189 | No effective key before AlterInter#8268{(0.800) staff:2 NATURAL pitch:1.0}
+2026-03-14 19:43:00,683 INFO [646b889bbdd3_Impresario_violin2#2]             KeyInter.java:1189 | No effective key before AlterInter#8384{(0.800) staff:6 NATURAL pitch:0.0}
+2026-03-14 19:43:00,690 INFO [646b889bbdd3_Impresario_violin2#2]             KeyInter.java:1189 | No effective key before AlterInter#8557{(0.800) staff:9 NATURAL pitch:3.0}
+2026-03-14 19:43:00,692 INFO [646b889bbdd3_Impresario_violin2#2]        SymbolsLinker.java:258  | No chord linked to OctaveShiftInter#8616{(0.358) staff:10 OTTAVA ALTA} at java.awt.Point[x=530,y=2587]
+2026-03-14 19:43:00,697 INFO [646b889bbdd3_Impresario_violin2#2]       StepMonitoring.java:98   | RHYTHMS
+2026-03-14 19:43:00,697 INFO [646b889bbdd3_Impresario_violin2#2]           PageRhythm.java:199  | {Page#2.1} Time value reused from sheet#1
+2026-03-14 19:43:00,732 INFO [646b889bbdd3_Impresario_violin2#2]        MeasureRhythm.java:1044 | Measure{#45} No timeOffset for HeadChordInter#5987{(0.946/0.946) staff:11 slot#3 dur:1/4}
+2026-03-14 19:43:00,732 INFO [646b889bbdd3_Impresario_violin2#2]          StackRhythm.java:224  | S11 MeasureStack#45 no correct rhythm
+2026-03-14 19:43:00,733 INFO [646b889bbdd3_Impresario_violin2#2]        MeasureRhythm.java:1044 | Measure{#46} No timeOffset for HeadChordInter#5990{(0.946/0.946) staff:11 slot#3 dur:1/4}
+2026-03-14 19:43:00,733 INFO [646b889bbdd3_Impresario_violin2#2]          StackRhythm.java:224  | S11 MeasureStack#46 no correct rhythm
+2026-03-14 19:43:00,733 INFO [646b889bbdd3_Impresario_violin2#2]        MeasureRhythm.java:1044 | Measure{#47} No timeOffset for HeadChordInter#5994{(0.935/0.935) staff:11 slot#4 dur:1/4}
+2026-03-14 19:43:00,734 INFO [646b889bbdd3_Impresario_violin2#2]   AbstractChordInter.java:627  | Measure{#47} No timeOffset for HeadChordInter#5994{(0.935/0.935) staff:11 slot#4 dur:1/4}
+2026-03-14 19:43:00,734 INFO [646b889bbdd3_Impresario_violin2#2]          StackRhythm.java:224  | S11 MeasureStack#47 no correct rhythm
+2026-03-14 19:43:00,735 INFO [646b889bbdd3_Impresario_violin2#2]       StepMonitoring.java:98   | PAGE
+2026-03-14 19:43:00,736 INFO [646b889bbdd3_Impresario_violin2#2]       SheetReduction.java:154  | Gutter. Different glyphs 1/2 DynamicsInter#8157{(0.800/0.931) DYNAMICS_P} vs DynamicsInter#8291{(0.787/0.787) DYNAMICS_P}
+2026-03-14 19:43:00,741 INFO [646b889bbdd3_Impresario_violin2#2]                 Book.java:2584 | Book{646b889bbdd3_Impresario_violin2} storing
+2026-03-14 19:43:00,831 INFO [646b889bbdd3_Impresario_violin2#2]                 Book.java:2565 | Stored /book.xml
+2026-03-14 19:43:00,931 INFO [646b889bbdd3_Impresario_violin2#2]           DataHolder.java:348  | Stored /sheet#2/BINARY.png
+2026-03-14 19:43:01,657 INFO [646b889bbdd3_Impresario_violin2#2]                Sheet.java:1583 | Stored /sheet#2/sheet#2.xml
+2026-03-14 19:43:01,658 INFO [646b889bbdd3_Impresario_violin2#2]                 Book.java:2525 | Book stored as C:\Users\llama\OneDrive\Documents\orchestra\outputs\185e8b8149aa\omr_out\646b889bbdd3_Impresario_violin2.omr
+2026-03-14 19:43:01,664 INFO [646b889bbdd3_Impresario_violin2#2]            SheetStub.java:1654 | Sheet#2 disposed
+2026-03-14 19:43:01,694 INFO [646b889bbdd3_Impresario_violin2#2]                 Book.java:2050 | End of Stub#2
+2026-03-14 19:43:01,695 INFO [646b889bbdd3_Impresario_violin2]                 Book.java:2057 | End of Book{646b889bbdd3_Impresario_violin2}
+2026-03-14 19:43:02,284 INFO [646b889bbdd3_Impresario_violin2]            SheetStub.java:1000 | Loaded /sheet#1/sheet#1.xml
+2026-03-14 19:43:02,684 INFO [646b889bbdd3_Impresario_violin2]            SheetStub.java:1000 | Loaded /sheet#2/sheet#2.xml
+2026-03-14 19:43:03,009 INFO [646b889bbdd3_Impresario_violin2]      PartwiseBuilder.java:2706 | Exporting sheet(s): [#1#2]
+2026-03-14 19:43:03,159 INFO [646b889bbdd3_Impresario_violin2]        ScoreExporter.java:164  | Score 646b889bbdd3_Impresario_violin2 exported to C:\Users\llama\OneDrive\Documents\orchestra\outputs\185e8b8149aa\omr_out\646b889bbdd3_Impresario_violin2.mxl
+2026-03-14 19:43:03,219 INFO [646b889bbdd3_Impresario_violin2]                Score.java:181  | Closing {Score 1}

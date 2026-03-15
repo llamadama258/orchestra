@@ -1,0 +1,112 @@
+2026-03-14 19:43:05,694 INFO [15e90868a271_Impresario_cello]                 Book.java:560  | 2 sheets in C:\Users\llama\OneDrive\Documents\orchestra\uploads\15e90868a271_Impresario_cello.pdf
+2026-03-14 19:43:05,769 INFO []                 Book.java:2565 | Stored /book.xml
+2026-03-14 19:43:05,770 INFO []                 Book.java:2525 | Book stored as C:\Users\llama\OneDrive\Documents\orchestra\outputs\029a66ced2af\omr_out\15e90868a271_Impresario_cello.omr
+2026-03-14 19:43:05,772 INFO []                 Book.java:1929 | Book reaching PAGE on sheets:[#1#2]
+2026-03-14 19:43:05,774 INFO [15e90868a271_Impresario_cello#1]       StepMonitoring.java:98   | LOAD
+2026-03-14 19:43:05,998 INFO [15e90868a271_Impresario_cello#1]            SheetStub.java:1278 | Loaded image #1 2550x3299 from C:\Users\llama\OneDrive\Documents\orchestra\uploads\15e90868a271_Impresario_cello.pdf
+2026-03-14 19:43:06,000 INFO [15e90868a271_Impresario_cello#1]       StepMonitoring.java:98   | BINARY
+2026-03-14 19:43:06,246 INFO [15e90868a271_Impresario_cello#1]       StepMonitoring.java:98   | SCALE
+2026-03-14 19:43:06,258 INFO [15e90868a271_Impresario_cello#1]         ScaleBuilder.java:241  | Beam  guessed height: 10 -- 0.50 of 19 interline
+2026-03-14 19:43:06,259 INFO [15e90868a271_Impresario_cello#1]         ScaleBuilder.java:264  | Beam measured height: 11 -- 0.38 of [6..19] range at 215% of needed quorum
+2026-03-14 19:43:06,259 INFO [15e90868a271_Impresario_cello#1]         ScaleBuilder.java:392  | Normalized black jitter: 10.00 %
+2026-03-14 19:43:06,260 INFO [15e90868a271_Impresario_cello#1]            ScaleStep.java:65   | Scale{ interline(19,20,21) line(3,4,5) beam(11)}
+2026-03-14 19:43:06,260 INFO [15e90868a271_Impresario_cello#1]       StepMonitoring.java:98   | GRID
+2026-03-14 19:43:06,700 INFO [15e90868a271_Impresario_cello#1]       LinesRetriever.java:1500 | Global slope: -0.00820
+2026-03-14 19:43:06,728 INFO [15e90868a271_Impresario_cello#1]    ClustersRetriever.java:326  | Retrieved raw line clusters: 10 of sizes [5] with interline(19,20,21)
+2026-03-14 19:43:06,890 INFO [15e90868a271_Impresario_cello#1]            PeakGraph.java:310  | Systems: #1[1] #2[2] #3[3] #4[4] #5[5] #6[6] #7[7] #8[8] #9[9] #10[10]
+2026-03-14 19:43:07,144 INFO [15e90868a271_Impresario_cello#1]        SystemManager.java:779  | 1 part along 10 systems
+2026-03-14 19:43:07,144 INFO [15e90868a271_Impresario_cello#1]                 Book.java:543  | Created scores: [{Score 1}]
+2026-03-14 19:43:07,145 INFO [15e90868a271_Impresario_cello#1]       StepMonitoring.java:98   | HEADERS
+2026-03-14 19:43:07,724 INFO [15e90868a271_Impresario_cello#1]       StepMonitoring.java:98   | STEM_SEEDS
+2026-03-14 19:43:07,762 INFO [15e90868a271_Impresario_cello#1]        StemSeedsStep.java:86   | stem(4 max:5)
+2026-03-14 19:43:07,822 INFO [15e90868a271_Impresario_cello#1]       StepMonitoring.java:98   | BEAMS
+2026-03-14 19:43:11,271 INFO [15e90868a271_Impresario_cello#1]       StepMonitoring.java:98   | LEDGERS
+2026-03-14 19:43:11,671 INFO [15e90868a271_Impresario_cello#1]       StepMonitoring.java:98   | HEADS
+2026-03-14 19:43:16,120 INFO [15e90868a271_Impresario_cello#1]        HeadSeedTally.java:235  | Scale information: HeadSeeds{NOTEHEAD_VOID[L:0.4] NOTEHEAD_BLACK[L:0.5,R:0.4]}
+2026-03-14 19:43:16,120 INFO [15e90868a271_Impresario_cello#1]       StepMonitoring.java:98   | STEMS
+2026-03-14 19:43:16,611 INFO [15e90868a271_Impresario_cello#1]       StepMonitoring.java:98   | REDUCTION
+2026-03-14 19:43:16,683 INFO [15e90868a271_Impresario_cello#1]        ReductionStep.java:105  | Stems free length median value: 72 pixels, 3.6 interlines
+2026-03-14 19:43:16,687 INFO [15e90868a271_Impresario_cello#1]       StepMonitoring.java:98   | CUE_BEAMS
+2026-03-14 19:43:16,687 INFO [15e90868a271_Impresario_cello#1]         CueBeamsStep.java:81   | Step CUE_BEAMS is skipped because small heads switch is off
+2026-03-14 19:43:16,688 INFO [15e90868a271_Impresario_cello#1]       StepMonitoring.java:98   | TEXTS
+2026-03-14 19:43:18,079 INFO [15e90868a271_Impresario_cello#1]       StepMonitoring.java:98   | MEASURES
+2026-03-14 19:43:18,087 INFO [15e90868a271_Impresario_cello#1]                 Page.java:307  | 42 raw measures: [4 in system#1, 4 in system#2, 4 in system#3, 4 in system#4, 4 in system#5, 4 in system#6, 4 in system#7, 4 in system#8, 5 in system#9, 5 in system#10]
+2026-03-14 19:43:18,087 INFO [15e90868a271_Impresario_cello#1]       StepMonitoring.java:98   | CHORDS
+2026-03-14 19:43:18,100 INFO [15e90868a271_Impresario_cello#1]       StepMonitoring.java:98   | CURVES
+2026-03-14 19:43:19,119 INFO [15e90868a271_Impresario_cello#1]         SlursBuilder.java:240  | Slurs: 3
+2026-03-14 19:43:19,134 INFO [15e90868a271_Impresario_cello#1]      SegmentsBuilder.java:155  | Segments: 7
+2026-03-14 19:43:19,292 INFO [15e90868a271_Impresario_cello#1]    RehearsalsBuilder.java:229  | RehearsalInter#5775{(0.609) staff:9 mFont:I-51 Rehearsal enclosure:java.awt.Rectangle[x=1118,y=2628,width=66,height=64]}
+2026-03-14 19:43:19,294 INFO [15e90868a271_Impresario_cello#1]       StepMonitoring.java:98   | SYMBOLS
+2026-03-14 19:43:19,941 INFO [15e90868a271_Impresario_cello#1]       StepMonitoring.java:98   | LINKS
+2026-03-14 19:43:19,970 INFO [15e90868a271_Impresario_cello#1]        SymbolsLinker.java:258  | No chord linked to OctaveShiftInter#7271{(0.257) staff:6 OTTAVA BASSA} at java.awt.Point[x=1847,y=1954]
+2026-03-14 19:43:19,981 INFO [15e90868a271_Impresario_cello#1]        SymbolsLinker.java:258  | No chord linked to OctaveShiftInter#7291{(0.173) staff:8 OTTAVA ALTA} at java.awt.Point[x=889,y=2248]
+2026-03-14 19:43:19,981 INFO [15e90868a271_Impresario_cello#1]             KeyInter.java:1189 | No effective key before AlterInter#7292{(0.800) staff:8 NATURAL pitch:-3.0}
+2026-03-14 19:43:19,987 INFO [15e90868a271_Impresario_cello#1]       StepMonitoring.java:98   | RHYTHMS
+2026-03-14 19:43:20,035 INFO [15e90868a271_Impresario_cello#1]                Voice.java:257  | Measure{#28} Voice{#1 excess:1/8} too long
+2026-03-14 19:43:20,036 INFO [15e90868a271_Impresario_cello#1]          StackRhythm.java:224  | S7 MeasureStack#28 no correct rhythm
+2026-03-14 19:43:20,043 INFO [15e90868a271_Impresario_cello#1]       StepMonitoring.java:98   | PAGE
+2026-03-14 19:43:20,048 INFO [15e90868a271_Impresario_cello#1]                Voice.java:257  | Measure{#28} Voice{#1 excess:1/8} too long
+2026-03-14 19:43:20,051 INFO [15e90868a271_Impresario_cello#1]                 Book.java:2584 | Book{15e90868a271_Impresario_cello} storing
+2026-03-14 19:43:20,134 INFO [15e90868a271_Impresario_cello#1]                 Book.java:2565 | Stored /book.xml
+2026-03-14 19:43:20,245 INFO [15e90868a271_Impresario_cello#1]           DataHolder.java:348  | Stored /sheet#1/BINARY.png
+2026-03-14 19:43:21,042 INFO [15e90868a271_Impresario_cello#1]                Sheet.java:1583 | Stored /sheet#1/sheet#1.xml
+2026-03-14 19:43:21,042 INFO [15e90868a271_Impresario_cello#1]                 Book.java:2525 | Book stored as C:\Users\llama\OneDrive\Documents\orchestra\outputs\029a66ced2af\omr_out\15e90868a271_Impresario_cello.omr
+2026-03-14 19:43:21,048 INFO [15e90868a271_Impresario_cello#1]            SheetStub.java:1654 | Sheet#1 disposed
+2026-03-14 19:43:21,087 INFO [15e90868a271_Impresario_cello#1]                 Book.java:2050 | End of Stub#1
+2026-03-14 19:43:21,088 INFO [15e90868a271_Impresario_cello#2]       StepMonitoring.java:98   | LOAD
+2026-03-14 19:43:21,346 INFO [15e90868a271_Impresario_cello#2]            SheetStub.java:1278 | Loaded image #2 2550x3299 from C:\Users\llama\OneDrive\Documents\orchestra\uploads\15e90868a271_Impresario_cello.pdf
+2026-03-14 19:43:21,347 INFO [15e90868a271_Impresario_cello#2]       StepMonitoring.java:98   | BINARY
+2026-03-14 19:43:22,012 INFO [15e90868a271_Impresario_cello#2]       StepMonitoring.java:98   | SCALE
+2026-03-14 19:43:22,035 INFO [15e90868a271_Impresario_cello#2]         ScaleBuilder.java:241  | Beam  guessed height: 10 -- 0.50 of 20 interline
+2026-03-14 19:43:22,036 INFO [15e90868a271_Impresario_cello#2]         ScaleBuilder.java:264  | Beam measured height: 11 -- 0.36 of [6..20] range at 137% of needed quorum
+2026-03-14 19:43:22,037 INFO [15e90868a271_Impresario_cello#2]         ScaleBuilder.java:392  | Normalized black jitter: 9.52 %
+2026-03-14 19:43:22,037 INFO [15e90868a271_Impresario_cello#2]            ScaleStep.java:65   | Scale{ interline(21,21,22) line(3,4,5) beam(11)}
+2026-03-14 19:43:22,038 INFO [15e90868a271_Impresario_cello#2]       StepMonitoring.java:98   | GRID
+2026-03-14 19:43:22,702 INFO [15e90868a271_Impresario_cello#2]       LinesRetriever.java:1500 | Global slope: 0.00000
+2026-03-14 19:43:22,716 INFO [15e90868a271_Impresario_cello#2]    ClustersRetriever.java:326  | Retrieved raw line clusters: 11 of sizes [5] with interline(21,21,22)
+2026-03-14 19:43:22,865 INFO [15e90868a271_Impresario_cello#2]            PeakGraph.java:310  | Systems: #1[1] #2[2] #3[3] #4[4] #5[5] #6[6] #7[7] #8[8] #9[9] #10[10] #11[11]
+2026-03-14 19:43:23,354 INFO [15e90868a271_Impresario_cello#2]        SystemManager.java:779  | 1 part along 11 systems
+2026-03-14 19:43:23,354 INFO [15e90868a271_Impresario_cello#2]       StepMonitoring.java:98   | HEADERS
+2026-03-14 19:43:23,826 INFO [15e90868a271_Impresario_cello#2]       StepMonitoring.java:98   | STEM_SEEDS
+2026-03-14 19:43:23,858 INFO [15e90868a271_Impresario_cello#2]        StemSeedsStep.java:86   | stem(4 max:5)
+2026-03-14 19:43:23,871 INFO [15e90868a271_Impresario_cello#2]       StepMonitoring.java:98   | BEAMS
+2026-03-14 19:43:26,714 INFO [15e90868a271_Impresario_cello#2]       StepMonitoring.java:98   | LEDGERS
+2026-03-14 19:43:26,832 INFO [15e90868a271_Impresario_cello#2]       StepMonitoring.java:98   | HEADS
+2026-03-14 19:43:32,205 INFO [15e90868a271_Impresario_cello#2]        HeadSeedTally.java:235  | Scale information: HeadSeeds{NOTEHEAD_VOID[L:0.3] NOTEHEAD_BLACK[L:0.3,R:-0.2]}
+2026-03-14 19:43:32,206 INFO [15e90868a271_Impresario_cello#2]       StepMonitoring.java:98   | STEMS
+2026-03-14 19:43:32,357 INFO [15e90868a271_Impresario_cello#2]       StepMonitoring.java:98   | REDUCTION
+2026-03-14 19:43:32,384 INFO [15e90868a271_Impresario_cello#2]        ReductionStep.java:105  | Stems free length median value: 77 pixels, 3.7 interlines
+2026-03-14 19:43:32,386 INFO [15e90868a271_Impresario_cello#2]       StepMonitoring.java:98   | CUE_BEAMS
+2026-03-14 19:43:32,386 INFO [15e90868a271_Impresario_cello#2]         CueBeamsStep.java:81   | Step CUE_BEAMS is skipped because small heads switch is off
+2026-03-14 19:43:32,386 INFO [15e90868a271_Impresario_cello#2]       StepMonitoring.java:98   | TEXTS
+2026-03-14 19:43:33,026 INFO [15e90868a271_Impresario_cello#2]       StepMonitoring.java:98   | MEASURES
+2026-03-14 19:43:33,028 INFO [15e90868a271_Impresario_cello#2]                 Page.java:307  | 50 raw measures: [5 in system#1, 5 in system#2, 4 in system#3, 5 in system#4, 5 in system#5, 5 in system#6, 4 in system#7, 4 in system#8, 4 in system#9, 4 in system#10, 5 in system#11]
+2026-03-14 19:43:33,028 INFO [15e90868a271_Impresario_cello#2]       StepMonitoring.java:98   | CHORDS
+2026-03-14 19:43:33,032 INFO [15e90868a271_Impresario_cello#2]       StepMonitoring.java:98   | CURVES
+2026-03-14 19:43:33,760 INFO [15e90868a271_Impresario_cello#2]         SlursBuilder.java:240  | Slurs: 16
+2026-03-14 19:43:33,765 INFO [15e90868a271_Impresario_cello#2]      SegmentsBuilder.java:155  | Segments: 16
+2026-03-14 19:43:33,902 INFO [15e90868a271_Impresario_cello#2]    RehearsalsBuilder.java:229  | RehearsalInter#4433{(0.465) staff:4 mFont:IMS-95 Rehearsal enclosure:java.awt.Rectangle[x=1972,y=944,width=68,height=67]}
+2026-03-14 19:43:34,084 INFO [15e90868a271_Impresario_cello#2]    RehearsalsBuilder.java:229  | RehearsalInter#4440{(0.108) staff:6 mFont:IMS-91 Rehearsal enclosure:java.awt.Rectangle[x=1202,y=1527,width=69,height=68]}
+2026-03-14 19:43:34,210 INFO [15e90868a271_Impresario_cello#2]    RehearsalsBuilder.java:199  | No text found in rehearsal enclosure java.awt.Rectangle[x=1113,y=2400,width=68,height=68]
+2026-03-14 19:43:34,211 INFO [15e90868a271_Impresario_cello#2]       StepMonitoring.java:98   | SYMBOLS
+2026-03-14 19:43:34,597 INFO [15e90868a271_Impresario_cello#2]       StepMonitoring.java:98   | LINKS
+2026-03-14 19:43:34,599 INFO [15e90868a271_Impresario_cello#2]        SentenceInter.java:463  | No chord near SentenceInter#3883{(0.571) staff:1 mFont:52 Direction} ueuu " 4
+2026-03-14 19:43:34,631 INFO [15e90868a271_Impresario_cello#2]       StepMonitoring.java:98   | RHYTHMS
+2026-03-14 19:43:34,632 INFO [15e90868a271_Impresario_cello#2]           PageRhythm.java:199  | {Page#2.1} Time value reused from sheet#1
+2026-03-14 19:43:34,645 INFO [15e90868a271_Impresario_cello#2]        MeasureRhythm.java:1044 | Measure{#23} No timeOffset for RestChordInter#5992{(0.799/0.799) staff:5 slot#8 dur:1/8}
+2026-03-14 19:43:34,646 INFO [15e90868a271_Impresario_cello#2]          StackRhythm.java:224  | S5 MeasureStack#23 no correct rhythm
+2026-03-14 19:43:34,658 INFO [15e90868a271_Impresario_cello#2]       StepMonitoring.java:98   | PAGE
+2026-03-14 19:43:34,660 INFO [15e90868a271_Impresario_cello#2]                 Book.java:2584 | Book{15e90868a271_Impresario_cello} storing
+2026-03-14 19:43:34,724 INFO [15e90868a271_Impresario_cello#2]                 Book.java:2565 | Stored /book.xml
+2026-03-14 19:43:34,824 INFO [15e90868a271_Impresario_cello#2]           DataHolder.java:348  | Stored /sheet#2/BINARY.png
+2026-03-14 19:43:35,338 INFO [15e90868a271_Impresario_cello#2]                Sheet.java:1583 | Stored /sheet#2/sheet#2.xml
+2026-03-14 19:43:35,338 INFO [15e90868a271_Impresario_cello#2]                 Book.java:2525 | Book stored as C:\Users\llama\OneDrive\Documents\orchestra\outputs\029a66ced2af\omr_out\15e90868a271_Impresario_cello.omr
+2026-03-14 19:43:35,344 INFO [15e90868a271_Impresario_cello#2]            SheetStub.java:1654 | Sheet#2 disposed
+2026-03-14 19:43:35,368 INFO [15e90868a271_Impresario_cello#2]                 Book.java:2050 | End of Stub#2
+2026-03-14 19:43:35,369 INFO [15e90868a271_Impresario_cello]                 Book.java:2057 | End of Book{15e90868a271_Impresario_cello}
+2026-03-14 19:43:35,803 INFO [15e90868a271_Impresario_cello]            SheetStub.java:1000 | Loaded /sheet#1/sheet#1.xml
+2026-03-14 19:43:36,041 INFO [15e90868a271_Impresario_cello]            SheetStub.java:1000 | Loaded /sheet#2/sheet#2.xml
+2026-03-14 19:43:36,355 INFO [15e90868a271_Impresario_cello]      PartwiseBuilder.java:2706 | Exporting sheet(s): [#1#2]
+2026-03-14 19:43:36,373 WARN [15e90868a271_Impresario_cello]      PartwiseBuilder.java:983  | Measure{#42} Multirest with no measure count, using default value 1
+2026-03-14 19:43:36,451 INFO [15e90868a271_Impresario_cello]        ScoreExporter.java:164  | Score 15e90868a271_Impresario_cello exported to C:\Users\llama\OneDrive\Documents\orchestra\outputs\029a66ced2af\omr_out\15e90868a271_Impresario_cello.mxl
+2026-03-14 19:43:36,505 INFO [15e90868a271_Impresario_cello]                Score.java:181  | Closing {Score 1}

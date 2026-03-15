@@ -448,6 +448,49 @@ select:focus { outline: none; border-color: var(--c-primary); box-shadow: 0 0 0 
 .sm-btn.danger { border-color: #ef9a9a; color: #c62828; }
 .sm-btn.danger:hover:not(:disabled) { background: #fce4ec; border-color: #e57373; }
 
+/* ── Part Tabs (ensemble) ────────────────────────────── */
+.part-tabs {
+  display: flex;
+  gap: 0;
+  background: var(--c-surface);
+  border-bottom: 2px solid var(--c-border);
+  padding: 0 0.75rem;
+  overflow-x: auto;
+  flex-shrink: 0;
+}
+.part-tabs::-webkit-scrollbar { display: none; }
+.part-tab {
+  padding: 0.6rem 1.25rem;
+  border: none;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;    /* overlap the container border */
+  background: transparent;
+  color: var(--c-text-med);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+  box-shadow: none;
+  transform: none;
+  border-radius: 0;
+  transition: color var(--ease-std), border-color var(--ease-std), background var(--ease-std);
+}
+.part-tab.active {
+  color: var(--c-primary);
+  border-bottom-color: var(--c-primary);
+  font-weight: 600;
+}
+.part-tab:hover:not(.active):not(:disabled) {
+  color: var(--c-text-hi);
+  background: var(--c-surface-var);
+  box-shadow: none;
+  transform: none;
+}
+
 
 
 .notes-display {

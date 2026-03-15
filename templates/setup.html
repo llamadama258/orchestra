@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Melodra &ndash; New Song</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
+  <style>
+    :root {
+      --c-primary:       #3A86FF;
+      --c-primary-dark:  #2A6FD9;
+      --c-primary-tonal: #E7F4FF;
+      --c-bg:            #FAFAFA;
+      --c-surface:       #FFFFFF;
+      --c-surface-var:   #F5F5F5;
+      --c-border:        #E0E0E0;
+      --c-text-hi:       #212121;
+      --c-text-med:      #616161;
+      --c-text-lo:       #9E9E9E;
+      --c-error:         #C62828;
+      --c-error-bg:      #FFEBEE;
+      --shadow-2: 0 3px 6px rgba(0,0,0,.12), 0 2px 4px rgba(0,0,0,.08);
+      --shadow-4: 0 8px 24px rgba(0,0,0,.12);
+      --r-md: 8px; --r-lg: 12px; --r-xl: 16px;
+      --ease: 200ms cubic-bezier(.4,0,.2,1);
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { font-size: 16px; }
+    body {
+      font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+      background: var(--c-bg);
+      color: var(--c-text-hi);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Page layout ─── */
+    .page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem 5rem;
+    }
+
+    .home-link {
+      align-self: flex-start;
+      margin-bottom: 2rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--c-primary);
+      text-decoration: none;
+      letter-spacing: -0.01em;
+    }
+    .home-link:hover { text-decoration: underline; }
+
+    .wizard-card {
+      background: var(--c-surface);
+      border-radius: var(--r-xl);
+      padding: 2.5rem 2.25rem;
+      max-width: 680px;
+      width: 100%;
+      box-shadow: var(--shadow-4);
+      border: 1px solid var(--c-border);
+    }
+
+    /* ── Step indicator ─── */
+    .step-indicator {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 0.4rem;
+    }
+    .step-dot {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      background: var(--c-border);
+      color: var(--c-text-lo);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.8rem; font-weight: 600;
+      flex-shrink: 0;
+      transition: background var(--ease), color var(--ease);
+    }
+    .step-dot.active  { background: var(--c-primary); color: #fff; }
+    .step-dot.done    { background: var(--c-primary); color: #fff; }
+    .step-line {
+      flex: 1; max-width: 90px; height: 2px;
+      background: var(--c-border);
+      transition: background var(--ease);
+    }
+    .step-line.done { background: var(--c-primary); }
+    .step-labels {
+      display: flex;
+      justify-content: space-between;
+      padding: 0 15px;
+      margin-bottom: 2.25rem;
+    }
+    .step-labels span {
+      font-size: 0.72rem;
+      color: var(--c-text-lo);
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      user-select: none;
+    }
+
+    /* ── Step panes ─── */
+    .step-pane h2 {
+      font-size: 1.35rem; font-weight: 700;
+      color: var(--c-text-hi); margin-bottom: 0.35rem;
+      letter-spacing: -0.01em;
+    }
+    .step-sub {
+      font-size: 0.875rem; color: var(--c-text-med);
+      margin-bottom: 1.75rem;
+    }
+
+    /* ── Choice cards ─── */
+    .choice-cards {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
+    }
+    .choice-card {
+      display: flex; flex-direction: column; align-items: center;
+      padding: 1.75rem 1rem;
+      border: 2px solid var(--c-border);
+      border-radius: var(--r-lg);
+      cursor: pointer;
+      transition: border-color var(--ease), background var(--ease), box-shadow var(--ease);
+      user-select: none;
+    }
+    .choice-card input[type="radio"] { display: none; }
+    .choice-card:has(input:checked) {
+      border-color: var(--c-primary);
+      background: var(--c-primary-tonal);
+      box-shadow: 0 0 0 3px rgba(58,134,255,.12);
+    }
+    .choice-card:hover { border-color: var(--c-primary); }
+    .card-icon  { font-size: 2.25rem; margin-bottom: 0.65rem; }
+    .card-title { font-size: 1.05rem; font-weight: 600; margin-bottom: 0.2rem; }
+    .card-desc  { font-size: 0.78rem; color: var(--c-text-med); text-align: center; }
+
+    /* ── File drop zone ─── */
+    .file-drop-zone {
+      display: flex; flex-direction: column; align-items: center; gap: 0.35rem;
+      border: 2px dashed var(--c-border);
+      border-radius: var(--r-lg);
+      padding: 2.5rem 1.5rem;
+      cursor: pointer; text-align: center;
+      transition: border-color var(--ease), background var(--ease);
+      margin-bottom: 0.875rem;
+    }
+    .file-drop-zone:hover,
+    .file-drop-zone:focus-within { border-color: var(--c-primary); background: var(--c-primary-tonal); }
+    .file-drop-zone input[type="file"] { display: none; }
+    .drop-icon    { font-size: 2.25rem; }
+    .drop-heading { font-size: 0.95rem; font-weight: 500; color: var(--c-text-hi); }
+    .drop-sub     { font-size: 0.825rem; color: var(--c-text-med); }
+    .drop-formats { display: flex; gap: 0.4rem; margin-top: 0.4rem; flex-wrap: wrap; justify-content: center; }
+    .drop-formats span {
+      font-size: 0.68rem; font-weight: 600; letter-spacing: 0.06em;
+      text-transform: uppercase;
+      background: var(--c-surface-var); color: var(--c-text-lo);
+      border: 1px solid var(--c-border); border-radius: 4px;
+      padding: 0.1rem 0.45rem;
+    }
+    .file-selected-name {
+      display: flex; align-items: center; gap: 0.5rem;
+      font-size: 0.9rem; font-weight: 500; color: var(--c-text-hi);
+      min-height: 1.5rem;
+    }
+    .file-check { color: #2E7D32; font-size: 1rem; }
+
+    /* ── Ensemble part rows ─── */
+    .parts-list { display: flex; flex-direction: column; gap: 0.625rem; margin-bottom: 0.875rem; }
+
+    .part-row { display: flex; gap: 0.5rem; align-items: center; }
+
+    .part-name-input {
+      flex: 0 0 185px;
+      padding: 0.5rem 0.7rem;
+      border: 1.5px solid var(--c-border); border-radius: var(--r-md);
+      font-family: inherit; font-size: 0.875rem;
+      color: var(--c-text-hi); background: var(--c-surface);
+      transition: border-color var(--ease);
+    }
+    .part-name-input:focus { outline: none; border-color: var(--c-primary); }
+    .part-name-input::placeholder { color: var(--c-text-lo); }
+
+    .part-file-label {
+      flex: 1; display: flex; align-items: center; gap: 0.4rem;
+      padding: 0.5rem 0.7rem;
+      border: 1.5px dashed var(--c-border); border-radius: var(--r-md);
+      cursor: pointer; font-size: 0.825rem; color: var(--c-text-med);
+      transition: border-color var(--ease), background var(--ease);
+      overflow: hidden; white-space: nowrap;
+      user-select: none;
+    }
+    .part-file-label:hover { border-color: var(--c-primary); background: var(--c-primary-tonal); }
+    .part-file-label input[type="file"] { display: none; }
+    .part-file-display { overflow: hidden; text-overflow: ellipsis; }
+    .part-file-display.has-file { color: var(--c-text-hi); font-weight: 500; }
+
+    .remove-part-btn {
+      flex-shrink: 0; width: 30px; height: 30px; border-radius: 50%;
+      border: 1px solid var(--c-border); background: var(--c-surface);
+      color: var(--c-text-lo); font-size: 1rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: border-color var(--ease), background var(--ease), color var(--ease);
+      font-family: inherit; padding: 0;
+    }
+    .remove-part-btn:hover { border-color: #ef9a9a; background: #ffebee; color: var(--c-error); }
+
+    .add-part-btn {
+      font-family: inherit; font-size: 0.875rem; font-weight: 500;
+      color: var(--c-primary); background: transparent;
+      border: 1.5px dashed var(--c-primary); border-radius: var(--r-md);
+      padding: 0.5rem 1rem; cursor: pointer;
+      transition: background var(--ease);
+    }
+    .add-part-btn:hover { background: var(--c-primary-tonal); }
+
+    /* ── Piece name input ─── */
+    .piece-name-input {
+      width: 100%; padding: 0.875rem 1rem;
+      border: 2px solid var(--c-border); border-radius: var(--r-lg);
+      font-family: inherit; font-size: 1.05rem;
+      color: var(--c-text-hi); background: var(--c-surface);
+      transition: border-color var(--ease);
+    }
+    .piece-name-input:focus { outline: none; border-color: var(--c-primary); }
+    .piece-name-input::placeholder { color: var(--c-text-lo); }
+
+    /* ── Error banner ─── */
+    .step-error {
+      margin-top: 1.25rem; padding: 0.75rem 1rem;
+      background: var(--c-error-bg); color: var(--c-error);
+      border: 1px solid rgba(198,40,40,.3); border-radius: var(--r-md);
+      font-size: 0.875rem; line-height: 1.45;
+    }
+
+    /* ── Navigation bar ─── */
+    .step-nav {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-top: 2rem; padding-top: 1.5rem;
+      border-top: 1px solid var(--c-border);
+    }
+    .nav-btn {
+      font-family: inherit; font-size: 0.875rem; font-weight: 600;
+      letter-spacing: 0.01em; padding: 0.625rem 1.5rem;
+      border-radius: 24px; cursor: pointer;
+      transition: background var(--ease), box-shadow var(--ease), transform var(--ease);
+      border: none;
+    }
+    .nav-btn.secondary {
+      background: transparent; color: var(--c-text-med);
+      border: 1.5px solid var(--c-border);
+    }
+    .nav-btn.secondary:hover { background: var(--c-surface-var); }
+    .nav-btn.secondary.invisible { visibility: hidden; pointer-events: none; }
+    .nav-btn.primary {
+      background: var(--c-primary); color: #fff;
+      box-shadow: 0 2px 8px rgba(58,134,255,.3);
+    }
+    .nav-btn.primary:hover {
+      background: var(--c-primary-dark);
+      box-shadow: 0 4px 14px rgba(58,134,255,.4);
+      transform: translateY(-1px);
+    }
+    .nav-btn.primary:active { transform: translateY(0); box-shadow: 0 2px 8px rgba(58,134,255,.3); }
+
+    /* ── Loading overlay ─── */
+    .loading-overlay {
+      position: fixed; inset: 0;
+      background: rgba(250,250,250,.72);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 999;
+      backdrop-filter: blur(6px);
+    }
+    .loading-card {
+      background: var(--c-surface); border-radius: var(--r-xl);
+      padding: 2.5rem; max-width: 400px; width: 90%;
+      text-align: center; box-shadow: var(--shadow-4);
+      border: 1px solid var(--c-border);
+    }
+    .loading-title { font-size: 1.15rem; font-weight: 700; margin-bottom: 0.4rem; }
+    .loading-status { font-size: 0.85rem; color: var(--c-text-med); height: 1.5em; margin-bottom: 1.5rem; }
+    .loading-bar-track {
+      width: 100%; height: 6px; background: var(--c-surface-var);
+      border-radius: 3px; overflow: hidden; margin-bottom: 0.625rem;
+    }
+    .loading-bar-fill {
+      height: 100%; width: 0%;
+      background: var(--c-primary); border-radius: 3px;
+      transition: width 400ms ease;
+    }
+    .loading-pct-row {
+      display: flex; justify-content: space-between;
+      font-size: 0.78rem; color: var(--c-text-lo);
+    }
+    .loading-pct-row .pct-num { font-weight: 700; color: var(--c-primary); }
+    .hidden { display: none !important; }  </style>
+</head>
+<body>
+
+<div class="page">
+  <a href="/" class="home-link">&#8592; Melodra</a>
+
+  <div class="wizard-card">
+
+    <!-- Step indicator -->
+    <div class="step-indicator">
+      <div class="step-dot active" id="dot-1">1</div>
+      <div class="step-line" id="line-1"></div>
+      <div class="step-dot" id="dot-2">2</div>
+      <div class="step-line" id="line-2"></div>
+      <div class="step-dot" id="dot-3">3</div>
+    </div>
+    <div class="step-labels">
+      <span>Type</span>
+      <span>Files</span>
+      <span>Title</span>
+    </div>
+
+    <!-- ─── Pane 1: Solo vs Ensemble ─── -->
+    <div class="step-pane" id="pane-1">
+      <h2>What are you performing?</h2>
+      <p class="step-sub">Choose the type of score you&rsquo;re uploading.</p>
+      <div class="choice-cards">
+        <label class="choice-card" id="card-solo">
+          <input type="radio" name="type" value="solo" checked />
+          <div class="card-icon">🎹</div>
+          <div class="card-title">Solo</div>
+          <div class="card-desc">One instrument,&nbsp;one file</div>
+        </label>
+        <label class="choice-card" id="card-ensemble">
+          <input type="radio" name="type" value="ensemble" />
+          <div class="card-icon">🎻</div>
+          <div class="card-title">Ensemble</div>
+          <div class="card-desc">Multiple parts playing together</div>
+        </label>
+      </div>
+    </div>
+
+    <!-- ─── Pane 2a: Solo file upload ─── -->
+    <div class="step-pane hidden" id="pane-2-solo">
+      <h2>Upload your score</h2>
+      <p class="step-sub">PDF, MXL, XML, or MusicXML &mdash; up to 50&thinsp;MB</p>
+      <label class="file-drop-zone" id="solo-drop">
+        <input type="file" id="solo-file-input" accept=".pdf,.mxl,.xml,.musicxml" />
+        <div class="drop-icon">🎼</div>
+        <p class="drop-heading">Drop your file here</p>
+        <p class="drop-sub">or click to browse</p>
+        <div class="drop-formats">
+          <span>PDF</span><span>MXL</span><span>XML</span><span>MusicXML</span>
+        </div>
+      </label>
+      <div id="solo-filename" class="file-selected-name"></div>
+    </div>
+
+    <!-- ─── Pane 2b: Ensemble parts ─── -->
+    <div class="step-pane hidden" id="pane-2-ensemble">
+      <h2>Upload each part</h2>
+      <p class="step-sub">Add a name and score file for each instrument.</p>
+      <div id="parts-list" class="parts-list"></div>
+      <button type="button" id="add-part-btn" class="add-part-btn">+ Add Part</button>
+    </div>
+
+    <!-- ─── Pane 3: Piece name ─── -->
+    <div class="step-pane hidden" id="pane-3">
+      <h2>Name your piece</h2>
+      <p class="step-sub">This appears as the title in the player.</p>
+      <input type="text" id="piece-name-input" class="piece-name-input"
+             placeholder="e.g. Beethoven Symphony No. 5"
+             autocomplete="off" spellcheck="false" />
+    </div>
+
+    <!-- Error banner -->
+    <div id="step-error" class="step-error hidden"></div>
+
+    <!-- Navigation -->
+    <div class="step-nav">
+      <button type="button" id="prev-btn" class="nav-btn secondary invisible">&#8592; Back</button>
+      <button type="button" id="next-btn" class="nav-btn primary">Continue &#8594;</button>
+    </div>
+
+  </div><!-- /wizard-card -->
+</div><!-- /page -->
+
+<!-- Loading overlay -->
+<div id="loading-overlay" class="loading-overlay hidden">
+  <div class="loading-card">
+    <div class="loading-title">Converting your score&hellip;</div>
+    <div id="loading-status" class="loading-status">Starting&hellip;</div>
+    <div class="loading-bar-track">
+      <div id="loading-bar-fill" class="loading-bar-fill"></div>
+    </div>
+    <div class="loading-pct-row">
+      <span id="loading-pct" class="pct-num">0%</span>
+      <span>Converting</span>
+    </div>
+  </div>
+</div>
+
+<script>
+  const TOTAL_STEPS = 3;
+  let currentStep = 1;
+  let partCount   = 0;
+
+  const prevBtn    = document.getElementById("prev-btn");
+  const nextBtn    = document.getElementById("next-btn");
+  const stepError  = document.getElementById("step-error");
+  const partsList  = document.getElementById("parts-list");
+
+  /* ── Step navigation ─────────────────────────────────── */
+  function getActivePaneId(step) {
+    if (step === 1) return "pane-1";
+    if (step === 2) {
+      const type = document.querySelector("input[name='type']:checked").value;
+      return type === "ensemble" ? "pane-2-ensemble" : "pane-2-solo";
+    }
+    return "pane-3";
+  }
+
+  function showStep(n) {
+    document.querySelectorAll(".step-pane").forEach(p => p.classList.add("hidden"));
+    document.getElementById(getActivePaneId(n)).classList.remove("hidden");
+
+    // Dots and lines
+    [1, 2, 3].forEach(i => {
+      const dot  = document.getElementById(`dot-${i}`);
+      dot.classList.toggle("active", i === n);
+      dot.classList.toggle("done",   i < n);
+    });
+    [1, 2].forEach(i => {
+      document.getElementById(`line-${i}`).classList.toggle("done", i < n);
+    });
+
+    prevBtn.classList.toggle("invisible", n === 1);
+    nextBtn.textContent = n === TOTAL_STEPS ? "Start \u2192" : "Continue \u2192";
+    clearError();
+  }
+
+  function showError(msg) {
+    stepError.textContent = msg;
+    stepError.classList.remove("hidden");
+  }
+  function clearError() { stepError.classList.add("hidden"); }
+
+  /* ── Validation ──────────────────────────────────────── */
+  function validateStep(n) {
+    if (n === 1) return true;
+
+    if (n === 2) {
+      const type = document.querySelector("input[name='type']:checked").value;
+      if (type === "solo") {
+        if (!document.getElementById("solo-file-input").files.length) {
+          showError("Please select a file before continuing.");
+          return false;
+        }
+      } else {
+        const rows = partsList.querySelectorAll(".part-row");
+        const hasFile = [...rows].some(r => r.querySelector(".part-file-input").files.length > 0);
+        if (!hasFile) {
+          showError("Please upload at least one part file before continuing.");
+          return false;
+        }
+      }
+    }
+
+    if (n === 3) {
+      const v = document.getElementById("piece-name-input").value.trim();
+      if (!v) {
+        showError("Please enter a title for the piece.");
+        document.getElementById("piece-name-input").focus();
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /* ── Continue / Back ─────────────────────────────────── */
+  nextBtn.addEventListener("click", () => {
+    if (!validateStep(currentStep)) return;
+    if (currentStep === TOTAL_STEPS) {
+      submitSetup();
+    } else {
+      currentStep++;
+      showStep(currentStep);
+    }
+  });
+
+  prevBtn.addEventListener("click", () => {
+    if (currentStep > 1) { currentStep--; showStep(currentStep); }
+  });
+
+  /* ── Keyboard: Enter advances ────────────────────────── */
+  document.addEventListener("keydown", e => {
+    if (e.key === "Enter" && e.target.tagName !== "BUTTON") nextBtn.click();
+  });
+
+  /* ── Solo file pick ──────────────────────────────────── */
+  document.getElementById("solo-file-input").addEventListener("change", function () {
+    const fname  = document.getElementById("solo-filename");
+    if (this.files.length) {
+      fname.innerHTML = `<span class="file-check">&#10003;</span> ${this.files[0].name}`;
+    } else {
+      fname.textContent = "";
+    }
+  });
+
+  /* Drag-over highlight on solo drop zone */
+  const soloDropLabel = document.getElementById("solo-drop");
+  soloDropLabel.addEventListener("dragover",  e => { e.preventDefault(); soloDropLabel.style.borderColor = "var(--c-primary)"; });
+  soloDropLabel.addEventListener("dragleave", ()  => soloDropLabel.style.borderColor = "");
+  soloDropLabel.addEventListener("drop",      e  => {
+    e.preventDefault();
+    soloDropLabel.style.borderColor = "";
+    const fi = document.getElementById("solo-file-input");
+    if (e.dataTransfer.files.length) {
+      fi.files = e.dataTransfer.files;
+      fi.dispatchEvent(new Event("change"));
+    }
+  });
+
+  /* ── Ensemble parts ──────────────────────────────────── */
+  function addPart(defaultName) {
+    const idx = partCount++;
+    const row = document.createElement("div");
+    row.className = "part-row";
+
+    row.innerHTML = `
+      <input type="text" class="part-name-input"
+             placeholder="Part name (e.g. Violin 1)"
+             value="${defaultName || ""}" />
+      <label class="part-file-label">
+        <input type="file" class="part-file-input" accept=".pdf,.mxl,.xml,.musicxml" />
+        <span class="part-file-icon">&#128196;</span>
+        <span class="part-file-display">Choose file</span>
+      </label>
+      <button type="button" class="remove-part-btn" title="Remove part">&times;</button>
+    `;
+
+    row.querySelector(".part-file-input").addEventListener("change", function () {
+      const disp = row.querySelector(".part-file-display");
+      if (this.files.length) {
+        disp.textContent = this.files[0].name;
+        disp.classList.add("has-file");
+      } else {
+        disp.textContent = "Choose file";
+        disp.classList.remove("has-file");
+      }
+    });
+
+    row.querySelector(".remove-part-btn").addEventListener("click", () => {
+      if (partsList.querySelectorAll(".part-row").length > 1) row.remove();
+    });
+
+    partsList.appendChild(row);
+  }
+
+  document.getElementById("add-part-btn").addEventListener("click", () => addPart(""));
+
+  /* Initialise ensemble with 2 rows */
+  addPart("Part 1");
+  addPart("Part 2");
+
+  /* ── Form submission ─────────────────────────────────── */
+  async function submitSetup() {
+    const fd        = new FormData();
+    const type      = document.querySelector("input[name='type']:checked").value;
+    const pieceName = document.getElementById("piece-name-input").value.trim() || "Untitled";
+
+    fd.append("type",       type);
+    fd.append("piece_name", pieceName);
+
+    if (type === "solo") {
+      fd.append("file", document.getElementById("solo-file-input").files[0]);
+    } else {
+      let idx = 0;
+      partsList.querySelectorAll(".part-row").forEach(row => {
+        const fi = row.querySelector(".part-file-input");
+        if (fi.files.length > 0) {
+          const name = row.querySelector(".part-name-input").value.trim() || `Part ${idx + 1}`;
+          fd.append(`part_name_${idx}`, name);
+          fd.append(`part_file_${idx}`, fi.files[0]);
+          idx++;
+        }
+      });
+    }
+
+    document.getElementById("loading-overlay").classList.remove("hidden");
+
+    try {
+      const res  = await fetch("/setup/upload", { method: "POST", body: fd });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Upload failed.");
+      await pollStatus(data.job_id);
+    } catch (err) {
+      document.getElementById("loading-overlay").classList.add("hidden");
+      showError(err.message);
+    }
+  }
+
+  async function pollStatus(jobId) {
+    while (true) {
+      await new Promise(r => setTimeout(r, 500));
+      let data;
+      try {
+        const res = await fetch(`/status/${jobId}`);
+        data = await res.json();
+      } catch (e) {
+        document.getElementById("loading-overlay").classList.add("hidden");
+        showError("Lost connection to server.");
+        return;
+      }
+
+      if (typeof data.progress === "number") {
+        document.getElementById("loading-bar-fill").style.width = data.progress + "%";
+        document.getElementById("loading-pct").textContent        = data.progress + "%";
+      }
+      if (data.status_text) {
+        document.getElementById("loading-status").textContent = data.status_text;
+      }
+
+      if (data.status === "done") {
+        sessionStorage.setItem("melodra_setup", JSON.stringify(data.result));
+        window.location.href = "/";
+        return;
+      }
+      if (data.status === "error") {
+        document.getElementById("loading-overlay").classList.add("hidden");
+        showError(data.error || "Conversion failed.");
+        return;
+      }
+    }
+  }
+
+  /* Initialise first step */
+  showStep(1);
+</script>
+</body>
+</html>

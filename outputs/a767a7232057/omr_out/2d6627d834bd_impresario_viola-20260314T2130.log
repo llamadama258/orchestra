@@ -1,0 +1,116 @@
+2026-03-14 21:30:40,562 INFO [2d6627d834bd_impresario_viola]                 Book.java:560  | 2 sheets in C:\Users\llama\OneDrive\Documents\orchestra\uploads\2d6627d834bd_impresario_viola.pdf
+2026-03-14 21:30:40,787 INFO []                 Book.java:2565 | Stored /book.xml
+2026-03-14 21:30:40,789 INFO []                 Book.java:2525 | Book stored as C:\Users\llama\OneDrive\Documents\orchestra\outputs\a767a7232057\omr_out\2d6627d834bd_impresario_viola.omr
+2026-03-14 21:30:40,797 INFO []                 Book.java:1929 | Book reaching PAGE on sheets:[#1#2]
+2026-03-14 21:30:40,801 INFO [2d6627d834bd_impresario_viola#1]       StepMonitoring.java:98   | LOAD
+2026-03-14 21:30:41,462 INFO [2d6627d834bd_impresario_viola#1]            SheetStub.java:1278 | Loaded image #1 2550x3299 from C:\Users\llama\OneDrive\Documents\orchestra\uploads\2d6627d834bd_impresario_viola.pdf
+2026-03-14 21:30:41,470 INFO [2d6627d834bd_impresario_viola#1]       StepMonitoring.java:98   | BINARY
+2026-03-14 21:30:42,170 INFO [2d6627d834bd_impresario_viola#1]       StepMonitoring.java:98   | SCALE
+2026-03-14 21:30:42,210 INFO [2d6627d834bd_impresario_viola#1]         ScaleBuilder.java:241  | Beam  guessed height:  8 -- 0.50 of 17 interline
+2026-03-14 21:30:42,213 INFO [2d6627d834bd_impresario_viola#1]         ScaleBuilder.java:264  | Beam measured height: 11 -- 0.50 of [5..17] range at 283% of needed quorum
+2026-03-14 21:30:42,213 INFO [2d6627d834bd_impresario_viola#1]         ScaleBuilder.java:392  | Normalized black jitter: 5.26 %
+2026-03-14 21:30:42,213 INFO [2d6627d834bd_impresario_viola#1]            ScaleStep.java:65   | Scale{ interline(18,19,20) line(4,5,5) beam(11)}
+2026-03-14 21:30:42,216 INFO [2d6627d834bd_impresario_viola#1]       StepMonitoring.java:98   | GRID
+2026-03-14 21:30:43,115 INFO [2d6627d834bd_impresario_viola#1]       LinesRetriever.java:1500 | Global slope: 0.00176
+2026-03-14 21:30:43,186 INFO [2d6627d834bd_impresario_viola#1]    ClustersRetriever.java:326  | Retrieved raw line clusters: 10 of sizes [5] with interline(18,19,20)
+2026-03-14 21:30:43,525 INFO [2d6627d834bd_impresario_viola#1]            PeakGraph.java:310  | Systems: #1[1] #2[2] #3[3] #4[4] #5[5] #6[6] #7[7] #8[8] #9[9] #10[10]
+2026-03-14 21:30:44,225 INFO [2d6627d834bd_impresario_viola#1]        SystemManager.java:779  | 1 part along 10 systems
+2026-03-14 21:30:44,226 INFO [2d6627d834bd_impresario_viola#1]                 Book.java:543  | Created scores: [{Score 1}]
+2026-03-14 21:30:44,226 INFO [2d6627d834bd_impresario_viola#1]       StepMonitoring.java:98   | HEADERS
+2026-03-14 21:30:46,481 INFO [2d6627d834bd_impresario_viola#1]       StepMonitoring.java:98   | STEM_SEEDS
+2026-03-14 21:30:46,551 INFO [2d6627d834bd_impresario_viola#1]        StemSeedsStep.java:86   | stem(4 max:5)
+2026-03-14 21:30:46,654 INFO [2d6627d834bd_impresario_viola#1]       StepMonitoring.java:98   | BEAMS
+2026-03-14 21:30:51,133 INFO [2d6627d834bd_impresario_viola#1]       StepMonitoring.java:98   | LEDGERS
+2026-03-14 21:30:51,497 INFO [2d6627d834bd_impresario_viola#1]       StepMonitoring.java:98   | HEADS
+2026-03-14 21:30:58,102 INFO [2d6627d834bd_impresario_viola#1]        HeadSeedTally.java:235  | Scale information: HeadSeeds{NOTEHEAD_VOID[L:0.2] NOTEHEAD_BLACK[L:0.2,R:-0.4]}
+2026-03-14 21:30:58,102 INFO [2d6627d834bd_impresario_viola#1]       StepMonitoring.java:98   | STEMS
+2026-03-14 21:30:58,715 INFO [2d6627d834bd_impresario_viola#1]       StepMonitoring.java:98   | REDUCTION
+2026-03-14 21:30:58,823 INFO [2d6627d834bd_impresario_viola#1]        ReductionStep.java:105  | Stems free length median value: 68 pixels, 3.6 interlines
+2026-03-14 21:30:58,828 INFO [2d6627d834bd_impresario_viola#1]       StepMonitoring.java:98   | CUE_BEAMS
+2026-03-14 21:30:58,829 INFO [2d6627d834bd_impresario_viola#1]         CueBeamsStep.java:81   | Step CUE_BEAMS is skipped because small heads switch is off
+2026-03-14 21:30:58,829 INFO [2d6627d834bd_impresario_viola#1]       StepMonitoring.java:98   | TEXTS
+2026-03-14 21:31:00,467 INFO [2d6627d834bd_impresario_viola#1]       StepMonitoring.java:98   | MEASURES
+2026-03-14 21:31:00,478 INFO [2d6627d834bd_impresario_viola#1]                 Page.java:307  | 38 raw measures: [4 in system#1, 4 in system#2, 4 in system#3, 4 in system#4, 4 in system#5, 4 in system#6, 3 in system#7, 3 in system#8, 4 in system#9, 4 in system#10]
+2026-03-14 21:31:00,480 INFO [2d6627d834bd_impresario_viola#1]       StepMonitoring.java:98   | CHORDS
+2026-03-14 21:31:00,502 INFO [2d6627d834bd_impresario_viola#1]       StepMonitoring.java:98   | CURVES
+2026-03-14 21:31:01,546 INFO [2d6627d834bd_impresario_viola#1]         SlursBuilder.java:240  | Slurs: 3
+2026-03-14 21:31:01,561 INFO [2d6627d834bd_impresario_viola#1]      SegmentsBuilder.java:155  | Segments: 5
+2026-03-14 21:31:01,756 INFO [2d6627d834bd_impresario_viola#1]    RehearsalsBuilder.java:229  | RehearsalInter#5038{(0.556) staff:6 mFont:S-87 Rehearsal enclosure:java.awt.Rectangle[x=1099,y=1793,width=63,height=58]}
+2026-03-14 21:31:01,761 INFO [2d6627d834bd_impresario_viola#1]       StepMonitoring.java:98   | SYMBOLS
+2026-03-14 21:31:02,513 INFO [2d6627d834bd_impresario_viola#1]       StepMonitoring.java:98   | LINKS
+2026-03-14 21:31:02,518 INFO [2d6627d834bd_impresario_viola#1]        SentenceInter.java:463  | No chord near SentenceInter#4458{(0.689) staff:1 mFont:B-45 Direction} All
+2026-03-14 21:31:02,563 INFO [2d6627d834bd_impresario_viola#1]             KeyInter.java:1189 | No effective key before AlterInter#6365{(0.800) staff:8 NATURAL pitch:-4.0}
+2026-03-14 21:31:02,573 INFO [2d6627d834bd_impresario_viola#1]       StepMonitoring.java:98   | RHYTHMS
+2026-03-14 21:31:02,663 INFO [2d6627d834bd_impresario_viola#1]       StepMonitoring.java:98   | PAGE
+2026-03-14 21:31:02,676 INFO [2d6627d834bd_impresario_viola#1]                 Book.java:2584 | Book{2d6627d834bd_impresario_viola} storing
+2026-03-14 21:31:02,759 INFO [2d6627d834bd_impresario_viola#1]                 Book.java:2565 | Stored /book.xml
+2026-03-14 21:31:02,888 INFO [2d6627d834bd_impresario_viola#1]           DataHolder.java:348  | Stored /sheet#1/BINARY.png
+2026-03-14 21:31:03,802 INFO [2d6627d834bd_impresario_viola#1]                Sheet.java:1583 | Stored /sheet#1/sheet#1.xml
+2026-03-14 21:31:03,802 INFO [2d6627d834bd_impresario_viola#1]                 Book.java:2525 | Book stored as C:\Users\llama\OneDrive\Documents\orchestra\outputs\a767a7232057\omr_out\2d6627d834bd_impresario_viola.omr
+2026-03-14 21:31:03,808 INFO [2d6627d834bd_impresario_viola#1]            SheetStub.java:1654 | Sheet#1 disposed
+2026-03-14 21:31:03,850 INFO [2d6627d834bd_impresario_viola#1]                 Book.java:2050 | End of Stub#1
+2026-03-14 21:31:03,851 INFO [2d6627d834bd_impresario_viola#2]       StepMonitoring.java:98   | LOAD
+2026-03-14 21:31:04,207 INFO [2d6627d834bd_impresario_viola#2]            SheetStub.java:1278 | Loaded image #2 2550x3299 from C:\Users\llama\OneDrive\Documents\orchestra\uploads\2d6627d834bd_impresario_viola.pdf
+2026-03-14 21:31:04,208 INFO [2d6627d834bd_impresario_viola#2]       StepMonitoring.java:98   | BINARY
+2026-03-14 21:31:04,759 INFO [2d6627d834bd_impresario_viola#2]       StepMonitoring.java:98   | SCALE
+2026-03-14 21:31:04,809 INFO [2d6627d834bd_impresario_viola#2]         ScaleBuilder.java:241  | Beam  guessed height:  9 -- 0.50 of 18 interline
+2026-03-14 21:31:04,809 INFO [2d6627d834bd_impresario_viola#2]         ScaleBuilder.java:264  | Beam measured height: 11 -- 0.42 of [6..18] range at 314% of needed quorum
+2026-03-14 21:31:04,810 INFO [2d6627d834bd_impresario_viola#2]         ScaleBuilder.java:392  | Normalized black jitter: 10.00 %
+2026-03-14 21:31:04,810 INFO [2d6627d834bd_impresario_viola#2]            ScaleStep.java:65   | Scale{ interline(19,20,20) line(4,5,6) beam(11)}
+2026-03-14 21:31:04,810 INFO [2d6627d834bd_impresario_viola#2]       StepMonitoring.java:98   | GRID
+2026-03-14 21:31:05,477 INFO [2d6627d834bd_impresario_viola#2]       LinesRetriever.java:1500 | Global slope: -0.00694
+2026-03-14 21:31:05,510 INFO [2d6627d834bd_impresario_viola#2]    ClustersRetriever.java:326  | Retrieved raw line clusters: 11 of sizes [5] with interline(19,20,20)
+2026-03-14 21:31:05,894 INFO [2d6627d834bd_impresario_viola#2]            PeakGraph.java:310  | Systems: #1[1] #2[2] #3[3] #4[4] #5[5] #6[6] #7[7] #8[8] #9[9] #10[10] #11[11]
+2026-03-14 21:31:06,561 INFO [2d6627d834bd_impresario_viola#2]        SystemManager.java:779  | 1 part along 11 systems
+2026-03-14 21:31:06,561 INFO [2d6627d834bd_impresario_viola#2]       StepMonitoring.java:98   | HEADERS
+2026-03-14 21:31:08,530 INFO [2d6627d834bd_impresario_viola#2]       StepMonitoring.java:98   | STEM_SEEDS
+2026-03-14 21:31:08,596 INFO [2d6627d834bd_impresario_viola#2]        StemSeedsStep.java:86   | stem(4 max:5)
+2026-03-14 21:31:08,613 INFO [2d6627d834bd_impresario_viola#2]       StepMonitoring.java:98   | BEAMS
+2026-03-14 21:31:12,589 INFO [2d6627d834bd_impresario_viola#2]       StepMonitoring.java:98   | LEDGERS
+2026-03-14 21:31:12,855 INFO [2d6627d834bd_impresario_viola#2]       StepMonitoring.java:98   | HEADS
+2026-03-14 21:31:20,855 INFO [2d6627d834bd_impresario_viola#2]        HeadSeedTally.java:235  | Scale information: HeadSeeds{NOTEHEAD_VOID[L:0.4,R:-1.0] NOTEHEAD_BLACK[L:0.3,R:-0.8]}
+2026-03-14 21:31:20,856 INFO [2d6627d834bd_impresario_viola#2]       StepMonitoring.java:98   | STEMS
+2026-03-14 21:31:21,283 INFO [2d6627d834bd_impresario_viola#2]       StepMonitoring.java:98   | REDUCTION
+2026-03-14 21:31:21,369 INFO [2d6627d834bd_impresario_viola#2]        ReductionStep.java:105  | Stems free length median value: 70 pixels, 3.5 interlines
+2026-03-14 21:31:21,373 INFO [2d6627d834bd_impresario_viola#2]       StepMonitoring.java:98   | CUE_BEAMS
+2026-03-14 21:31:21,374 INFO [2d6627d834bd_impresario_viola#2]         CueBeamsStep.java:81   | Step CUE_BEAMS is skipped because small heads switch is off
+2026-03-14 21:31:21,374 INFO [2d6627d834bd_impresario_viola#2]       StepMonitoring.java:98   | TEXTS
+2026-03-14 21:31:22,333 INFO [2d6627d834bd_impresario_viola#2]       StepMonitoring.java:98   | MEASURES
+2026-03-14 21:31:22,334 INFO [2d6627d834bd_impresario_viola#2]                 Page.java:307  | 45 raw measures: [4 in system#1, 4 in system#2, 4 in system#3, 4 in system#4, 4 in system#5, 4 in system#6, 5 in system#7, 4 in system#8, 4 in system#9, 4 in system#10, 4 in system#11]
+2026-03-14 21:31:22,336 INFO [2d6627d834bd_impresario_viola#2]       StepMonitoring.java:98   | CHORDS
+2026-03-14 21:31:22,343 INFO [2d6627d834bd_impresario_viola#2]       StepMonitoring.java:98   | CURVES
+2026-03-14 21:31:23,484 INFO [2d6627d834bd_impresario_viola#2]         SlursBuilder.java:240  | Slurs: 30
+2026-03-14 21:31:23,528 INFO [2d6627d834bd_impresario_viola#2]      SegmentsBuilder.java:155  | Segments: 18
+2026-03-14 21:31:23,750 INFO [2d6627d834bd_impresario_viola#2]    RehearsalsBuilder.java:229  | RehearsalInter#6232{(0.465) staff:3 mFont:BS-91 Rehearsal enclosure:java.awt.Rectangle[x=2001,y=771,width=64,height=61]}
+2026-03-14 21:31:23,750 INFO [2d6627d834bd_impresario_viola#2]       StepMonitoring.java:98   | SYMBOLS
+2026-03-14 21:31:24,628 INFO [2d6627d834bd_impresario_viola#2]       StepMonitoring.java:98   | LINKS
+2026-03-14 21:31:24,656 INFO [2d6627d834bd_impresario_viola#2]        SymbolsLinker.java:258  | No chord linked to OctaveShiftInter#7704{(0.296) staff:3 OTTAVA ALTA} at java.awt.Point[x=1956,y=751]
+2026-03-14 21:31:24,660 INFO [2d6627d834bd_impresario_viola#2]             KeyInter.java:1189 | No effective key before AlterInter#7659{(0.800) staff:3 NATURAL pitch:-4.0}
+2026-03-14 21:31:24,660 INFO [2d6627d834bd_impresario_viola#2]             KeyInter.java:1189 | No effective key before AlterInter#7683{(0.800) staff:3 NATURAL pitch:-5.0}
+2026-03-14 21:31:24,681 INFO [2d6627d834bd_impresario_viola#2]             KeyInter.java:1189 | No effective key before AlterInter#7829{(0.800) staff:7 NATURAL pitch:1.0}
+2026-03-14 21:31:24,689 INFO [2d6627d834bd_impresario_viola#2]             KeyInter.java:1189 | No effective key before AlterInter#7955{(0.800) staff:10 NATURAL pitch:-3.0}
+2026-03-14 21:31:24,689 INFO [2d6627d834bd_impresario_viola#2]             KeyInter.java:1189 | No effective key before AlterInter#7974{(0.127) staff:10 NATURAL pitch:-3.0}
+2026-03-14 21:31:24,695 INFO [2d6627d834bd_impresario_viola#2]        SymbolsLinker.java:258  | No chord linked to OctaveShiftInter#8016{(0.197) staff:11 OTTAVA ALTA} at java.awt.Point[x=2178,y=2873]
+2026-03-14 21:31:24,700 INFO [2d6627d834bd_impresario_viola#2]       StepMonitoring.java:98   | RHYTHMS
+2026-03-14 21:31:24,701 INFO [2d6627d834bd_impresario_viola#2]           PageRhythm.java:199  | {Page#2.1} Time value reused from sheet#1
+2026-03-14 21:31:24,738 INFO [2d6627d834bd_impresario_viola#2]        MeasureRhythm.java:1044 | Measure{#34} No timeOffset for RestChordInter#7936{(0.794/0.794) staff:9 slot#9 dur:1/8}
+2026-03-14 21:31:24,739 INFO [2d6627d834bd_impresario_viola#2]          StackRhythm.java:224  | S9 MeasureStack#34 no correct rhythm
+2026-03-14 21:31:24,744 INFO [2d6627d834bd_impresario_viola#2]                Voice.java:257  | Measure{#38} Voice{#1 excess:1/8} too long
+2026-03-14 21:31:24,744 INFO [2d6627d834bd_impresario_viola#2]          StackRhythm.java:224  | S10 MeasureStack#38 no correct rhythm
+2026-03-14 21:31:24,748 INFO [2d6627d834bd_impresario_viola#2]       StepMonitoring.java:98   | PAGE
+2026-03-14 21:31:24,749 INFO [2d6627d834bd_impresario_viola#2]       SheetReduction.java:154  | Gutter. Different glyphs 2/3 DynamicsInter#7567{(0.800/0.931) DYNAMICS_P} vs DynamicsInter#7679{(0.796/0.929) DYNAMICS_P}
+2026-03-14 21:31:24,749 INFO [2d6627d834bd_impresario_viola#2]       SheetReduction.java:154  | Gutter. Different glyphs 2/3 DynamicsInter#7579{(0.788/0.926) DYNAMICS_P} vs SlurInter#6029{(0.612/0.932) SLUR_ABOVE}
+2026-03-14 21:31:24,754 INFO [2d6627d834bd_impresario_viola#2]                Voice.java:257  | Measure{#38} Voice{#1 excess:1/8} too long
+2026-03-14 21:31:24,756 INFO [2d6627d834bd_impresario_viola#2]                 Book.java:2584 | Book{2d6627d834bd_impresario_viola} storing
+2026-03-14 21:31:24,831 INFO [2d6627d834bd_impresario_viola#2]                 Book.java:2565 | Stored /book.xml
+2026-03-14 21:31:24,935 INFO [2d6627d834bd_impresario_viola#2]           DataHolder.java:348  | Stored /sheet#2/BINARY.png
+2026-03-14 21:31:25,628 INFO [2d6627d834bd_impresario_viola#2]                Sheet.java:1583 | Stored /sheet#2/sheet#2.xml
+2026-03-14 21:31:25,629 INFO [2d6627d834bd_impresario_viola#2]                 Book.java:2525 | Book stored as C:\Users\llama\OneDrive\Documents\orchestra\outputs\a767a7232057\omr_out\2d6627d834bd_impresario_viola.omr
+2026-03-14 21:31:25,646 INFO [2d6627d834bd_impresario_viola#2]            SheetStub.java:1654 | Sheet#2 disposed
+2026-03-14 21:31:25,682 INFO [2d6627d834bd_impresario_viola#2]                 Book.java:2050 | End of Stub#2
+2026-03-14 21:31:25,683 INFO [2d6627d834bd_impresario_viola]                 Book.java:2057 | End of Book{2d6627d834bd_impresario_viola}
+2026-03-14 21:31:26,190 INFO [2d6627d834bd_impresario_viola]            SheetStub.java:1000 | Loaded /sheet#1/sheet#1.xml
+2026-03-14 21:31:26,578 INFO [2d6627d834bd_impresario_viola]            SheetStub.java:1000 | Loaded /sheet#2/sheet#2.xml
+2026-03-14 21:31:27,047 INFO [2d6627d834bd_impresario_viola]      PartwiseBuilder.java:2706 | Exporting sheet(s): [#1#2]
+2026-03-14 21:31:27,214 INFO [2d6627d834bd_impresario_viola]        ScoreExporter.java:164  | Score 2d6627d834bd_impresario_viola exported to C:\Users\llama\OneDrive\Documents\orchestra\outputs\a767a7232057\omr_out\2d6627d834bd_impresario_viola.mxl
+2026-03-14 21:31:27,274 INFO [2d6627d834bd_impresario_viola]                Score.java:181  | Closing {Score 1}

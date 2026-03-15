@@ -183,6 +183,78 @@ def _run_job(job_id, upload_path, ext, export_dir):
         _set_job(job_id, status="error", error=str(exc))
 
 
+def _run_setup_job(job_id, piece_name, setup_type, parts_info, output_folder):
+    """Process each part file sequentially for the setup flow.
+
+    parts_info: list of {name: str, upload_path: str, ext: str}
+    """
+    total = len(parts_info)
+    results = []
+
+    for idx, part in enumerate(parts_info):
+        base_pct = int(idx * 100 / total)
+        end_pct  = int((idx + 1) * 100 / total)
+
+        sub_id     = uuid.uuid4().hex[:12]
+        export_dir = os.path.join(output_folder, sub_id)
+        os.makedirs(export_dir, exist_ok=True)
+
+        def prog(pct, text=None, _base=base_pct, _rng=end_pct - base_pct,
+                 _i=idx, _t=total):
+            scaled = _base + int(pct * _rng / 100)
+            update = {"progress": scaled}
+            if text:
+                update["status_text"] = f"Part {_i + 1}/{_t}: {text}"
+            _set_job(job_id, **update)
+
+        try:
+            parse_path = part["upload_path"]
+
+            if part["ext"] == "pdf":
+                omr_dir = os.path.join(export_dir, "omr_out")
+                os.makedirs(omr_dir, exist_ok=True)
+                prog(10, "Launching OMR\u2026")
+                parse_path = convert_pdf_to_mxl(
+                    part["upload_path"], omr_dir,
+                    progress_cb=lambda p, _p=prog: _p(int(p * 0.6), "Recognising score\u2026"),
+                )
+                prog(72, "Score detected\u2026")
+            else:
+                prog(25, "Reading score\u2026")
+
+            prog(75, "Parsing MusicXML\u2026")
+            score = converter.parse(parse_path)
+
+            prog(88, "Writing score\u2026")
+            xml_path = os.path.join(export_dir, "score.xml")
+            score.write("musicxml", fp=xml_path)
+
+            prog(94, "Generating MIDI\u2026")
+            midi_path = os.path.join(export_dir, f"{sub_id}.mid")
+            score.write("midi", fp=midi_path)
+
+            results.append({
+                "part_name": part["name"],
+                "mxl_url":  f"/mxl/{sub_id}",
+                "midi_url": f"/midi/{sub_id}",
+            })
+
+        except RuntimeError as exc:
+            _set_job(job_id, status="error",
+                     error=f"Part \u2018{part['name']}\u2019: {exc}")
+            return
+        except Exception as exc:
+            _set_job(job_id, status="error",
+                     error=f"Part \u2018{part['name']}\u2019: {exc}")
+            return
+
+    _set_job(job_id,
+             progress=100,
+             status="done",
+             status_text="Done!",
+             result={"piece_name": piece_name, "type": setup_type, "parts": results})
+
+
 def convert_pdf_to_mxl(pdf_path, output_dir, progress_cb=None):
     """Run Audiveris OMR on pdf_path; return path of the produced .mxl file.
     Optionally calls progress_cb(pct) with values 12–68 as output lines come in.
@@ -304,6 +376,76 @@ def allowed_file(filename):
 @app.route("/")
 def index():
     return render_template("index.html")
+
+
+@app.route("/setup")
+def setup():
+    return render_template("setup.html")
+
+
+@app.route("/setup/upload", methods=["POST"])
+def setup_upload():
+    setup_type = request.form.get("type", "solo")
+    piece_name = (request.form.get("piece_name", "Untitled").strip() or "Untitled")
+
+    if setup_type not in ("solo", "ensemble"):
+        return jsonify({"error": "Invalid type."}), 400
+
+    parts_info = []
+
+    if setup_type == "solo":
+        f = request.files.get("file")
+        if not f or not f.filename:
+            return jsonify({"error": "No file uploaded."}), 400
+        if not allowed_file(f.filename):
+            return jsonify({"error": "Unsupported file type."}), 400
+        ext         = f.filename.rsplit(".", 1)[1].lower()
+        pid         = uuid.uuid4().hex[:12]
+        safe        = secure_filename(f.filename)
+        upload_path = os.path.join(app.config["UPLOAD_FOLDER"], f"{pid}_{safe}")
+        f.save(upload_path)
+        parts_info.append({"name": piece_name, "upload_path": upload_path, "ext": ext})
+    else:
+        i = 0
+        while True:
+            f = request.files.get(f"part_file_{i}")
+            if f is None:
+                break
+            if not f.filename:
+                i += 1
+                continue
+            if not allowed_file(f.filename):
+                return jsonify({"error": f"Part {i + 1}: unsupported file type."}), 400
+            name        = (request.form.get(f"part_name_{i}", f"Part {i + 1}").strip()
+                           or f"Part {i + 1}")
+            ext         = f.filename.rsplit(".", 1)[1].lower()
+            pid         = uuid.uuid4().hex[:12]
+            safe        = secure_filename(f.filename)
+            upload_path = os.path.join(app.config["UPLOAD_FOLDER"], f"{pid}_{safe}")
+            f.save(upload_path)
+            parts_info.append({"name": name, "upload_path": upload_path, "ext": ext})
+            i += 1
+
+    if not parts_info:
+        return jsonify({"error": "No valid files uploaded."}), 400
+
+    job_id = uuid.uuid4().hex[:12]
+    with _jobs_lock:
+        _jobs[job_id] = {
+            "progress": 0,
+            "status": "processing",
+            "status_text": "Starting\u2026",
+            "error": None,
+            "result": None,
+        }
+
+    t = threading.Thread(
+        target=_run_setup_job,
+        args=(job_id, piece_name, setup_type, parts_info, app.config["OUTPUT_FOLDER"]),
+        daemon=True,
+    )
+    t.start()
+    return jsonify({"job_id": job_id})
 
 
 @app.route("/check")

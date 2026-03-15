@@ -96,35 +96,12 @@
         <!-- dep badge -->
         <div id="pdf-badge" class="dep-badge dep-checking" style="position:absolute;top:1rem;right:1rem;z-index:3;">&#128203; PDF: checking&hellip;</div>
 
-        <!-- drop zone -->
-        <form id="upload-form">
-          <label class="ms-dropzone" id="ms-dropzone-label">
-            <div class="ms-ring"></div>
-            <div class="ms-ring"></div>
-            <div class="ms-ring"></div>
-            <input type="file" id="file-input" accept=".pdf,.mxl,.xml,.musicxml" />
-            <div class="ms-dz-inner">
-              <div class="ms-dz-icon">🎼</div>
-              <p class="ms-dz-heading">Drop your file here</p>
-              <p class="ms-dz-sub">or click to browse</p>
-              <div class="ms-formats">
-                <span class="ms-fmt">PDF</span>
-                <span class="ms-fmt">MXL</span>
-                <span class="ms-fmt">XML</span>
-                <span class="ms-fmt">MusicXML</span>
-              </div>
-            </div>
-          </label>
-
-          <!-- bottom bar -->
-          <div class="ms-bottom">
-            <div class="ms-filename-row">
-              <span class="ms-filename-dot" id="ms-fn-dot"></span>
-              <span id="file-name">No file selected</span>
-            </div>
-            <button type="submit" id="upload-btn" class="ms-btn" disabled>Convert to Audio</button>
-          </div>
-        </form>
+        <!-- CTA -->
+        <div class="ms-cta-wrap">
+          <div class="ms-cta-tagline">Drop a score. Hear it play.</div>
+          <button type="button" id="upload-btn" class="ms-btn ms-btn-cta">Start Your Song &rarr;</button>
+          <p class="ms-cta-hint">PDF, MXL, XML, MusicXML supported</p>
+        </div>
       </div><!-- /ms-right -->
 
     </div><!-- /ms-layout -->
@@ -146,6 +123,7 @@
       </div>
       <button id="sidebar-toggle" class="hamburger-btn" title="Controls">&#9776;</button>
     </header>
+    <div id="part-tabs" class="part-tabs hidden"></div>
 
     <div class="player-body">
       <div id="sheet-container">
@@ -192,7 +170,7 @@
     let metroSeq        = null;   // live Tone.Sequence for mid-song toggle
     let osmd            = null;
     let osmdReady       = false;
-    let baseBpm         = 120;
+    let globalBaseBpm   = 120;
     let midiData        = null;      // cached Midi object
     let cursorPositions = [];        // [{time, measureIdx}]
     let currentBeat     = 0;
@@ -201,10 +179,17 @@
     let showLabels      = false;
     let labelEls        = [];
     let highlightEl     = null;
+    let currentParts      = [];      // [{part_name, mxl_url, midi_url}] from setup flow
+    let activePartIdx     = 0;
+    let allMidiData       = [];      // cached Midi objects for all parts
+    let allCursorPositions = [];     // cursor positions per part index (cached)
+    let osmdCache         = [];      // pre-rendered OSMD instances per part {osmd, bboxes}
+    let cursorRafId       = null;    // requestAnimationFrame handle for cursor sync
+    let rafStartScoreTime = 0;       // score-seconds at the moment rAF was (re)started
+    let rafCountinSecs    = 0;       // Transport.seconds value when rAF was (re)started
+    let rafTempoRatio     = 1;
 
     /* ── element refs ───────────────────────────────────── */
-    const fileInput       = document.getElementById("file-input");
-    const fileNameEl      = document.getElementById("file-name");
     const uploadBtn       = document.getElementById("upload-btn");
     const statusDiv       = document.getElementById("status");
     const openPlayerBtn   = document.getElementById("open-player-btn");
@@ -223,6 +208,7 @@
     const metroBtn        = document.getElementById("metro-btn");
     const countinBtn      = document.getElementById("countin-btn");
     const labelsBtn       = document.getElementById("labels-btn");
+    const partTabsEl      = document.getElementById("part-tabs");
 
     /* ── helpers ────────────────────────────────────────── */
     function showStatus(msg, isError = false) {
@@ -257,31 +243,12 @@
     }
     function isActive(btn) { return btn.classList.contains("active"); }
     function toggleActive(btn) { btn.classList.toggle("active"); }
-    function effectiveBpm() { return baseBpm * (parseInt(tempoSlider.value) / 100); }
+    function effectiveBpm() { return globalBaseBpm * (parseInt(tempoSlider.value) / 100); }
 
-    /* ── upload ─────────────────────────────────────────── */
-    fileInput.addEventListener("change", () => {
-      if (fileInput.files.length) {
-        fileNameEl.textContent = fileInput.files[0].name;
-        document.getElementById("ms-fn-dot").classList.add("visible");
-        uploadBtn.disabled = false;
-      }
-    });
+    /* ── upload button: navigate to setup ───────────────── */
+    uploadBtn.addEventListener("click", () => { window.location.href = "/setup"; });
 
-    /* drag-over highlight on the drop zone */
-    const dzLabel = document.getElementById("ms-dropzone-label");
-    if (dzLabel) {
-      dzLabel.addEventListener("dragover",  e => { e.preventDefault(); dzLabel.classList.add("ms-active"); });
-      dzLabel.addEventListener("dragleave", ()  => dzLabel.classList.remove("ms-active"));
-      dzLabel.addEventListener("drop",      e  => {
-        e.preventDefault();
-        dzLabel.classList.remove("ms-active");
-        if (e.dataTransfer.files.length) {
-          fileInput.files = e.dataTransfer.files;
-          fileInput.dispatchEvent(new Event("change"));
-        }
-      });
-    }
+    /* ── drag-over / drop / form-submit removed (handled in /setup) ── */
 
     /* ── mouse tracking for .ms-right reactivity ──────────── */
     let msMouseX = 0.5, msMouseY = 0.5;
@@ -350,65 +317,6 @@
       raf = requestAnimationFrame(draw);
     })();
 
-    document.getElementById("upload-form").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      if (!fileInput.files.length) return;
-      const fd = new FormData();
-      fd.append("file", fileInput.files[0]);
-      uploadBtn.disabled = true;
-      openPlayerBtn.classList.add("hidden");
-      stopPlayback();
-      osmdReady = false;
-      measureBboxes = {};
-      showLoadingScreen();
-
-      try {
-        // 1. Start the job — server returns immediately with a job_id
-        const startRes  = await fetch("/upload", { method: "POST", body: fd });
-        const startData = await startRes.json();
-        if (!startRes.ok) {
-          hideLoadingScreen();
-          showStatus(startData.error || "Something went wrong.", true);
-          return;
-        }
-        const jobId = startData.job_id;
-
-        // 2. Poll /status/<jobId> until done or error
-        await new Promise((resolve, reject) => {
-          const iv = setInterval(async () => {
-            try {
-              const sRes  = await fetch(`/status/${jobId}`);
-              const sData = await sRes.json();
-              if (sData.progress !== undefined) updateLoadingProgress(sData.progress);
-              if (sData.status === "done") {
-                clearInterval(iv);
-                currentMidiUrl = sData.result.midi_url;
-                currentMxlUrl  = sData.result.mxl_url;
-                resolve();
-              } else if (sData.status === "error") {
-                clearInterval(iv);
-                reject(new Error(sData.error || "Conversion failed."));
-              }
-            } catch (pollErr) {
-              clearInterval(iv);
-              reject(pollErr);
-            }
-          }, 500);
-        });
-
-        // 3. Show play button on the loading screen (don't hide it)
-        trackTitle.textContent = fileInput.files[0].name.replace(/\.[^.]+$/, "");
-        document.getElementById("ls-open-btn").classList.remove("hidden");
-
-      } catch (err) {
-        hideLoadingScreen();
-        showStatus("Error: " + err.message, true);
-      } finally {
-        uploadBtn.disabled = false;
-      }
-    });
-
-    /* ── loading-screen play button ─────────────────────── */
     document.getElementById("ls-open-btn").addEventListener("click", async () => {
       hideLoadingScreen();
       goTo("screen-player");
@@ -424,7 +332,15 @@
       await initOSMD();
 
     });
-    backBtn.addEventListener("click", () => { stopPlayback(); goTo("screen-upload"); });
+    backBtn.addEventListener("click", () => {
+      stopPlayback();
+      currentParts = []; allMidiData = []; activePartIdx = 0; midiData = null;
+      allCursorPositions = []; osmdCache = [];
+      osmdReady = false; cursorPositions = [];
+      scoreWrapper.innerHTML = "";
+      renderPartTabs();
+      goTo("screen-upload");
+    });
 
     /* ── sidebar toggle ──────────────────────────────── */
     function openSidebar()  { sidebar.classList.add("open"); }
@@ -435,27 +351,96 @@
     async function initOSMD() {
       if (osmdReady) return;
       loader.classList.remove("hidden");
-      scoreWrapper.innerHTML = "";
+
+      // For ensemble, each part gets its own inner div so we can toggle visibility
+      // instead of destroying and re-rendering on tab switches.
+      let container;
+      if (currentParts.length > 0) {
+        const divId = "part-sheet-" + activePartIdx;
+        let partDiv = document.getElementById(divId);
+        if (!partDiv) {
+          partDiv = document.createElement("div");
+          partDiv.id = divId;
+          scoreWrapper.appendChild(partDiv);
+        }
+        // Show active div, keep others in layout but invisible
+        partDiv.style.cssText = "visibility:visible;position:relative;opacity:1;pointer-events:auto;";
+        scoreWrapper.querySelectorAll("[id^='part-sheet-']").forEach(d => {
+          if (d !== partDiv) {
+            d.style.cssText = "visibility:hidden;position:absolute;top:0;left:0;width:100%;pointer-events:none;opacity:0;";
+          }
+        });
+        container = partDiv;
+      } else {
+        scoreWrapper.innerHTML = "";
+        container = scoreWrapper;
+      }
+
       try {
-        osmd = new opensheetmusicdisplay.OpenSheetMusicDisplay(scoreWrapper, {
+        const o = new opensheetmusicdisplay.OpenSheetMusicDisplay(container, {
           autoResize: true,
           drawTitle: true,
           drawComposer: true,
           followCursor: false,
         });
-        await osmd.load(currentMxlUrl);
-        osmd.render();
-        osmd.cursor.show();
-        osmd.cursor.reset();
-        buildMeasureBboxes();   // precompute after render
-        attachScoreClickHandler(); // click-to-jump
+        await o.load(currentMxlUrl);
+        o.render();
+        o.cursor.show();
+        o.cursor.reset();
+        osmd = o;
+        buildMeasureBboxes();
+        attachScoreClickHandler();
         osmdReady = true;
+        if (currentParts.length > 0) {
+          osmdCache[activePartIdx] = { osmd: o, bboxes: measureBboxes };
+        }
       } catch (err) {
         loader.textContent = "Could not load score: " + err.message;
         loader.style.color = "#c0392b";
         return;
       }
       loader.classList.add("hidden");
+    }
+
+    /* Pre-render all other ensemble parts into hidden divs in the background.
+       After this completes, tab switches are instant (no render blocking). */
+    async function preRenderOtherParts() {
+      if (currentParts.length <= 1) return;
+      for (let i = 0; i < currentParts.length; i++) {
+        if (osmdCache[i]) continue;  // already rendered
+        const divId  = "part-sheet-" + i;
+        let partDiv  = document.getElementById(divId);
+        if (!partDiv) {
+          partDiv = document.createElement("div");
+          partDiv.id = divId;
+          // Keep in layout (not display:none) so OSMD can measure dimensions;
+          // hide visually with visibility + opacity instead.
+          partDiv.style.cssText = "visibility:hidden;position:absolute;top:0;left:0;width:100%;pointer-events:none;opacity:0;";
+          scoreWrapper.appendChild(partDiv);
+        }
+        try {
+          const o = new opensheetmusicdisplay.OpenSheetMusicDisplay(partDiv, {
+            autoResize: false,  // avoid unnecessary re-renders while hidden
+            drawTitle: true, drawComposer: true, followCursor: false,
+          });
+          await o.load(currentParts[i].mxl_url);
+          o.render();
+          o.cursor.show();
+          o.cursor.reset();
+          // Build cursor timeline (no DOM rects needed — pure cursor walking)
+          const sPerWhole = 240 / globalBaseBpm;
+          const positions = [];
+          while (!o.cursor.iterator.EndReached) {
+            const ts = o.cursor.iterator.currentTimeStamp.RealValue;
+            const mi = o.cursor.iterator.CurrentMeasureIndex ?? 0;
+            positions.push({ time: ts * sPerWhole, measureIdx: mi });
+            o.cursor.next();
+          }
+          o.cursor.reset();
+          allCursorPositions[i] = positions;
+          osmdCache[i] = { osmd: o, bboxes: null };  // bboxes built on first show
+        } catch (_) { /* silently skip if one part fails to pre-render */ }
+      }
     }
 
     /* ── measure highlight ──────────────────────────────── */
@@ -575,11 +560,18 @@
       cleanupTone();
       await Tone.start();
 
-      if (!midiData) {
+      if (currentParts.length > 0) {
+        if (allMidiData.length !== currentParts.length) {
+          allMidiData = await Promise.all(
+            currentParts.map(p => fetch(p.midi_url).then(r => r.arrayBuffer()).then(buf => new Midi(buf)))
+          );
+        }
+        midiData = allMidiData[activePartIdx];
+      } else if (!midiData) {
         const buf = await fetch(currentMidiUrl).then(r => r.arrayBuffer());
         midiData = new Midi(buf);
       }
-      baseBpm = midiData.header.tempos[0]?.bpm ?? 120;
+      globalBaseBpm = (allMidiData[0] ?? midiData).header.tempos[0]?.bpm ?? 120;
       Tone.Transport.bpm.value = effectiveBpm();
       tempoVal.textContent = Math.round(effectiveBpm());
 
@@ -598,7 +590,7 @@
       // Rebuild cursor positions if needed
       if (!cursorPositions.length) {
         osmd.cursor.reset();
-        const secsPerWhole = 240 / baseBpm;
+        const secsPerWhole = 240 / globalBaseBpm;
         while (!osmd.cursor.iterator.EndReached) {
           const ts = osmd.cursor.iterator.currentTimeStamp.RealValue;
           const mi = osmd.cursor.iterator.CurrentMeasureIndex ?? 0;
@@ -608,7 +600,7 @@
       }
 
       const startTime = cursorPositions[beatIdx]?.time ?? 0;
-      const tempoRatio = baseBpm / effectiveBpm();
+      const tempoRatio = globalBaseBpm / effectiveBpm();
 
       // Advance OSMD cursor to beatIdx
       osmd.cursor.reset();
@@ -619,19 +611,25 @@
 
       Tone.Transport.loop = false;
 
-      // Schedule only notes that start at or after startTime
-      midiData.tracks.forEach(track => {
-        const synth = new Tone.PolySynth(Tone.Synth, {
-          oscillator: { type: waveform },
-          envelope: { attack: 0.02, decay: 0.1, sustain: 0.3, release: 0.8 },
-        }).toDestination();
-        synths.push(synth);
-        track.notes.forEach(n => {
-          if (n.time < startTime) return;  // skip past notes
-          const t = (n.time - startTime) * tempoRatio;
-          Tone.Transport.schedule(time => {
-            synth.triggerAttackRelease(n.name, n.duration * tempoRatio, time, n.velocity);
-          }, t);
+      // Schedule notes — each ensemble part uses its own BPM
+      const midiSrcsFrom = currentParts.length > 0 ? allMidiData : [midiData];
+      midiSrcsFrom.forEach(partMidi => {
+        const partBpm   = partMidi.header.tempos[0]?.bpm ?? 120;
+        const partRatio = partBpm / effectiveBpm();
+        const partStart = cursorPositions[beatIdx]?.time ?? startTime; // startTime from active part
+        partMidi.tracks.forEach(track => {
+          const synth = new Tone.PolySynth(Tone.Synth, {
+            oscillator: { type: waveform },
+            envelope: { attack: 0.02, decay: 0.1, sustain: 0.3, release: 0.8 },
+          }).toDestination();
+          synths.push(synth);
+          track.notes.forEach(n => {
+            if (n.time < partStart) return;
+            const t = (n.time - partStart) * partRatio;
+            Tone.Transport.schedule(time => {
+              synth.triggerAttackRelease(n.name, n.duration * partRatio, time, n.velocity);
+            }, t);
+          });
         });
       });
 
@@ -662,24 +660,8 @@
       }, [0], "4n");
       metroSeq.start(0);
 
-      // Schedule cursor advances from beatIdx onwards
-      const latencyOffset = (Tone.context.outputLatency || 0) + 0.02;
-      cursorPositions.slice(beatIdx).forEach(({ time, measureIdx }, i) => {
-        const t = (time - startTime) * tempoRatio + latencyOffset;
-        Tone.Transport.schedule(() => {
-          currentBeat = beatIdx + i;
-          if (i > 0) osmd.cursor.next();
-          if (measureIdx !== lastHighlightedMeasure) {
-            lastHighlightedMeasure = measureIdx;
-            highlightCurrentMeasure();
-          }
-          drawLabelsForCursor();
-          const el = osmd.cursor.cursorElement;
-          if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
-        }, t);
-      });
-
       Tone.Transport.start();
+      startCursorRaf(beatIdx, 0);
       playerPlayBtn.innerHTML = "&#9646;&#9646; Pause";
     }
 
@@ -738,12 +720,19 @@
       cleanupTone();
       await Tone.start();
 
-      // Load MIDI (cache it)
-      if (!midiData) {
+      // Load MIDI (cache all parts for ensemble, or single for solo)
+      if (currentParts.length > 0) {
+        if (allMidiData.length !== currentParts.length) {
+          allMidiData = await Promise.all(
+            currentParts.map(p => fetch(p.midi_url).then(r => r.arrayBuffer()).then(buf => new Midi(buf)))
+          );
+        }
+        midiData = allMidiData[activePartIdx];
+      } else if (!midiData) {
         const buf = await fetch(currentMidiUrl).then(r => r.arrayBuffer());
         midiData = new Midi(buf);
       }
-      baseBpm = midiData.header.tempos[0]?.bpm ?? 120;
+      globalBaseBpm = allMidiData[0]?.header.tempos[0]?.bpm ?? midiData.header.tempos[0]?.bpm ?? 120;
       Tone.Transport.bpm.value = effectiveBpm();
       tempoVal.textContent = Math.round(effectiveBpm());
 
@@ -775,7 +764,7 @@
       /* build cursor position list */
       osmd.cursor.reset();
       cursorPositions = [];
-      const secsPerWhole = 240 / baseBpm;
+      const secsPerWhole = 240 / globalBaseBpm;
       while (!osmd.cursor.iterator.EndReached) {
         const ts  = osmd.cursor.iterator.currentTimeStamp.RealValue;
         const mi  = osmd.cursor.iterator.CurrentMeasureIndex ?? 0;
@@ -784,21 +773,43 @@
       }
       osmd.cursor.reset();
       currentBeat = 0;
+      // Cache cursor positions for this part so switchPart can reuse them instantly
+      allCursorPositions[activePartIdx] = cursorPositions;
 
-      /* schedule notes */
-      midiData.tracks.forEach(track => {
-        const synth = new Tone.PolySynth(Tone.Synth, {
-          oscillator: { type: waveform },
-          envelope: { attack: 0.02, decay: 0.1, sustain: 0.3, release: 0.8 },
-        }).toDestination();
-        synths.push(synth);
-        track.notes.forEach(n => {
-          const noteTime = n.time * (baseBpm / effectiveBpm()) + countinSecs;
-          Tone.Transport.schedule(t => {
-            synth.triggerAttackRelease(n.name, n.duration * (baseBpm / effectiveBpm()), t, n.velocity);
-          }, noteTime);
+      /* schedule notes — each ensemble part uses its own BPM so tempo ratios are independent */
+      if (currentParts.length > 0) {
+        allMidiData.forEach((partMidi, partIdx) => {
+          const partBpm = partMidi.header.tempos[0]?.bpm ?? 120;
+          const partRatio = partBpm / effectiveBpm();
+          partMidi.tracks.forEach(track => {
+            const synth = new Tone.PolySynth(Tone.Synth, {
+              oscillator: { type: waveform },
+              envelope: { attack: 0.02, decay: 0.1, sustain: 0.3, release: 0.8 },
+            }).toDestination();
+            synths.push(synth);
+            track.notes.forEach(n => {
+              const noteTime = n.time * partRatio + countinSecs;
+              Tone.Transport.schedule(t => {
+                synth.triggerAttackRelease(n.name, n.duration * partRatio, t, n.velocity);
+              }, noteTime);
+            });
+          });
         });
-      });
+      } else {
+        midiData.tracks.forEach(track => {
+          const synth = new Tone.PolySynth(Tone.Synth, {
+            oscillator: { type: waveform },
+            envelope: { attack: 0.02, decay: 0.1, sustain: 0.3, release: 0.8 },
+          }).toDestination();
+          synths.push(synth);
+          track.notes.forEach(n => {
+            const noteTime = n.time * (globalBaseBpm / effectiveBpm()) + countinSecs;
+            Tone.Transport.schedule(t => {
+              synth.triggerAttackRelease(n.name, n.duration * (globalBaseBpm / effectiveBpm()), t, n.velocity);
+            }, noteTime);
+          });
+        });
+      }
 
       /* schedule metronome if on */
       if (metroOn) {
@@ -821,34 +832,73 @@
       }, [0], "4n");
       metroSeq.start(countinSecs);
 
-      /* schedule cursor advances
-         Add outputLatency so the visual update fires when audio is
-         actually heard from the speakers, not when it enters the buffer. */
-      const latencyOffset = (Tone.context.outputLatency || 0) + 0.02;
-      cursorPositions.forEach(({ time, measureIdx }, i) => {
-        const t = time * (baseBpm / effectiveBpm()) + countinSecs + latencyOffset;
-        Tone.Transport.schedule(() => {
-          currentBeat = i;
-          if (i > 0) osmd.cursor.next();
-          // Only repaint measure highlight when we enter a new measure
-          if (measureIdx !== lastHighlightedMeasure) {
-            lastHighlightedMeasure = measureIdx;
+      Tone.Transport.start();
+      // rAF must start AFTER Transport.start() so Transport.seconds is non-zero
+      startCursorRaf(0, countinSecs);
+      playerPlayBtn.innerHTML = "&#9646;&#9646; Pause";
+
+      // Kick off background pre-renders for all other ensemble parts so that
+      // tab switches are instant when the user clicks them.
+      preRenderOtherParts();
+    }
+
+    function stopCursorRaf() {
+      if (cursorRafId) { cancelAnimationFrame(cursorRafId); cursorRafId = null; }
+    }
+
+    /* Drive the OSMD cursor using Tone.Transport.seconds — the real audio clock.
+       startBeatIdx : cursor is already positioned here
+       countinSecs  : how many seconds of count-in precede score beat 0
+                      (pass Tone.Transport.seconds when restarting mid-song so the
+                       formula evaluates to the current position immediately) */
+    function startCursorRaf(startBeatIdx, countinSecs) {
+      stopCursorRaf();
+      // Safety copy — ensures rAF always uses the active part's timeline,
+      // never a stale reference shared with another part.
+      cursorPositions   = [...(allCursorPositions[activePartIdx] ?? cursorPositions)];
+      rafStartScoreTime = cursorPositions[startBeatIdx]?.time ?? 0;
+      rafCountinSecs    = countinSecs;
+      rafTempoRatio     = globalBaseBpm / effectiveBpm();
+
+      (function loop() {
+        if (Tone.Transport.state === "stopped") { stopCursorRaf(); return; }
+        if (Tone.Transport.state === "paused")  { cursorRafId = requestAnimationFrame(loop); return; }
+
+        // Transport.seconds IS the audio clock — no drift vs performance.now()
+        const scoreSec = rafStartScoreTime +
+          (Tone.Transport.seconds - rafCountinSecs) / rafTempoRatio;
+
+        // Advance cursor forward as needed (never go backward)
+        let advanced = false;
+        while (
+          currentBeat < cursorPositions.length - 1 &&
+          cursorPositions[currentBeat + 1].time <= scoreSec
+        ) {
+          currentBeat++;
+          osmd.cursor.next();
+          advanced = true;
+        }
+
+        if (advanced) {
+          const mi = cursorPositions[currentBeat]?.measureIdx;
+          if (mi !== undefined && mi !== lastHighlightedMeasure) {
+            lastHighlightedMeasure = mi;
             highlightCurrentMeasure();
           }
           drawLabelsForCursor();
           const el = osmd.cursor.cursorElement;
           if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
-        }, t);
-      });
+        }
 
-      Tone.Transport.start();
-      playerPlayBtn.innerHTML = "&#9646;&#9646; Pause";
+        cursorRafId = requestAnimationFrame(loop);
+      })();
     }
 
     function cleanupTone() {
       Tone.Transport.stop();
       Tone.Transport.cancel();
       Tone.Transport.loop = false;
+      stopCursorRaf();
       if (metroSeq)  { try { metroSeq.dispose();  } catch (_) {} metroSeq  = null; }
       synths.forEach(s => { try { s.dispose(); } catch (_) {} });
       synths = [];
@@ -910,6 +960,137 @@
       else drawLabelsForCursor();
     });
 
+    /* ── Part tabs (ensemble) ─────────────────────────── */
+    function renderPartTabs() {
+      if (!partTabsEl) return;
+      if (!currentParts.length || currentParts.length <= 1) {
+        partTabsEl.classList.add("hidden");
+        partTabsEl.innerHTML = "";
+        return;
+      }
+      partTabsEl.innerHTML = "";
+      currentParts.forEach((part, i) => {
+        const btn = document.createElement("button");
+        btn.className = "part-tab" + (i === activePartIdx ? " active" : "");
+        btn.textContent = part.part_name;
+        btn.addEventListener("click", () => switchPart(i));
+        partTabsEl.appendChild(btn);
+      });
+      partTabsEl.classList.remove("hidden");
+    }
+
+    async function switchPart(idx) {
+      if (idx === activePartIdx) return;
+
+      const transportState  = Tone.Transport.state;
+
+      // Stop only the cursor rAF — audio keeps running uninterrupted
+      stopCursorRaf();
+      clearLabels();
+      lastHighlightedMeasure = -1;
+      if (highlightEl) highlightEl.style.display = "none";
+
+      activePartIdx  = idx;
+      currentMxlUrl  = currentParts[idx].mxl_url;
+      currentMidiUrl = currentParts[idx].midi_url;
+      midiData       = allMidiData[idx] ?? null;
+      renderPartTabs();
+
+      if (osmdCache[idx]) {
+        // ── Instant swap: toggle visibility, keep all divs in layout ────────────────────────
+        scoreWrapper.querySelectorAll("[id^='part-sheet-']").forEach(d => {
+          if (d.id === "part-sheet-" + idx) {
+            d.style.cssText = "visibility:visible;position:relative;opacity:1;pointer-events:auto;";
+          } else {
+            d.style.cssText = "visibility:hidden;position:absolute;top:0;left:0;width:100%;pointer-events:none;opacity:0;";
+          }
+        });
+        osmd            = osmdCache[idx].osmd;
+        cursorPositions = allCursorPositions[idx] ?? [];
+        // Rebuild bboxes if not yet done (first show after background pre-render)
+        if (!osmdCache[idx].bboxes) {
+          buildMeasureBboxes();
+          osmdCache[idx].bboxes = measureBboxes;
+        } else {
+          measureBboxes = osmdCache[idx].bboxes;
+        }
+        osmdReady = true;
+      } else {
+        // ── First time: render (unavoidable, but preRenderOtherParts() prevents this) ──
+        osmdReady       = false;
+        cursorPositions = [];
+        await initOSMD();
+        const sPerWhole = 240 / globalBaseBpm;
+        const positions = [];
+        osmd.cursor.reset();
+        while (!osmd.cursor.iterator.EndReached) {
+          const ts = osmd.cursor.iterator.currentTimeStamp.RealValue;
+          const mi = osmd.cursor.iterator.CurrentMeasureIndex ?? 0;
+          positions.push({ time: ts * sPerWhole, measureIdx: mi });
+          osmd.cursor.next();
+        }
+        osmd.cursor.reset();
+        allCursorPositions[idx] = positions;
+        cursorPositions         = positions;
+        osmdCache[idx].bboxes   = measureBboxes;
+      }
+
+      // Wrap cursor repositioning in rAF so it doesn't block the audio thread
+      // during the visual transition. Resume rAF inside the same frame.
+      requestAnimationFrame(() => {
+        // Find closest beat using the live Transport clock (avoids drift from savedScoreTime)
+        const currentTransportSecs = Tone.Transport.seconds;
+        const effectiveScoreSec    = rafStartScoreTime + (currentTransportSecs - rafCountinSecs) / rafTempoRatio;
+        let targetBeat = 0;
+        for (let i = 0; i < cursorPositions.length - 1; i++) {
+          if (cursorPositions[i].time <= effectiveScoreSec) targetBeat = i;
+          else break;
+        }
+
+        // Reposition cursor
+        osmd.cursor.reset();
+        for (let i = 0; i < targetBeat; i++) osmd.cursor.next();
+        currentBeat            = targetBeat;
+        lastHighlightedMeasure = cursorPositions[targetBeat]?.measureIdx ?? -1;
+        highlightCurrentMeasure();
+        osmd.cursor.show();
+
+        // Resume rAF — compute rafCountinSecs backwards from the live Transport clock
+        // so the formula evaluates to exactly the right score position right now,
+        // regardless of how long the async tab-switch work took.
+        if (transportState === "started") {
+          const freshSecs      = Tone.Transport.seconds;
+          const freshScoreTime = cursorPositions[targetBeat]?.time ?? 0;
+          // Derive what rafCountinSecs must be so that:
+          //   scoreSec = freshScoreTime + (freshSecs - rafCountinSecs) / tempoRatio  == freshScoreTime
+          // => rafCountinSecs = freshSecs
+          rafStartScoreTime = freshScoreTime;
+          rafTempoRatio     = globalBaseBpm / effectiveBpm();
+          startCursorRaf(targetBeat, freshSecs);
+        }
+      });
+    }
+
+    /* ── Bootstrap from /setup flow (sessionStorage) ─── */
+    (async () => {
+      const pending = sessionStorage.getItem("melodra_setup");
+      if (!pending) return;
+      try {
+        sessionStorage.removeItem("melodra_setup");
+        const setup    = JSON.parse(pending);
+        currentParts   = setup.parts;
+        activePartIdx  = 0;
+        currentMxlUrl  = setup.parts[0].mxl_url;
+        currentMidiUrl = setup.parts[0].midi_url;
+        trackTitle.textContent = setup.piece_name;
+        renderPartTabs();
+        goTo("screen-player");
+        await new Promise(r => setTimeout(r, 80));
+        await initOSMD();
+      } catch (e) {
+        console.error("Failed to load setup data:", e);
+      }
+    })();
 
   </script>
   <script src="/static/loading.js"></script>
