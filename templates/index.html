@@ -192,6 +192,8 @@
     let rafCountinSecs    = 0;       // Transport.seconds value when rAF was (re)started
     let rafTempoRatio     = 1;
     let audioLimiter      = null;    // shared Tone.Limiter for all synths
+    let audioReverb       = null;    // shared Tone.Reverb for room ambience
+    let audioFilters      = [];     // per-synth lowpass filters
 
     /* ── element refs ───────────────────────────────────── */
     const uploadBtn       = document.getElementById("upload-btn");
@@ -666,17 +668,26 @@
       //   where transportOffset = startTime * globalBaseBpm / effectiveBpm()
       //   (converts score-seconds to transport-seconds, independent of per-part BPM)
       if (audioLimiter) { try { audioLimiter.dispose(); } catch (_) {} }
-      audioLimiter = new Tone.Limiter(-3).toDestination();
+      if (audioReverb)  { try { audioReverb.dispose();  } catch (_) {} }
+      audioFilters.forEach(f => { try { f.dispose(); } catch (_) {} });
+      audioFilters = [];
+      audioLimiter = new Tone.Limiter(-1).toDestination();
+      audioReverb  = new Tone.Reverb({ decay: 1.5, wet: 0.15, preDelay: 0.01 }).connect(audioLimiter);
+
       const transportOffset = startTime * (globalBaseBpm / effectiveBpm());
       const midiSrcsFrom = currentParts.length > 0 ? allMidiData : [midiData];
+      const isEnsemble = currentParts.length > 0;
       midiSrcsFrom.forEach(partMidi => {
         const partBpm   = partMidi.header.tempos[0]?.bpm ?? 120;
         const partRatio = partBpm / effectiveBpm();
+        const filter = new Tone.Filter({ frequency: 3500, type: "lowpass", rolloff: -12 }).connect(audioReverb);
+        audioFilters.push(filter);
         const synth = new Tone.PolySynth(Tone.Synth, {
-          maxPolyphony: 6,
+          maxPolyphony: isEnsemble ? 10 : 12,
           oscillator: { type: waveform },
-          envelope: { attack: 0.02, decay: 0.1, sustain: 0.3, release: 0.8 },
-        }).connect(audioLimiter);
+          envelope: { attack: 0.03, decay: 0.2, sustain: 0.4, release: 1.0 },
+          volume: isEnsemble ? -8 : -6,
+        }).connect(filter);
         synths.push(synth);
         partMidi.tracks.forEach(track => {
           track.notes.forEach(n => {
@@ -834,17 +845,26 @@
       allCursorPositions[activePartIdx] = cursorPositions;
 
       /* schedule notes — one synth per part (not per track) to limit Web Audio load */
+      /* Audio chain: PolySynth → LowPass Filter → Reverb → Limiter → Destination */
       if (audioLimiter) { try { audioLimiter.dispose(); } catch (_) {} }
-      audioLimiter = new Tone.Limiter(-3).toDestination();
+      if (audioReverb)  { try { audioReverb.dispose();  } catch (_) {} }
+      audioFilters.forEach(f => { try { f.dispose(); } catch (_) {} });
+      audioFilters = [];
+      audioLimiter = new Tone.Limiter(-1).toDestination();
+      audioReverb  = new Tone.Reverb({ decay: 1.5, wet: 0.15, preDelay: 0.01 }).connect(audioLimiter);
+
       if (currentParts.length > 0) {
         allMidiData.forEach((partMidi, partIdx) => {
           const partBpm = partMidi.header.tempos[0]?.bpm ?? 120;
           const partRatio = partBpm / effectiveBpm();
+          const filter = new Tone.Filter({ frequency: 3500, type: "lowpass", rolloff: -12 }).connect(audioReverb);
+          audioFilters.push(filter);
           const synth = new Tone.PolySynth(Tone.Synth, {
-            maxPolyphony: 6,
+            maxPolyphony: 10,
             oscillator: { type: waveform },
-            envelope: { attack: 0.02, decay: 0.1, sustain: 0.3, release: 0.8 },
-          }).connect(audioLimiter);
+            envelope: { attack: 0.03, decay: 0.2, sustain: 0.4, release: 1.0 },
+            volume: -8,
+          }).connect(filter);
           synths.push(synth);
           partMidi.tracks.forEach(track => {
             track.notes.forEach(n => {
@@ -857,11 +877,14 @@
         });
       } else {
         const soloRatio = globalBaseBpm / effectiveBpm();
+        const filter = new Tone.Filter({ frequency: 3500, type: "lowpass", rolloff: -12 }).connect(audioReverb);
+        audioFilters.push(filter);
         const synth = new Tone.PolySynth(Tone.Synth, {
-          maxPolyphony: 8,
+          maxPolyphony: 12,
           oscillator: { type: waveform },
-          envelope: { attack: 0.02, decay: 0.1, sustain: 0.3, release: 0.8 },
-        }).connect(audioLimiter);
+          envelope: { attack: 0.03, decay: 0.2, sustain: 0.4, release: 1.0 },
+          volume: -6,
+        }).connect(filter);
         synths.push(synth);
         midiData.tracks.forEach(track => {
           track.notes.forEach(n => {
@@ -975,7 +998,10 @@
       if (metroSeq)  { try { metroSeq.dispose();  } catch (_) {} metroSeq  = null; }
       synths.forEach(s => { try { s.dispose(); } catch (_) {} });
       synths = [];
+      audioFilters.forEach(f => { try { f.dispose(); } catch (_) {} });
+      audioFilters = [];
       if (metroSynth) { try { metroSynth.dispose(); } catch (_) {} metroSynth = null; }
+      if (audioReverb)  { try { audioReverb.dispose();  } catch (_) {} audioReverb  = null; }
       if (audioLimiter) { try { audioLimiter.dispose(); } catch (_) {} audioLimiter = null; }
     }
 
