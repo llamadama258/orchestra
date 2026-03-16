@@ -508,7 +508,7 @@ select:focus { outline: none; border-color: var(--c-primary); box-shadow: 0 0 0 
    ═══════════════════════════════════════════════════════ */
 .measure-highlight {
   position: absolute;
-  background: transparent;
+  background: rgba(0, 200, 0, 0.2);
   border: none;
   border-radius: var(--r-sm);
   pointer-events: none;

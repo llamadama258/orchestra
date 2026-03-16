@@ -162,6 +162,9 @@
   </div>
 
   <script>
+    /* ── audio context: larger buffer so heavy DOM work doesn't starve audio ── */
+    Tone.context.lookAhead = 0.5;
+
     /* ── state ─────────────────────────────────────────── */
     let currentMidiUrl  = null;
     let currentMxlUrl   = null;
@@ -188,6 +191,7 @@
     let rafStartScoreTime = 0;       // score-seconds at the moment rAF was (re)started
     let rafCountinSecs    = 0;       // Transport.seconds value when rAF was (re)started
     let rafTempoRatio     = 1;
+    let audioLimiter      = null;    // shared Tone.Limiter for all synths
 
     /* ── element refs ───────────────────────────────────── */
     const uploadBtn       = document.getElementById("upload-btn");
@@ -364,11 +368,9 @@
           scoreWrapper.appendChild(partDiv);
         }
         // Show active div, keep others in layout but invisible
-        partDiv.style.cssText = "visibility:visible;position:relative;opacity:1;pointer-events:auto;";
+        partDiv.style.cssText = VISIBLE_PART_CSS;
         scoreWrapper.querySelectorAll("[id^='part-sheet-']").forEach(d => {
-          if (d !== partDiv) {
-            d.style.cssText = "visibility:hidden;position:absolute;top:0;left:0;width:100%;pointer-events:none;opacity:0;";
-          }
+          if (d !== partDiv) d.style.cssText = HIDDEN_PART_CSS;
         });
         container = partDiv;
       } else {
@@ -389,6 +391,8 @@
         o.cursor.reset();
         osmd = o;
         buildMeasureBboxes();
+        // Hide cursor after all cursor-walking is done (show/reset/buildBboxes re-show it)
+        if (o.cursor.cursorElement) o.cursor.cursorElement.style.display = "none";
         attachScoreClickHandler();
         osmdReady = true;
         if (currentParts.length > 0) {
@@ -403,31 +407,41 @@
     }
 
     /* Pre-render all other ensemble parts into hidden divs in the background.
-       After this completes, tab switches are instant (no render blocking). */
+       After this completes, tab switches are instant (no render blocking).
+       Uses delays between parts so heavy SVG/DOM work doesn't starve the audio thread. */
+    const HIDDEN_PART_CSS = "visibility:hidden;position:absolute;top:0;left:0;width:100%;pointer-events:none;opacity:0;contain:content;";
+    const VISIBLE_PART_CSS = "visibility:visible;position:relative;opacity:1;pointer-events:auto;contain:content;";
+
     async function preRenderOtherParts() {
       if (currentParts.length <= 1) return;
+      // Let playback stabilise before starting heavy rendering work
+      await new Promise(r => setTimeout(r, 1200));
       for (let i = 0; i < currentParts.length; i++) {
         if (osmdCache[i]) continue;  // already rendered
+        // Yield between parts so audio thread can breathe
+        await new Promise(r => setTimeout(r, 300));
+        if (Tone.Transport.state === "stopped") return;
         const divId  = "part-sheet-" + i;
         let partDiv  = document.getElementById(divId);
         if (!partDiv) {
           partDiv = document.createElement("div");
           partDiv.id = divId;
-          // Keep in layout (not display:none) so OSMD can measure dimensions;
-          // hide visually with visibility + opacity instead.
-          partDiv.style.cssText = "visibility:hidden;position:absolute;top:0;left:0;width:100%;pointer-events:none;opacity:0;";
+          partDiv.style.cssText = HIDDEN_PART_CSS;
           scoreWrapper.appendChild(partDiv);
         }
         try {
           const o = new opensheetmusicdisplay.OpenSheetMusicDisplay(partDiv, {
-            autoResize: false,  // avoid unnecessary re-renders while hidden
+            autoResize: false,
             drawTitle: true, drawComposer: true, followCursor: false,
           });
           await o.load(currentParts[i].mxl_url);
+          await new Promise(r => setTimeout(r, 150));
+          if (Tone.Transport.state === "stopped") return;
           o.render();
           o.cursor.show();
+          if (o.cursor.cursorElement) o.cursor.cursorElement.style.display = "none";
           o.cursor.reset();
-          // Build cursor timeline (no DOM rects needed — pure cursor walking)
+          // Build cursor timeline — pure iterator walking, no DOM rects
           const sPerWhole = 240 / globalBaseBpm;
           const positions = [];
           while (!o.cursor.iterator.EndReached) {
@@ -438,7 +452,13 @@
           }
           o.cursor.reset();
           allCursorPositions[i] = positions;
-          osmdCache[i] = { osmd: o, bboxes: null };  // bboxes built on first show
+          // Build bboxes async — yields every 15 beats so audio thread can breathe
+          await new Promise(r => setTimeout(r, 200));
+          if (Tone.Transport.state === "stopped") return;
+          const bboxes = await buildMeasureBboxesAsync(o);
+          osmdCache[i] = { osmd: o, bboxes };
+          await new Promise(r => setTimeout(r, 150));
+          if (Tone.Transport.state === "stopped") return;
         } catch (_) { /* silently skip if one part fails to pre-render */ }
       }
     }
@@ -454,31 +474,11 @@
       return highlightEl;
     }
 
-    function buildMeasureBboxes() {
-      measureBboxes = {};
-      osmd.cursor.reset();
-      const wrapRect = scoreWrapper.getBoundingClientRect();
-      // First pass: collect all cursor rects per measure index
-      const raw = {}; // mi -> [{left, top, right, bottom}]
-      while (!osmd.cursor.iterator.EndReached) {
-        const mi = osmd.cursor.iterator.CurrentMeasureIndex ?? 0;
-        const c  = osmd.cursor.cursorElement;
-        if (c) {
-          const r = c.getBoundingClientRect();
-          const entry = {
-            left:   r.left   - wrapRect.left,
-            top:    r.top    - wrapRect.top,
-            right:  r.right  - wrapRect.left,
-            bottom: r.bottom - wrapRect.top,
-          };
-          if (!raw[mi]) raw[mi] = [];
-          raw[mi].push(entry);
-        }
-        osmd.cursor.next();
-      }
-      osmd.cursor.reset();
-
-      // Second pass: compute bbox per measure from all collected rects
+    /* Collect raw cursor rects from an OSMD instance, then compute bboxes.
+       The core logic is shared; the async wrapper yields every CHUNK_SIZE beats
+       so the audio thread can breathe during background pre-rendering. */
+    function _computeBboxesFromRaw(raw) {
+      const bboxes = {};
       const indices = Object.keys(raw).map(Number).sort((a, b) => a - b);
       indices.forEach((mi, idx) => {
         const rects  = raw[mi];
@@ -487,19 +487,67 @@
         const bottom = Math.max(...rects.map(r => r.bottom));
         const lastRight = Math.max(...rects.map(r => r.right));
 
-        // Use first cursor position of NEXT measure on same row as right edge (most accurate)
         let right = lastRight + 10;
         const nextMi = indices[idx + 1];
         if (nextMi !== undefined && raw[nextMi].length) {
           const nextFirst = raw[nextMi][0];
-          // Only use next measure's left if it's on roughly the same row
           if (Math.abs(nextFirst.top - top) < 20) {
             right = nextFirst.left - 2;
           }
         }
-
-        measureBboxes[mi] = { left: left - 6, top: top - 4, width: right - left + 6, height: bottom - top + 8 };
+        bboxes[mi] = { left: left - 6, top: top - 4, width: right - left + 6, height: bottom - top + 8 };
       });
+      return bboxes;
+    }
+
+    function buildMeasureBboxes() {
+      const targetOsmd = osmd;
+      targetOsmd.cursor.reset();
+      const wrapRect = scoreWrapper.getBoundingClientRect();
+      const raw = {};
+      while (!targetOsmd.cursor.iterator.EndReached) {
+        const mi = targetOsmd.cursor.iterator.CurrentMeasureIndex ?? 0;
+        const c  = targetOsmd.cursor.cursorElement;
+        if (c) {
+          const r = c.getBoundingClientRect();
+          if (!raw[mi]) raw[mi] = [];
+          raw[mi].push({
+            left:   r.left   - wrapRect.left,
+            top:    r.top    - wrapRect.top,
+            right:  r.right  - wrapRect.left,
+            bottom: r.bottom - wrapRect.top,
+          });
+        }
+        targetOsmd.cursor.next();
+      }
+      targetOsmd.cursor.reset();
+      measureBboxes = _computeBboxesFromRaw(raw);
+    }
+
+    /* Async version: yields to the event loop every 15 beats so audio doesn't starve */
+    async function buildMeasureBboxesAsync(targetOsmd) {
+      targetOsmd.cursor.reset();
+      const wrapRect = scoreWrapper.getBoundingClientRect();
+      const raw = {};
+      let count = 0;
+      while (!targetOsmd.cursor.iterator.EndReached) {
+        const mi = targetOsmd.cursor.iterator.CurrentMeasureIndex ?? 0;
+        const c  = targetOsmd.cursor.cursorElement;
+        if (c) {
+          const r = c.getBoundingClientRect();
+          if (!raw[mi]) raw[mi] = [];
+          raw[mi].push({
+            left:   r.left   - wrapRect.left,
+            top:    r.top    - wrapRect.top,
+            right:  r.right  - wrapRect.left,
+            bottom: r.bottom - wrapRect.top,
+          });
+        }
+        targetOsmd.cursor.next();
+        if (++count % 15 === 0) await new Promise(r => setTimeout(r, 0));
+      }
+      targetOsmd.cursor.reset();
+      return _computeBboxesFromRaw(raw);
     }
 
     function highlightCurrentMeasure() {
@@ -605,27 +653,35 @@
       // Advance OSMD cursor to beatIdx
       osmd.cursor.reset();
       for (let i = 0; i < beatIdx; i++) osmd.cursor.next();
+      if (osmd.cursor.cursorElement) osmd.cursor.cursorElement.style.display = "none";
       currentBeat = beatIdx;
       lastHighlightedMeasure = cursorPositions[beatIdx]?.measureIdx ?? -1;
       highlightCurrentMeasure();
 
       Tone.Transport.loop = false;
 
-      // Schedule notes — each ensemble part uses its own BPM
+      // Schedule notes — same math as startPlayback but offset by startTime.
+      // Transport time 0 = score time startTime.
+      // For each part: transportTime = n.time * partRatio - transportOffset
+      //   where transportOffset = startTime * globalBaseBpm / effectiveBpm()
+      //   (converts score-seconds to transport-seconds, independent of per-part BPM)
+      if (audioLimiter) { try { audioLimiter.dispose(); } catch (_) {} }
+      audioLimiter = new Tone.Limiter(-3).toDestination();
+      const transportOffset = startTime * (globalBaseBpm / effectiveBpm());
       const midiSrcsFrom = currentParts.length > 0 ? allMidiData : [midiData];
       midiSrcsFrom.forEach(partMidi => {
         const partBpm   = partMidi.header.tempos[0]?.bpm ?? 120;
         const partRatio = partBpm / effectiveBpm();
-        const partStart = cursorPositions[beatIdx]?.time ?? startTime; // startTime from active part
+        const synth = new Tone.PolySynth(Tone.Synth, {
+          maxPolyphony: 6,
+          oscillator: { type: waveform },
+          envelope: { attack: 0.02, decay: 0.1, sustain: 0.3, release: 0.8 },
+        }).connect(audioLimiter);
+        synths.push(synth);
         partMidi.tracks.forEach(track => {
-          const synth = new Tone.PolySynth(Tone.Synth, {
-            oscillator: { type: waveform },
-            envelope: { attack: 0.02, decay: 0.1, sustain: 0.3, release: 0.8 },
-          }).toDestination();
-          synths.push(synth);
           track.notes.forEach(n => {
-            if (n.time < partStart) return;
-            const t = (n.time - partStart) * partRatio;
+            const t = n.time * partRatio - transportOffset;
+            if (t < 0) return;   // note is before the jump point
             Tone.Transport.schedule(time => {
               synth.triggerAttackRelease(n.name, n.duration * partRatio, time, n.velocity);
             }, t);
@@ -772,21 +828,25 @@
         osmd.cursor.next();
       }
       osmd.cursor.reset();
+      if (osmd.cursor.cursorElement) osmd.cursor.cursorElement.style.display = "none";
       currentBeat = 0;
       // Cache cursor positions for this part so switchPart can reuse them instantly
       allCursorPositions[activePartIdx] = cursorPositions;
 
-      /* schedule notes — each ensemble part uses its own BPM so tempo ratios are independent */
+      /* schedule notes — one synth per part (not per track) to limit Web Audio load */
+      if (audioLimiter) { try { audioLimiter.dispose(); } catch (_) {} }
+      audioLimiter = new Tone.Limiter(-3).toDestination();
       if (currentParts.length > 0) {
         allMidiData.forEach((partMidi, partIdx) => {
           const partBpm = partMidi.header.tempos[0]?.bpm ?? 120;
           const partRatio = partBpm / effectiveBpm();
+          const synth = new Tone.PolySynth(Tone.Synth, {
+            maxPolyphony: 6,
+            oscillator: { type: waveform },
+            envelope: { attack: 0.02, decay: 0.1, sustain: 0.3, release: 0.8 },
+          }).connect(audioLimiter);
+          synths.push(synth);
           partMidi.tracks.forEach(track => {
-            const synth = new Tone.PolySynth(Tone.Synth, {
-              oscillator: { type: waveform },
-              envelope: { attack: 0.02, decay: 0.1, sustain: 0.3, release: 0.8 },
-            }).toDestination();
-            synths.push(synth);
             track.notes.forEach(n => {
               const noteTime = n.time * partRatio + countinSecs;
               Tone.Transport.schedule(t => {
@@ -796,16 +856,18 @@
           });
         });
       } else {
+        const soloRatio = globalBaseBpm / effectiveBpm();
+        const synth = new Tone.PolySynth(Tone.Synth, {
+          maxPolyphony: 8,
+          oscillator: { type: waveform },
+          envelope: { attack: 0.02, decay: 0.1, sustain: 0.3, release: 0.8 },
+        }).connect(audioLimiter);
+        synths.push(synth);
         midiData.tracks.forEach(track => {
-          const synth = new Tone.PolySynth(Tone.Synth, {
-            oscillator: { type: waveform },
-            envelope: { attack: 0.02, decay: 0.1, sustain: 0.3, release: 0.8 },
-          }).toDestination();
-          synths.push(synth);
           track.notes.forEach(n => {
-            const noteTime = n.time * (globalBaseBpm / effectiveBpm()) + countinSecs;
+            const noteTime = n.time * soloRatio + countinSecs;
             Tone.Transport.schedule(t => {
-              synth.triggerAttackRelease(n.name, n.duration * (globalBaseBpm / effectiveBpm()), t, n.velocity);
+              synth.triggerAttackRelease(n.name, n.duration * soloRatio, t, n.velocity);
             }, noteTime);
           });
         });
@@ -878,16 +940,27 @@
           osmd.cursor.next();
           advanced = true;
         }
+        // OSMD cursor.next() re-shows the cursor element; keep it hidden
+        if (advanced && osmd.cursor.cursorElement) osmd.cursor.cursorElement.style.display = "none";
 
         if (advanced) {
           const mi = cursorPositions[currentBeat]?.measureIdx;
-          if (mi !== undefined && mi !== lastHighlightedMeasure) {
+          const measureChanged = mi !== undefined && mi !== lastHighlightedMeasure;
+          if (measureChanged) {
             lastHighlightedMeasure = mi;
             highlightCurrentMeasure();
           }
           drawLabelsForCursor();
-          const el = osmd.cursor.cursorElement;
-          if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+          // Only scroll when measure changes AND cursor is off-screen
+          if (measureChanged) {
+            const el = osmd.cursor.cursorElement;
+            if (el) {
+              const r = el.getBoundingClientRect();
+              if (r.bottom < 0 || r.top > window.innerHeight) {
+                el.scrollIntoView({ behavior: "smooth", block: "center" });
+              }
+            }
+          }
         }
 
         cursorRafId = requestAnimationFrame(loop);
@@ -903,6 +976,7 @@
       synths.forEach(s => { try { s.dispose(); } catch (_) {} });
       synths = [];
       if (metroSynth) { try { metroSynth.dispose(); } catch (_) {} metroSynth = null; }
+      if (audioLimiter) { try { audioLimiter.dispose(); } catch (_) {} audioLimiter = null; }
     }
 
     function stopPlayback() {
@@ -910,7 +984,10 @@
       clearLabels();
       lastHighlightedMeasure = -1;
       if (highlightEl) highlightEl.style.display = "none";
-      if (osmdReady && osmd) osmd.cursor.reset();
+      if (osmdReady && osmd) {
+        osmd.cursor.reset();
+        if (osmd.cursor.cursorElement) osmd.cursor.cursorElement.style.display = "none";
+      }
       playerPlayBtn.innerHTML = "&#9654; Play";
     }
 
@@ -982,7 +1059,8 @@
     async function switchPart(idx) {
       if (idx === activePartIdx) return;
 
-      const transportState  = Tone.Transport.state;
+      const transportState = Tone.Transport.state;
+      const prevIdx        = activePartIdx;
 
       // Stop only the cursor rAF — audio keeps running uninterrupted
       stopCursorRaf();
@@ -994,20 +1072,23 @@
       currentMxlUrl  = currentParts[idx].mxl_url;
       currentMidiUrl = currentParts[idx].midi_url;
       midiData       = allMidiData[idx] ?? null;
-      renderPartTabs();
+
+      // Update tab active states without full DOM rebuild
+      if (partTabsEl) {
+        const tabs = partTabsEl.children;
+        for (let t = 0; t < tabs.length; t++) {
+          tabs[t].classList.toggle("active", t === idx);
+        }
+      }
+
+      // Capture score time ONCE from the still-valid rAF state, before any DOM work
+      const snapTransportSecs = Tone.Transport.seconds;
+      const snapScoreSec      = rafStartScoreTime + (snapTransportSecs - rafCountinSecs) / rafTempoRatio;
 
       if (osmdCache[idx]) {
-        // ── Instant swap: toggle visibility, keep all divs in layout ────────────────────────
-        scoreWrapper.querySelectorAll("[id^='part-sheet-']").forEach(d => {
-          if (d.id === "part-sheet-" + idx) {
-            d.style.cssText = "visibility:visible;position:relative;opacity:1;pointer-events:auto;";
-          } else {
-            d.style.cssText = "visibility:hidden;position:absolute;top:0;left:0;width:100%;pointer-events:none;opacity:0;";
-          }
-        });
+        // ── Swap state (cheap) before any DOM work ──────────────────────
         osmd            = osmdCache[idx].osmd;
         cursorPositions = allCursorPositions[idx] ?? [];
-        // Rebuild bboxes if not yet done (first show after background pre-render)
         if (!osmdCache[idx].bboxes) {
           buildMeasureBboxes();
           osmdCache[idx].bboxes = measureBboxes;
@@ -1015,6 +1096,12 @@
           measureBboxes = osmdCache[idx].bboxes;
         }
         osmdReady = true;
+
+        // Toggle divs — only the two affected ones, with CSS containment
+        const hideDiv = document.getElementById("part-sheet-" + prevIdx);
+        const showDiv = document.getElementById("part-sheet-" + idx);
+        if (hideDiv) hideDiv.style.cssText = HIDDEN_PART_CSS;
+        if (showDiv) showDiv.style.cssText = VISIBLE_PART_CSS;
       } else {
         // ── First time: render (unavoidable, but preRenderOtherParts() prevents this) ──
         osmdReady       = false;
@@ -1035,38 +1122,39 @@
         osmdCache[idx].bboxes   = measureBboxes;
       }
 
-      // Wrap cursor repositioning in rAF so it doesn't block the audio thread
-      // during the visual transition. Resume rAF inside the same frame.
+      // Yield a frame so the browser can paint the new div and refill the audio buffer
+      // before we start the expensive cursor walk
+      await new Promise(r => requestAnimationFrame(r));
+
+      // Second frame: reposition cursor + restart rAF
       requestAnimationFrame(() => {
-        // Find closest beat using the live Transport clock (avoids drift from savedScoreTime)
-        const currentTransportSecs = Tone.Transport.seconds;
-        const effectiveScoreSec    = rafStartScoreTime + (currentTransportSecs - rafCountinSecs) / rafTempoRatio;
-        let targetBeat = 0;
-        for (let i = 0; i < cursorPositions.length - 1; i++) {
-          if (cursorPositions[i].time <= effectiveScoreSec) targetBeat = i;
-          else break;
+        const nowSecs   = Tone.Transport.seconds;
+        const tempoR    = globalBaseBpm / effectiveBpm();
+        const scoreSec  = snapScoreSec + (nowSecs - snapTransportSecs) / tempoR;
+
+        // Binary search for targetBeat
+        let lo = 0, hi = cursorPositions.length - 1, targetBeat = 0;
+        while (lo <= hi) {
+          const mid = (lo + hi) >>> 1;
+          if (cursorPositions[mid].time <= scoreSec) { targetBeat = mid; lo = mid + 1; }
+          else hi = mid - 1;
         }
 
-        // Reposition cursor
+        // Hide cursor during walk (and keep hidden — yellow measure fill is the indicator)
+        const cursorEl = osmd.cursor.cursorElement;
+        if (cursorEl) cursorEl.style.display = "none";
         osmd.cursor.reset();
         for (let i = 0; i < targetBeat; i++) osmd.cursor.next();
+
         currentBeat            = targetBeat;
         lastHighlightedMeasure = cursorPositions[targetBeat]?.measureIdx ?? -1;
         highlightCurrentMeasure();
-        osmd.cursor.show();
 
-        // Resume rAF — compute rafCountinSecs backwards from the live Transport clock
-        // so the formula evaluates to exactly the right score position right now,
-        // regardless of how long the async tab-switch work took.
+        // Resume rAF with a corrected countin computed from a single clock read
         if (transportState === "started") {
-          const freshSecs      = Tone.Transport.seconds;
-          const freshScoreTime = cursorPositions[targetBeat]?.time ?? 0;
-          // Derive what rafCountinSecs must be so that:
-          //   scoreSec = freshScoreTime + (freshSecs - rafCountinSecs) / tempoRatio  == freshScoreTime
-          // => rafCountinSecs = freshSecs
-          rafStartScoreTime = freshScoreTime;
-          rafTempoRatio     = globalBaseBpm / effectiveBpm();
-          startCursorRaf(targetBeat, freshSecs);
+          const targetBeatTime   = cursorPositions[targetBeat]?.time ?? 0;
+          const correctedCountin = nowSecs - (scoreSec - targetBeatTime) * tempoR;
+          startCursorRaf(targetBeat, correctedCountin);
         }
       });
     }
