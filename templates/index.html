@@ -198,9 +198,12 @@
     let audioFilters      = [];     // per-synth lowpass filters
 
     /* ── Soundfont sampler infrastructure ─────────────────── */
-    const SOUNDFONT_BASE = "https://gleitz.github.io/midi-js-soundfonts/MusyngKite/";
+    const SOUNDFONT_BASE = "https://gleitz.github.io/midi-js-soundfonts/FluidR3_GM/";
+    /* Load every chromatic note so Tone.Sampler doesn't pitch-shift —
+       this is the key to making each instrument sound authentic. */
     const SAMPLER_NOTES_TO_LOAD = [];
-    ["C", "Eb", "Gb", "A"].forEach(n => {
+    const ALL_NOTES = ["C","Db","D","Eb","E","F","Gb","G","Ab","A","Bb","B"];
+    ALL_NOTES.forEach(n => {
       for (let oct = 1; oct <= 7; oct++) SAMPLER_NOTES_TO_LOAD.push(n + oct);
     });
 
@@ -250,7 +253,7 @@
           onload: () => resolve(sampler),
           onerror: () => resolve(sampler),
         });
-        setTimeout(() => resolve(sampler), 15000);
+        setTimeout(() => resolve(sampler), 30000);
       });
     }
 
@@ -764,11 +767,9 @@
           const partRatio = partBpm / effectiveBpm();
           const sampler   = partSamplers[partIdx];
           if (!sampler) return;
-          const filter = new Tone.Filter({ frequency: 8000, type: "lowpass", rolloff: -12 }).connect(audioReverb);
-          audioFilters.push(filter);
           sampler.disconnect();
           sampler.volume.value = 0;
-          sampler.connect(filter);
+          sampler.connect(audioReverb);
           partMidi.tracks.forEach(track => {
             track.notes.forEach(n => {
               const t = n.time * partRatio - transportOffset;
@@ -782,11 +783,9 @@
       } else {
         const soloRatio = globalBaseBpm / effectiveBpm();
         if (soloSampler) {
-          const filter = new Tone.Filter({ frequency: 8000, type: "lowpass", rolloff: -12 }).connect(audioReverb);
-          audioFilters.push(filter);
           soloSampler.disconnect();
           soloSampler.volume.value = 0;
-          soloSampler.connect(filter);
+          soloSampler.connect(audioReverb);
           midiData.tracks.forEach(track => {
             track.notes.forEach(n => {
               const t = n.time * soloRatio - transportOffset;
@@ -962,11 +961,9 @@
           const partRatio = partBpm / effectiveBpm();
           const sampler   = partSamplers[partIdx];
           if (!sampler) return;
-          const filter = new Tone.Filter({ frequency: 8000, type: "lowpass", rolloff: -12 }).connect(audioReverb);
-          audioFilters.push(filter);
           sampler.disconnect();
           sampler.volume.value = 0;
-          sampler.connect(filter);
+          sampler.connect(audioReverb);
           partMidi.tracks.forEach(track => {
             track.notes.forEach(n => {
               const noteTime = n.time * partRatio + countinSecs;
@@ -979,11 +976,9 @@
       } else {
         const soloRatio = globalBaseBpm / effectiveBpm();
         if (soloSampler) {
-          const filter = new Tone.Filter({ frequency: 8000, type: "lowpass", rolloff: -12 }).connect(audioReverb);
-          audioFilters.push(filter);
           soloSampler.disconnect();
           soloSampler.volume.value = 0;
-          soloSampler.connect(filter);
+          soloSampler.connect(audioReverb);
           midiData.tracks.forEach(track => {
             track.notes.forEach(n => {
               const noteTime = n.time * soloRatio + countinSecs;
@@ -1135,6 +1130,29 @@
       }
     });
     playerStopBtn.addEventListener("click", stopPlayback);
+
+    /* ── instrument selector ───────────────────────────── */
+    instrumentSel.addEventListener("change", async () => {
+      const sfName = instrumentSel.value;
+      // Always rebuild the solo sampler with the newly chosen instrument
+      if (soloSampler) { try { soloSampler.dispose(); } catch (_) {} }
+      soloSampler = await createSamplerPromise(sfName);
+      soloSamplerInstrument = sfName;
+
+      // If we're in ensemble mode, also update the sampler for the active tab
+      if (currentParts.length > 0) {
+        const idx = Array.from(partTabsEl.querySelectorAll("button")).findIndex(b => b.classList.contains("active"));
+        if (idx >= 0) {
+          if (partSamplers[idx]) { try { partSamplers[idx].dispose(); } catch (_) {} }
+          partSamplers[idx] = await createSamplerPromise(sfName);
+        }
+      }
+
+      // If currently playing, restart from current position with the new instrument
+      if (Tone.Transport.state !== "stopped") {
+        startPlaybackFrom(currentBeat);
+      }
+    });
 
     /* ── tempo slider ───────────────────────────────────── */
     tempoSlider.addEventListener("input", () => {
