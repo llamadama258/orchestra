@@ -14,6 +14,7 @@
   <script src="/static/opensheetmusicdisplay.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/tone@14/build/Tone.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tonejs/midi@2/build/Midi.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lamejs@1.2.1/lame.min.js"></script>
 </head>
 <body>
 
@@ -121,6 +122,7 @@
         <button id="player-play-btn" class="tp-btn play">&#9654; Play</button>
         <button id="player-stop-btn" class="tp-btn stop">&#9632; Stop</button>
       </div>
+      <button id="fullscreen-btn" class="hamburger-btn" title="Fullscreen">&#x26F6;</button>
       <button id="sidebar-toggle" class="hamburger-btn" title="Controls">&#9776;</button>
     </header>
     <div id="part-tabs" class="part-tabs hidden"></div>
@@ -129,6 +131,12 @@
       <div id="sheet-container">
         <div id="loader" class="loader hidden">Loading score&hellip;</div>
         <div id="score-wrapper"></div>
+        <div id="zoom-controls" class="zoom-controls">
+          <button id="zoom-out-btn" class="zoom-btn" title="Zoom out">&minus;</button>
+          <span id="zoom-level">100%</span>
+          <button id="zoom-in-btn" class="zoom-btn" title="Zoom in">+</button>
+        </div>
+        <button id="fullscreen-exit-btn" class="fullscreen-exit-btn">Exit Fullscreen</button>
       </div>
 
       <!-- ─── Sidebar (pushes score left) ─── -->
@@ -148,11 +156,30 @@
             <option value="trumpet">Trumpet</option>
           </select>
         </div>
+        <div id="mixer-section" class="sidebar-section hidden">
+          <span class="tb-label">Volume Mixer</span>
+          <div class="mixer-row">
+            <span class="mixer-label">Master</span>
+            <input type="range" id="master-volume" class="mixer-slider" min="-40" max="6" value="0" />
+            <span id="master-vol-val" class="mixer-val">0 dB</span>
+          </div>
+          <div id="part-mixers"></div>
+        </div>
         <div class="sidebar-section">
           <div class="tb-toggles">
             <button id="metro-btn"   class="toggle-btn" title="Metronome">&#9201; Metro</button>
             <button id="countin-btn" class="toggle-btn active" title="Count-in">&#9312; Count-in</button>
             <button id="labels-btn"  class="toggle-btn" title="Note labels">&#119070; Labels</button>
+            <button id="darkmode-btn" class="toggle-btn" title="Dark mode">&#127769; Dark Mode</button>
+          </div>
+        </div>
+        <div class="sidebar-section">
+          <button id="export-btn" class="sm-btn" title="Export as MP3">&#11015; Export MP3</button>
+          <div id="export-progress" class="hidden">
+            <div class="export-progress-bar">
+              <div id="export-progress-fill" class="export-progress-fill"></div>
+            </div>
+            <span id="export-status" class="export-status">Rendering...</span>
           </div>
         </div>
         <div id="notes-panel" class="sidebar-section hidden">
@@ -180,6 +207,8 @@
     let cursorPositions = [];        // [{time, measureIdx}]
     let currentBeat     = 0;
     let lastHighlightedMeasure = -1;
+    let currentZoom     = 1.0;
+    let masterVolume    = 0;  // dB
     let measureBboxes   = {};        // measureIdx -> {left,top,width,height}
     let showLabels      = false;
     let labelEls        = [];
@@ -295,6 +324,21 @@
     const countinBtn      = document.getElementById("countin-btn");
     const labelsBtn       = document.getElementById("labels-btn");
     const partTabsEl      = document.getElementById("part-tabs");
+    const zoomInBtn       = document.getElementById("zoom-in-btn");
+    const zoomOutBtn      = document.getElementById("zoom-out-btn");
+    const zoomLevelEl     = document.getElementById("zoom-level");
+    const fullscreenBtn   = document.getElementById("fullscreen-btn");
+    const fullscreenExit  = document.getElementById("fullscreen-exit-btn");
+    const screenPlayer    = document.getElementById("screen-player");
+    const darkmodeBtn     = document.getElementById("darkmode-btn");
+    const mixerSection    = document.getElementById("mixer-section");
+    const partMixersEl    = document.getElementById("part-mixers");
+    const masterVolumeSlider = document.getElementById("master-volume");
+    const masterVolVal    = document.getElementById("master-vol-val");
+    const exportBtn       = document.getElementById("export-btn");
+    const exportProgress  = document.getElementById("export-progress");
+    const exportProgressFill = document.getElementById("export-progress-fill");
+    const exportStatus    = document.getElementById("export-status");
 
     /* ── helpers ────────────────────────────────────────── */
     function showStatus(msg, isError = false) {
@@ -768,7 +812,7 @@
           const sampler   = partSamplers[partIdx];
           if (!sampler) return;
           sampler.disconnect();
-          sampler.volume.value = 0;
+          sampler.volume.value = getPartVolume(partIdx) + getMasterVolume();
           sampler.connect(audioReverb);
           partMidi.tracks.forEach(track => {
             track.notes.forEach(n => {
@@ -784,7 +828,7 @@
         const soloRatio = globalBaseBpm / effectiveBpm();
         if (soloSampler) {
           soloSampler.disconnect();
-          soloSampler.volume.value = 0;
+          soloSampler.volume.value = getMasterVolume();
           soloSampler.connect(audioReverb);
           midiData.tracks.forEach(track => {
             track.notes.forEach(n => {
@@ -962,7 +1006,7 @@
           const sampler   = partSamplers[partIdx];
           if (!sampler) return;
           sampler.disconnect();
-          sampler.volume.value = 0;
+          sampler.volume.value = getPartVolume(partIdx) + getMasterVolume();
           sampler.connect(audioReverb);
           partMidi.tracks.forEach(track => {
             track.notes.forEach(n => {
@@ -977,7 +1021,7 @@
         const soloRatio = globalBaseBpm / effectiveBpm();
         if (soloSampler) {
           soloSampler.disconnect();
-          soloSampler.volume.value = 0;
+          soloSampler.volume.value = getMasterVolume();
           soloSampler.connect(audioReverb);
           midiData.tracks.forEach(track => {
             track.notes.forEach(n => {
@@ -1184,6 +1228,223 @@
       else drawLabelsForCursor();
     });
 
+    /* ── Dark Mode ─────────────────────────────────────── */
+    if (localStorage.getItem("melodra_dark") === "true") {
+      document.body.classList.add("dark");
+      darkmodeBtn.classList.add("active");
+    }
+    darkmodeBtn.addEventListener("click", () => {
+      toggleActive(darkmodeBtn);
+      document.body.classList.toggle("dark");
+      localStorage.setItem("melodra_dark", document.body.classList.contains("dark"));
+    });
+
+    /* ── Zoom Controls ─────────────────────────────────── */
+    function applyZoom(newZoom) {
+      currentZoom = Math.max(0.5, Math.min(2.0, Math.round(newZoom * 10) / 10));
+      zoomLevelEl.textContent = Math.round(currentZoom * 100) + "%";
+      if (!osmd || !osmdReady) return;
+      osmd.zoom = currentZoom;
+      osmd.render();
+      buildMeasureBboxes();
+      if (currentParts.length > 0 && osmdCache[activePartIdx]) {
+        osmdCache[activePartIdx].bboxes = measureBboxes;
+      }
+      // Re-hide OSMD cursor (render() resets it)
+      if (osmd.cursor && osmd.cursor.cursorElement) osmd.cursor.cursorElement.style.display = "none";
+    }
+    zoomInBtn.addEventListener("click",  () => applyZoom(currentZoom + 0.1));
+    zoomOutBtn.addEventListener("click", () => applyZoom(currentZoom - 0.1));
+
+    /* ── Fullscreen Mode ──────────────────────────────── */
+    function enterFullscreen() {
+      if (screenPlayer.requestFullscreen) screenPlayer.requestFullscreen();
+      else if (screenPlayer.webkitRequestFullscreen) screenPlayer.webkitRequestFullscreen();
+      screenPlayer.classList.add("fullscreen-active");
+    }
+    function exitFullscreen() {
+      if (document.fullscreenElement || document.webkitFullscreenElement) {
+        if (document.exitFullscreen) document.exitFullscreen();
+        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+      }
+      screenPlayer.classList.remove("fullscreen-active");
+    }
+    fullscreenBtn.addEventListener("click", () => {
+      if (document.fullscreenElement) exitFullscreen();
+      else enterFullscreen();
+    });
+    fullscreenExit.addEventListener("click", exitFullscreen);
+    document.addEventListener("fullscreenchange", () => {
+      if (!document.fullscreenElement) screenPlayer.classList.remove("fullscreen-active");
+    });
+
+    /* ── Volume Mixer ─────────────────────────────────── */
+    function getPartVolume(partIdx) {
+      const slider = partMixersEl.querySelector(`input[data-part="${partIdx}"]`);
+      return slider ? parseInt(slider.value) : 0;
+    }
+    function getMasterVolume() { return masterVolume; }
+
+    function buildMixer() {
+      if (currentParts.length <= 1) {
+        mixerSection.classList.add("hidden");
+        return;
+      }
+      partMixersEl.innerHTML = "";
+      currentParts.forEach((part, i) => {
+        const row = document.createElement("div");
+        row.className = "mixer-row";
+        row.innerHTML = `<span class="mixer-label">${part.part_name}</span>` +
+          `<input type="range" class="mixer-slider" min="-40" max="6" value="0" data-part="${i}" />` +
+          `<span class="mixer-val">0 dB</span>`;
+        const slider = row.querySelector("input");
+        const valSpan = row.querySelector(".mixer-val");
+        slider.addEventListener("input", () => {
+          const db = parseInt(slider.value);
+          valSpan.textContent = db + " dB";
+          if (partSamplers[i]) partSamplers[i].volume.value = db + masterVolume;
+        });
+        partMixersEl.appendChild(row);
+      });
+      mixerSection.classList.remove("hidden");
+    }
+    masterVolumeSlider.addEventListener("input", () => {
+      masterVolume = parseInt(masterVolumeSlider.value);
+      masterVolVal.textContent = masterVolume + " dB";
+      partMixersEl.querySelectorAll("input[data-part]").forEach(slider => {
+        const i = parseInt(slider.dataset.part);
+        const partDb = parseInt(slider.value);
+        if (partSamplers[i]) partSamplers[i].volume.value = partDb + masterVolume;
+      });
+      if (soloSampler) soloSampler.volume.value = masterVolume;
+    });
+
+    /* ── Export Audio as MP3 ──────────────────────────── */
+    function floatTo16Bit(floatArray) {
+      const int16 = new Int16Array(floatArray.length);
+      for (let i = 0; i < floatArray.length; i++) {
+        const s = Math.max(-1, Math.min(1, floatArray[i]));
+        int16[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
+      }
+      return int16;
+    }
+
+    exportBtn.addEventListener("click", async () => {
+      if (!currentMidiUrl && currentParts.length === 0) return;
+      exportBtn.disabled = true;
+      exportProgress.classList.remove("hidden");
+      exportStatus.textContent = "Loading MIDI data...";
+      exportProgressFill.style.width = "5%";
+
+      try {
+        // Ensure MIDI data
+        if (currentParts.length > 0) {
+          if (allMidiData.length !== currentParts.length) {
+            allMidiData = await Promise.all(
+              currentParts.map(p => fetch(p.midi_url).then(r => r.arrayBuffer()).then(buf => new Midi(buf)))
+            );
+          }
+        } else if (!midiData) {
+          const buf = await fetch(currentMidiUrl).then(r => r.arrayBuffer());
+          midiData = new Midi(buf);
+        }
+
+        const bpm = effectiveBpm();
+        const midiSources = currentParts.length > 0 ? allMidiData : [midiData];
+
+        // Calculate total duration
+        let maxTime = 0;
+        midiSources.forEach(m => {
+          const r = (m.header.tempos[0]?.bpm ?? 120) / bpm;
+          m.tracks.forEach(t => {
+            t.notes.forEach(n => {
+              const end = (n.time + n.duration) * r;
+              if (end > maxTime) maxTime = end;
+            });
+          });
+        });
+        const duration = maxTime + 2;
+
+        exportStatus.textContent = "Rendering audio offline...";
+        exportProgressFill.style.width = "15%";
+
+        // Offline render (uses PolySynth since Samplers can't load URLs in offline context)
+        const buffer = await Tone.Offline(({ transport }) => {
+          const limiter = new Tone.Limiter(0).toDestination();
+          const reverb  = new Tone.Reverb({ decay: 1.5, wet: 0.15, preDelay: 0.01 }).connect(limiter);
+
+          midiSources.forEach(partMidi => {
+            const partBpm = partMidi.header.tempos[0]?.bpm ?? 120;
+            const r = partBpm / bpm;
+            const synth = new Tone.PolySynth(Tone.Synth, {
+              maxPolyphony: 16,
+              voice: Tone.Synth,
+              options: { oscillator: { type: "triangle" }, envelope: { attack: 0.03, decay: 0.2, sustain: 0.4, release: 1.0 } }
+            }).connect(reverb);
+            synth.volume.value = currentParts.length > 1 ? -6 : -3;
+            partMidi.tracks.forEach(track => {
+              track.notes.forEach(n => {
+                transport.schedule(time => {
+                  synth.triggerAttackRelease(n.name, n.duration * r, time, n.velocity);
+                }, n.time * r);
+              });
+            });
+          });
+
+          transport.bpm.value = bpm;
+          transport.start();
+        }, duration);
+
+        exportStatus.textContent = "Encoding MP3...";
+        exportProgressFill.style.width = "60%";
+
+        // Encode to MP3
+        const leftData  = buffer.getChannelData(0);
+        const rightData = buffer.numberOfChannels > 1 ? buffer.getChannelData(1) : leftData;
+        const sampleRate = buffer.sampleRate;
+        const mp3encoder = new lamejs.Mp3Encoder(2, sampleRate, 192);
+        const mp3Data = [];
+        const blockSize = 1152;
+        const leftInt16  = floatTo16Bit(leftData);
+        const rightInt16 = floatTo16Bit(rightData);
+
+        for (let i = 0; i < leftInt16.length; i += blockSize) {
+          const left  = leftInt16.subarray(i, i + blockSize);
+          const right = rightInt16.subarray(i, i + blockSize);
+          const buf = mp3encoder.encodeBuffer(left, right);
+          if (buf.length > 0) mp3Data.push(buf);
+          const pct = 60 + (i / leftInt16.length) * 35;
+          exportProgressFill.style.width = pct + "%";
+        }
+        const endBuf = mp3encoder.flush();
+        if (endBuf.length > 0) mp3Data.push(endBuf);
+
+        exportProgressFill.style.width = "100%";
+        exportStatus.textContent = "Download starting...";
+
+        // Trigger download
+        const blob = new Blob(mp3Data, { type: "audio/mp3" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = (trackTitle.textContent || "melodra-export") + ".mp3";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        setTimeout(() => {
+          exportProgress.classList.add("hidden");
+          exportBtn.disabled = false;
+          exportProgressFill.style.width = "0%";
+        }, 2000);
+      } catch (err) {
+        console.error("Export failed:", err);
+        exportStatus.textContent = "Export failed: " + err.message;
+        exportBtn.disabled = false;
+      }
+    });
+
     /* ── Part tabs (ensemble) ─────────────────────────── */
     function renderPartTabs() {
       if (!partTabsEl) return;
@@ -1201,6 +1462,7 @@
         partTabsEl.appendChild(btn);
       });
       partTabsEl.classList.remove("hidden");
+      buildMixer();
     }
 
     async function switchPart(idx) {

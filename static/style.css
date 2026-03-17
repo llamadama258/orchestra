@@ -23,6 +23,38 @@
   --sidebar-w:  272px;
 }
 
+/* ═══════════════════════════════════════════════════════
+   Dark Mode Override
+   ═══════════════════════════════════════════════════════ */
+body.dark {
+  --c-primary:       #5EA0FF;
+  --c-primary-dark:  #4A8CE6;
+  --c-primary-tonal: #1A2A40;
+  --c-on-primary:    #FFFFFF;
+  --c-bg:            #121212;
+  --c-surface:       #1E1E1E;
+  --c-surface-var:   #2A2A2A;
+  --c-border:        #333333;
+  --c-text-hi:       #E0E0E0;
+  --c-text-med:      #B0B0B0;
+  --c-text-lo:       #888888;
+  --c-text-disabled: #555555;
+  --shadow-1: 0 1px 3px rgba(0,0,0,.3), 0 1px 2px rgba(0,0,0,.4);
+  --shadow-2: 0 3px 6px rgba(0,0,0,.35), 0 2px 4px rgba(0,0,0,.3);
+  --shadow-4: 0 6px 12px rgba(0,0,0,.35), 0 3px 6px rgba(0,0,0,.25);
+}
+/* Keep sheet music on a light "paper" background in dark mode */
+body.dark #score-wrapper { background: #FAFAFA; }
+body.dark #score-wrapper .measure-highlight { background: rgba(0, 200, 0, 0.25); }
+body.dark .status.error { background: #3a1c1c; border-color: #6b3333; color: #ef9a9a; }
+body.dark .dep-checking { background: #2a2a2a; color: #888; }
+body.dark .dep-ok       { background: #0d3320; color: #6ee7a8; }
+body.dark .dep-warn     { background: #3a2d0e; color: #fbbf24; }
+body.dark .pill          { background: #1a2a40; color: #8bb8ff; border-color: #2a3a50; }
+body.dark .open-player:hover:not(:disabled) { border-color: #3a5a80; }
+body.dark .toggle-btn:hover:not(:disabled) { border-color: #3a5a80; }
+body.dark select { background: var(--c-surface-var); }
+
 /* ── Reset & Base ───────────────────────────────────── */
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 html { font-size: 16px; }
@@ -594,6 +626,143 @@ select:focus { outline: none; border-color: var(--c-primary); box-shadow: 0 0 0 
 .blob-1 { width: 400px; height: 400px; background: var(--c-primary); top: -100px; left: -80px; }
 .blob-2 { width: 320px; height: 320px; background: var(--c-primary); bottom: -80px; right: -60px; }
 .blob-3 { width: 240px; height: 240px; background: #818cf8; top: 35%; right: 8%; }
+
+/* ═══════════════════════════════════════════════════════
+   Zoom Controls
+   ═══════════════════════════════════════════════════════ */
+.zoom-controls {
+  position: sticky;
+  bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-lg);
+  padding: 0.35rem 0.75rem;
+  box-shadow: var(--shadow-2);
+  z-index: 20;
+  width: fit-content;
+  margin: 0 auto;
+}
+.zoom-btn {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: var(--c-surface-var);
+  border: 1px solid var(--c-border);
+  color: var(--c-text-hi);
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  padding: 0;
+  letter-spacing: 0;
+  text-transform: none;
+}
+.zoom-btn:hover:not(:disabled) {
+  background: var(--c-primary-tonal);
+  border-color: var(--c-primary);
+  color: var(--c-primary);
+  transform: none;
+  box-shadow: none;
+}
+#zoom-level {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--c-text-med);
+  min-width: 3rem;
+  text-align: center;
+}
+
+/* ═══════════════════════════════════════════════════════
+   Fullscreen Mode
+   ═══════════════════════════════════════════════════════ */
+#screen-player.fullscreen-active .player-header,
+#screen-player.fullscreen-active .part-tabs,
+#screen-player.fullscreen-active .sidebar {
+  display: none !important;
+}
+#screen-player.fullscreen-active .player-body {
+  height: 100vh;
+}
+#screen-player.fullscreen-active #sheet-container {
+  height: 100vh;
+}
+.fullscreen-exit-btn {
+  display: none;
+  position: fixed;
+  top: 1rem; right: 1rem;
+  z-index: 9999;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-md);
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+  letter-spacing: 0;
+  text-transform: none;
+  cursor: pointer;
+  box-shadow: var(--shadow-2);
+  color: var(--c-text-hi);
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+.fullscreen-exit-btn:hover { opacity: 1; transform: none; box-shadow: var(--shadow-2); }
+#screen-player.fullscreen-active .fullscreen-exit-btn { display: block; }
+
+/* ═══════════════════════════════════════════════════════
+   Volume Mixer
+   ═══════════════════════════════════════════════════════ */
+.mixer-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0;
+}
+.mixer-label {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--c-text-med);
+  min-width: 4.5rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.mixer-slider {
+  flex: 1;
+  accent-color: var(--c-primary);
+  cursor: pointer;
+}
+.mixer-val {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--c-text-lo);
+  min-width: 3rem;
+  text-align: right;
+}
+
+/* ═══════════════════════════════════════════════════════
+   Export MP3
+   ═══════════════════════════════════════════════════════ */
+.export-progress-bar {
+  width: 100%;
+  height: 4px;
+  background: var(--c-surface-var);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: 0.5rem;
+}
+.export-progress-fill {
+  height: 100%;
+  background: var(--c-primary);
+  width: 0%;
+  transition: width 0.3s;
+  border-radius: 2px;
+}
+.export-status {
+  font-size: 0.75rem;
+  color: var(--c-text-lo);
+  margin-top: 0.25rem;
+  display: block;
+}
 
 /* ═══════════════════════════════════════════════════════
    Responsive Breakpoints
