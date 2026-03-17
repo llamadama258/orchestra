@@ -140,10 +140,12 @@
         <div class="sidebar-section">
           <span class="tb-label">Sound</span>
           <select id="instrument-select">
-            <option value="sine">Piano (Sine)</option>
-            <option value="triangle">Mellow (Triangle)</option>
-            <option value="sawtooth">Strings (Saw)</option>
-            <option value="square">Organ (Square)</option>
+            <option value="acoustic_grand_piano">Piano</option>
+            <option value="violin">Violin</option>
+            <option value="cello">Cello</option>
+            <option value="flute">Flute</option>
+            <option value="clarinet">Clarinet</option>
+            <option value="trumpet">Trumpet</option>
           </select>
         </div>
         <div class="sidebar-section">
@@ -194,6 +196,81 @@
     let audioLimiter      = null;    // shared Tone.Limiter for all synths
     let audioReverb       = null;    // shared Tone.Reverb for room ambience
     let audioFilters      = [];     // per-synth lowpass filters
+
+    /* ── Soundfont sampler infrastructure ─────────────────── */
+    const SOUNDFONT_BASE = "https://gleitz.github.io/midi-js-soundfonts/MusyngKite/";
+    const SAMPLER_NOTES_TO_LOAD = [];
+    ["C", "Eb", "Gb", "A"].forEach(n => {
+      for (let oct = 1; oct <= 7; oct++) SAMPLER_NOTES_TO_LOAD.push(n + oct);
+    });
+
+    const INSTRUMENT_NAME_MAP = {
+      "violin": "violin", "violin 1": "violin", "violin 2": "violin",
+      "violin i": "violin", "violin ii": "violin", "vln": "violin",
+      "viola": "viola", "vla": "viola",
+      "cello": "cello", "violoncello": "cello", "vcl": "cello", "vc": "cello",
+      "bass": "contrabass", "double bass": "contrabass", "contrabass": "contrabass",
+      "cb": "contrabass", "db": "contrabass",
+      "flute": "flute", "fl": "flute",
+      "oboe": "oboe", "ob": "oboe",
+      "clarinet": "clarinet", "cl": "clarinet",
+      "bassoon": "bassoon", "bsn": "bassoon",
+      "trumpet": "trumpet", "tpt": "trumpet", "tr": "trumpet",
+      "horn": "french_horn", "french horn": "french_horn",
+      "trombone": "trombone", "tbn": "trombone",
+      "tuba": "tuba",
+      "piano": "acoustic_grand_piano",
+      "acoustic_grand_piano": "acoustic_grand_piano",
+      "violin": "violin", "cello": "cello", "flute": "flute",
+      "clarinet": "clarinet", "trumpet": "trumpet",
+    };
+
+    let partSamplers = [];          // one Sampler per ensemble part (persists across play/stop)
+    let soloSampler  = null;        // single Sampler for solo mode
+    let soloSamplerInstrument = null;
+    let samplersLoadingPromise = null;
+
+    function guessInstrument(partName) {
+      const lower = (partName || "").toLowerCase().trim();
+      if (INSTRUMENT_NAME_MAP[lower]) return INSTRUMENT_NAME_MAP[lower];
+      for (const [key, val] of Object.entries(INSTRUMENT_NAME_MAP)) {
+        if (lower.includes(key)) return val;
+      }
+      return "acoustic_grand_piano";
+    }
+
+    function createSamplerPromise(sfName) {
+      const urls = {};
+      SAMPLER_NOTES_TO_LOAD.forEach(note => { urls[note] = note + ".mp3"; });
+      return new Promise(resolve => {
+        const sampler = new Tone.Sampler({
+          urls,
+          baseUrl: SOUNDFONT_BASE + sfName + "-mp3/",
+          release: 1.5,
+          onload: () => resolve(sampler),
+          onerror: () => resolve(sampler),
+        });
+        setTimeout(() => resolve(sampler), 15000);
+      });
+    }
+
+    async function ensurePartSamplersLoaded() {
+      if (currentParts.length > 0) {
+        for (let i = 0; i < currentParts.length; i++) {
+          if (!partSamplers[i]) {
+            const sfName = guessInstrument(currentParts[i].part_name);
+            partSamplers[i] = await createSamplerPromise(sfName);
+          }
+        }
+      } else {
+        const sfName = instrumentSel.value;
+        if (!soloSampler || soloSamplerInstrument !== sfName) {
+          if (soloSampler) { try { soloSampler.dispose(); } catch (_) {} }
+          soloSampler = await createSamplerPromise(sfName);
+          soloSamplerInstrument = sfName;
+        }
+      }
+    }
 
     /* ── element refs ───────────────────────────────────── */
     const uploadBtn       = document.getElementById("upload-btn");
@@ -340,6 +417,12 @@
     });
     backBtn.addEventListener("click", () => {
       stopPlayback();
+      // Dispose cached samplers (they hold audio buffers)
+      partSamplers.forEach(s => { try { s.dispose(); } catch (_) {} });
+      partSamplers = [];
+      if (soloSampler) { try { soloSampler.dispose(); } catch (_) {} }
+      soloSampler = null; soloSamplerInstrument = null;
+      samplersLoadingPromise = null;
       currentParts = []; allMidiData = []; activePartIdx = 0; midiData = null;
       allCursorPositions = []; osmdCache = [];
       osmdReady = false; cursorPositions = [];
@@ -625,7 +708,6 @@
       Tone.Transport.bpm.value = effectiveBpm();
       tempoVal.textContent = Math.round(effectiveBpm());
 
-      const waveform    = instrumentSel.value;
       const metroOn     = isActive(metroBtn);
       const beatDur     = 60 / effectiveBpm();
 
@@ -663,42 +745,59 @@
       Tone.Transport.loop = false;
 
       // Schedule notes — same math as startPlayback but offset by startTime.
-      // Transport time 0 = score time startTime.
-      // For each part: transportTime = n.time * partRatio - transportOffset
-      //   where transportOffset = startTime * globalBaseBpm / effectiveBpm()
-      //   (converts score-seconds to transport-seconds, independent of per-part BPM)
       if (audioLimiter) { try { audioLimiter.dispose(); } catch (_) {} }
       if (audioReverb)  { try { audioReverb.dispose();  } catch (_) {} }
       audioFilters.forEach(f => { try { f.dispose(); } catch (_) {} });
       audioFilters = [];
-      audioLimiter = new Tone.Limiter(-1).toDestination();
+      audioLimiter = new Tone.Limiter(0).toDestination();
       audioReverb  = new Tone.Reverb({ decay: 1.5, wet: 0.15, preDelay: 0.01 }).connect(audioLimiter);
 
+      // Ensure sample-based instruments are loaded
+      await ensurePartSamplersLoaded();
+
       const transportOffset = startTime * (globalBaseBpm / effectiveBpm());
-      const midiSrcsFrom = currentParts.length > 0 ? allMidiData : [midiData];
       const isEnsemble = currentParts.length > 0;
-      midiSrcsFrom.forEach(partMidi => {
-        const partBpm   = partMidi.header.tempos[0]?.bpm ?? 120;
-        const partRatio = partBpm / effectiveBpm();
-        const filter = new Tone.Filter({ frequency: 3500, type: "lowpass", rolloff: -12 }).connect(audioReverb);
-        audioFilters.push(filter);
-        const synth = new Tone.PolySynth(Tone.Synth, {
-          maxPolyphony: isEnsemble ? 10 : 12,
-          oscillator: { type: waveform },
-          envelope: { attack: 0.03, decay: 0.2, sustain: 0.4, release: 1.0 },
-          volume: isEnsemble ? -8 : -6,
-        }).connect(filter);
-        synths.push(synth);
-        partMidi.tracks.forEach(track => {
-          track.notes.forEach(n => {
-            const t = n.time * partRatio - transportOffset;
-            if (t < 0) return;   // note is before the jump point
-            Tone.Transport.schedule(time => {
-              synth.triggerAttackRelease(n.name, n.duration * partRatio, time, n.velocity);
-            }, t);
+
+      if (isEnsemble) {
+        allMidiData.forEach((partMidi, partIdx) => {
+          const partBpm   = partMidi.header.tempos[0]?.bpm ?? 120;
+          const partRatio = partBpm / effectiveBpm();
+          const sampler   = partSamplers[partIdx];
+          if (!sampler) return;
+          const filter = new Tone.Filter({ frequency: 8000, type: "lowpass", rolloff: -12 }).connect(audioReverb);
+          audioFilters.push(filter);
+          sampler.disconnect();
+          sampler.volume.value = 0;
+          sampler.connect(filter);
+          partMidi.tracks.forEach(track => {
+            track.notes.forEach(n => {
+              const t = n.time * partRatio - transportOffset;
+              if (t < 0) return;
+              Tone.Transport.schedule(time => {
+                sampler.triggerAttackRelease(n.name, n.duration * partRatio, time, n.velocity);
+              }, t);
+            });
           });
         });
-      });
+      } else {
+        const soloRatio = globalBaseBpm / effectiveBpm();
+        if (soloSampler) {
+          const filter = new Tone.Filter({ frequency: 8000, type: "lowpass", rolloff: -12 }).connect(audioReverb);
+          audioFilters.push(filter);
+          soloSampler.disconnect();
+          soloSampler.volume.value = 0;
+          soloSampler.connect(filter);
+          midiData.tracks.forEach(track => {
+            track.notes.forEach(n => {
+              const t = n.time * soloRatio - transportOffset;
+              if (t < 0) return;
+              Tone.Transport.schedule(time => {
+                soloSampler.triggerAttackRelease(n.name, n.duration * soloRatio, time, n.velocity);
+              }, t);
+            });
+          });
+        }
+      }
 
       /* ── metronome synth (always created for live toggle) ── */
       metroSynth = new Tone.Synth({
@@ -803,7 +902,6 @@
       Tone.Transport.bpm.value = effectiveBpm();
       tempoVal.textContent = Math.round(effectiveBpm());
 
-      const waveform    = instrumentSel.value;
       const countinOn   = isActive(countinBtn);
       const metroOn     = isActive(metroBtn);
       const countinBeats = countinOn ? 4 : 0;
@@ -844,56 +942,57 @@
       // Cache cursor positions for this part so switchPart can reuse them instantly
       allCursorPositions[activePartIdx] = cursorPositions;
 
-      /* schedule notes — one synth per part (not per track) to limit Web Audio load */
-      /* Audio chain: PolySynth → LowPass Filter → Reverb → Limiter → Destination */
+      /* schedule notes — Sampler-based (real instrument samples from soundfont CDN) */
+      /* Audio chain: Sampler → LowPass Filter → Reverb → Limiter → Destination */
       if (audioLimiter) { try { audioLimiter.dispose(); } catch (_) {} }
       if (audioReverb)  { try { audioReverb.dispose();  } catch (_) {} }
       audioFilters.forEach(f => { try { f.dispose(); } catch (_) {} });
       audioFilters = [];
-      audioLimiter = new Tone.Limiter(-1).toDestination();
+      audioLimiter = new Tone.Limiter(0).toDestination();
       audioReverb  = new Tone.Reverb({ decay: 1.5, wet: 0.15, preDelay: 0.01 }).connect(audioLimiter);
+
+      // Ensure sample-based instruments are loaded (waits for pre-load or loads now)
+      playerPlayBtn.innerHTML = "Loading instruments…";
+      if (samplersLoadingPromise) await samplersLoadingPromise;
+      await ensurePartSamplersLoaded();
 
       if (currentParts.length > 0) {
         allMidiData.forEach((partMidi, partIdx) => {
-          const partBpm = partMidi.header.tempos[0]?.bpm ?? 120;
+          const partBpm   = partMidi.header.tempos[0]?.bpm ?? 120;
           const partRatio = partBpm / effectiveBpm();
-          const filter = new Tone.Filter({ frequency: 3500, type: "lowpass", rolloff: -12 }).connect(audioReverb);
+          const sampler   = partSamplers[partIdx];
+          if (!sampler) return;
+          const filter = new Tone.Filter({ frequency: 8000, type: "lowpass", rolloff: -12 }).connect(audioReverb);
           audioFilters.push(filter);
-          const synth = new Tone.PolySynth(Tone.Synth, {
-            maxPolyphony: 10,
-            oscillator: { type: waveform },
-            envelope: { attack: 0.03, decay: 0.2, sustain: 0.4, release: 1.0 },
-            volume: -8,
-          }).connect(filter);
-          synths.push(synth);
+          sampler.disconnect();
+          sampler.volume.value = 0;
+          sampler.connect(filter);
           partMidi.tracks.forEach(track => {
             track.notes.forEach(n => {
               const noteTime = n.time * partRatio + countinSecs;
               Tone.Transport.schedule(t => {
-                synth.triggerAttackRelease(n.name, n.duration * partRatio, t, n.velocity);
+                sampler.triggerAttackRelease(n.name, n.duration * partRatio, t, n.velocity);
               }, noteTime);
             });
           });
         });
       } else {
         const soloRatio = globalBaseBpm / effectiveBpm();
-        const filter = new Tone.Filter({ frequency: 3500, type: "lowpass", rolloff: -12 }).connect(audioReverb);
-        audioFilters.push(filter);
-        const synth = new Tone.PolySynth(Tone.Synth, {
-          maxPolyphony: 12,
-          oscillator: { type: waveform },
-          envelope: { attack: 0.03, decay: 0.2, sustain: 0.4, release: 1.0 },
-          volume: -6,
-        }).connect(filter);
-        synths.push(synth);
-        midiData.tracks.forEach(track => {
-          track.notes.forEach(n => {
-            const noteTime = n.time * soloRatio + countinSecs;
-            Tone.Transport.schedule(t => {
-              synth.triggerAttackRelease(n.name, n.duration * soloRatio, t, n.velocity);
-            }, noteTime);
+        if (soloSampler) {
+          const filter = new Tone.Filter({ frequency: 8000, type: "lowpass", rolloff: -12 }).connect(audioReverb);
+          audioFilters.push(filter);
+          soloSampler.disconnect();
+          soloSampler.volume.value = 0;
+          soloSampler.connect(filter);
+          midiData.tracks.forEach(track => {
+            track.notes.forEach(n => {
+              const noteTime = n.time * soloRatio + countinSecs;
+              Tone.Transport.schedule(t => {
+                soloSampler.triggerAttackRelease(n.name, n.duration * soloRatio, t, n.velocity);
+              }, noteTime);
+            });
           });
-        });
+        }
       }
 
       /* schedule metronome if on */
@@ -996,6 +1095,10 @@
       Tone.Transport.loop = false;
       stopCursorRaf();
       if (metroSeq)  { try { metroSeq.dispose();  } catch (_) {} metroSeq  = null; }
+      // Disconnect (but keep) cached samplers — they hold pre-loaded audio buffers
+      partSamplers.forEach(s => { try { s.releaseAll(); s.disconnect(); } catch (_) {} });
+      if (soloSampler) { try { soloSampler.releaseAll(); soloSampler.disconnect(); } catch (_) {} }
+      // Dispose any leftover PolySynth fallbacks
       synths.forEach(s => { try { s.dispose(); } catch (_) {} });
       synths = [];
       audioFilters.forEach(f => { try { f.dispose(); } catch (_) {} });
@@ -1201,6 +1304,10 @@
         goTo("screen-player");
         await new Promise(r => setTimeout(r, 80));
         await initOSMD();
+        // Pre-load instrument samples in background so first Play click is instant
+        if (currentParts.length > 0) {
+          samplersLoadingPromise = ensurePartSamplersLoaded();
+        }
       } catch (e) {
         console.error("Failed to load setup data:", e);
       }
