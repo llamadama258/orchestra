@@ -1369,9 +1369,10 @@
         exportProgressFill.style.width = "15%";
 
         // Offline render (uses PolySynth since Samplers can't load URLs in offline context)
-        const buffer = await Tone.Offline(({ transport }) => {
+        const buffer = await Tone.Offline(async ({ transport }) => {
           const limiter = new Tone.Limiter(0).toDestination();
-          const reverb  = new Tone.Reverb({ decay: 1.5, wet: 0.15, preDelay: 0.01 }).connect(limiter);
+          const reverb  = new Tone.Reverb({ decay: 1.2, wet: 0.12, preDelay: 0.01 }).connect(limiter);
+          await reverb.ready;
 
           midiSources.forEach(partMidi => {
             const partBpm = partMidi.header.tempos[0]?.bpm ?? 120;
