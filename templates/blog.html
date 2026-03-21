@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blog – Melodra</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" />
+  <link rel="stylesheet" href="/static/marketing.css" />
+</head>
+<body class="marketing">
+
+  <!-- ─── Navbar ─── -->
+  <nav class="navbar">
+    <div class="container">
+      <a href="/" class="nav-logo">Melo<span>dra</span></a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="/">Home</a></li>
+        <li><a href="/about">About</a></li>
+        <li><a href="/blog" class="active">Blog</a></li>
+        <li><a href="/contact">Contact</a></li>
+        <li><a href="/studio">Studio</a></li>
+      </ul>
+      <a href="/studio" class="nav-cta">Open App</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Menu">&#9776;</button>
+    </div>
+  </nav>
+
+  <!-- ─── Blog Header ─── -->
+  <section class="blog-hero">
+    <div class="container">
+      <p class="eyebrow">Blog</p>
+      <h1>Insights for musicians &amp; educators</h1>
+      <p class="subtitle">Tips, tutorials, and stories about sheet music, practice techniques, and how technology is transforming music education.</p>
+    </div>
+  </section>
+
+  <!-- ─── Blog List ─── -->
+  <section class="section">
+    <div class="container">
+      <div class="blog-grid">
+        <div class="blog-card">
+          <div class="blog-thumb">&#127932;</div>
+          <div class="blog-card-body">
+            <div class="tag">Tutorial</div>
+            <h3><a href="/blog/getting-started-with-melodra">Getting Started with Melodra: A Complete Guide</a></h3>
+            <p class="excerpt">Learn how to upload your first score, configure parts, and use playback features to enhance your practice sessions.</p>
+            <div class="meta">March 15, 2026 &middot; 5 min read</div>
+          </div>
+        </div>
+        <div class="blog-card">
+          <div class="blog-thumb">&#127911;</div>
+          <div class="blog-card-body">
+            <div class="tag">Technology</div>
+            <h3><a href="/blog/how-omr-works">How Optical Music Recognition Works</a></h3>
+            <p class="excerpt">A deep dive into the technology behind converting scanned sheet music PDFs into playable digital scores.</p>
+            <div class="meta">March 8, 2026 &middot; 7 min read</div>
+          </div>
+        </div>
+        <div class="blog-card">
+          <div class="blog-thumb">&#127925;</div>
+          <div class="blog-card-body">
+            <div class="tag">Education</div>
+            <h3><a href="/blog/melodra-in-the-classroom">Using Melodra in the Music Classroom</a></h3>
+            <p class="excerpt">Discover how music educators are using Melodra to help students learn parts, understand arrangements, and prepare for performances.</p>
+            <div class="meta">February 28, 2026 &middot; 6 min read</div>
+          </div>
+        </div>
+        <div class="blog-card">
+          <div class="blog-thumb">&#127929;</div>
+          <div class="blog-card-body">
+            <div class="tag">Tips</div>
+            <h3><a href="/blog/practice-tips-for-orchestra">5 Practice Tips Every Orchestra Musician Should Know</a></h3>
+            <p class="excerpt">Practical advice for making your practice sessions more productive, from slow practice to section isolation.</p>
+            <div class="meta">February 20, 2026 &middot; 4 min read</div>
+          </div>
+        </div>
+        <div class="blog-card">
+          <div class="blog-thumb">&#128196;</div>
+          <div class="blog-card-body">
+            <div class="tag">Guide</div>
+            <h3><a href="/blog/musicxml-vs-pdf">MusicXML vs PDF: Which Format Should You Use?</a></h3>
+            <p class="excerpt">Understanding the differences between file formats and when to use each one for the best results in Melodra.</p>
+            <div class="meta">February 12, 2026 &middot; 5 min read</div>
+          </div>
+        </div>
+        <div class="blog-card">
+          <div class="blog-thumb">&#127930;</div>
+          <div class="blog-card-body">
+            <div class="tag">Feature</div>
+            <h3><a href="/blog/realistic-instrument-samples">Behind the Sound: Our Instrument Sample Engine</a></h3>
+            <p class="excerpt">How we built Melodra's audio engine to deliver realistic, expressive instrument playback from digital scores.</p>
+            <div class="meta">February 5, 2026 &middot; 8 min read</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Newsletter ─── -->
+  <section class="section--sm text-center" style="background: var(--m-surface);">
+    <div class="container">
+      <p class="eyebrow">Stay Updated</p>
+      <h2>Never miss a post</h2>
+      <p class="subtitle">Subscribe to get the latest articles, tutorials, and Melodra news delivered to your inbox.</p>
+      <form class="newsletter-form" onsubmit="event.preventDefault(); this.querySelector('button').textContent='Subscribed!'; this.querySelector('input').value='';">
+        <input type="email" class="newsletter-input" placeholder="Enter your email address" required />
+        <button type="submit" class="btn btn--primary">Subscribe</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- ─── Footer ─── -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="/" class="nav-logo">Melo<span>dra</span></a>
+          <p>Turn any sheet music into instant audio playback. Built for orchestra musicians and educators.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Product</h4>
+          <ul>
+            <li><a href="/studio">Studio</a></li>
+            <li><a href="/#features">Features</a></li>
+            <li><a href="/#how-it-works">How It Works</a></li>
+            <li><a href="/#faq">FAQ</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Company</h4>
+          <ul>
+            <li><a href="/about">About</a></li>
+            <li><a href="/blog">Blog</a></li>
+            <li><a href="/contact">Contact</a></li>
+        <li><a href="/studio">Studio</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Terms of Service</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2026 Melodra. All rights reserved.</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('navToggle').addEventListener('click', () => {
+      document.getElementById('navLinks').classList.toggle('open');
+    });
+  </script>
+</body>
+</html>

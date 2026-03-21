@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About – Melodra</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" />
+  <link rel="stylesheet" href="/static/marketing.css" />
+</head>
+<body class="marketing">
+
+  <!-- ─── Navbar ─── -->
+  <nav class="navbar">
+    <div class="container">
+      <a href="/" class="nav-logo">Melo<span>dra</span></a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="/">Home</a></li>
+        <li><a href="/about" class="active">About</a></li>
+        <li><a href="/blog">Blog</a></li>
+        <li><a href="/contact">Contact</a></li>
+        <li><a href="/studio">Studio</a></li>
+      </ul>
+      <a href="/studio" class="nav-cta">Open App</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Menu">&#9776;</button>
+    </div>
+  </nav>
+
+  <!-- ─── Header ─── -->
+  <section class="about-hero">
+    <div class="container">
+      <p class="eyebrow">About Melodra</p>
+      <h1>Making music accessible to everyone</h1>
+      <p class="subtitle">We believe every musician deserves to hear their music — not just read it. Melodra bridges the gap between the written score and the sound it represents.</p>
+    </div>
+  </section>
+
+  <!-- ─── About / Story ─── -->
+  <section class="section">
+    <div class="container">
+      <div class="about-content">
+        <div>
+          <p class="eyebrow">Our Story</p>
+          <h2>Born from a rehearsal room problem</h2>
+          <p style="margin-top: 20px;">Melodra was created by orchestra musicians who were tired of showing up to rehearsal without ever having heard their part. Not everyone has access to a pianist, and MIDI playback from notation software always sounded robotic and lifeless.</p>
+          <p style="margin-top: 16px;">We built Melodra to solve that. Upload any sheet music — even a scanned PDF — and hear it played back with realistic instrument samples. No setup, no subscriptions, no friction. Just music.</p>
+          <p style="margin-top: 16px;">Our commitment is to keep Melodra free and open, making music education more accessible to students, teachers, and performers everywhere.</p>
+        </div>
+        <div style="background: var(--m-surface); border: 1px solid var(--m-border); border-radius: var(--m-radius); padding: 48px; display: flex; align-items: center; justify-content: center; min-height: 320px;">
+          <div style="text-align: center;">
+            <div style="font-size: 4rem; margin-bottom: 16px;">&#127925;</div>
+            <p style="color: var(--m-text-mid); font-family: var(--m-mono); font-size: 0.9rem;">From page to performance</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Feature / Mission ─── -->
+  <section class="section text-center" style="background: var(--m-surface);">
+    <div class="container">
+      <p class="eyebrow">Our Mission</p>
+      <h2>Bridging written music and audio</h2>
+      <p class="subtitle">Melodra specifically empowers orchestra musicians and music educators by turning static scores into dynamic, listenable performances.</p>
+
+      <div class="features-grid" style="margin-top: 48px;">
+        <div class="feature-card">
+          <div class="feature-icon">&#127911;</div>
+          <h3>Hear Before You Play</h3>
+          <p>Students and performers can listen to their parts before rehearsal, building familiarity with rhythm, pitch, and phrasing.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">&#128218;</div>
+          <h3>Teaching Tool</h3>
+          <p>Educators use Melodra to demonstrate parts, compare arrangements, and help students understand how their voice fits in the ensemble.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">&#127759;</div>
+          <h3>Accessible Everywhere</h3>
+          <p>Melodra runs in any browser with no installation. Students in any setting can access it — all they need is their sheet music.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Stats ─── -->
+  <section class="section text-center">
+    <div class="container">
+      <p class="eyebrow">Impact</p>
+      <h2>Our achievements so far</h2>
+
+      <div class="stats-grid">
+        <div class="stat">
+          <div class="stat-number">10K+</div>
+          <div class="stat-label">Scores Played</div>
+        </div>
+        <div class="stat">
+          <div class="stat-number">2,500+</div>
+          <div class="stat-label">Active Users</div>
+        </div>
+        <div class="stat">
+          <div class="stat-number">30+</div>
+          <div class="stat-label">Countries Served</div>
+        </div>
+        <div class="stat">
+          <div class="stat-number">5K+</div>
+          <div class="stat-label">Pieces Uploaded</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Team ─── -->
+  <section class="section text-center" style="background: var(--m-surface);">
+    <div class="container">
+      <p class="eyebrow">Team</p>
+      <h2>The people behind Melodra</h2>
+      <p class="subtitle">A small team of musicians and engineers passionate about making music education better.</p>
+
+      <div class="team-grid">
+        <div class="team-card">
+          <div class="team-avatar">JC</div>
+          <h3>Jordan C.</h3>
+          <div class="role">Founder &amp; Lead Developer</div>
+          <p>Full-stack engineer and lifelong violinist. Built Melodra to solve a problem he faced in every rehearsal.</p>
+        </div>
+        <div class="team-card">
+          <div class="team-avatar">AT</div>
+          <h3>Alex T.</h3>
+          <div class="role">Audio Engineer</div>
+          <p>Specializes in digital audio and synthesis. Responsible for Melodra's realistic instrument sample playback engine.</p>
+        </div>
+        <div class="team-card">
+          <div class="team-avatar">MR</div>
+          <h3>Maya R.</h3>
+          <div class="role">Music Education Advisor</div>
+          <p>20 years in music education. Guides Melodra's feature development to serve real classroom needs.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Awards / Logos ─── -->
+  <section class="section text-center">
+    <div class="container">
+      <p class="eyebrow">Recognition</p>
+      <h2>Awards &amp; partnerships</h2>
+
+      <div class="logos-strip">
+        <div class="logo-placeholder">Music Ed Tech Awards</div>
+        <div class="logo-placeholder">Open Source Music</div>
+        <div class="logo-placeholder">EduTech 2026</div>
+        <div class="logo-placeholder">NAMM Partner</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── CTA ─── -->
+  <section class="section cta-section">
+    <div class="container">
+      <div class="cta-box">
+        <div class="blob blob--1"></div>
+        <div class="blob blob--2"></div>
+        <h2>Experience Melodra for yourself</h2>
+        <p class="subtitle">Upload your first score and hear it come to life. Free, no sign-up required.</p>
+        <div class="btn-group">
+          <a href="/studio" class="btn btn--primary">Try Melodra Free</a>
+          <a href="/contact" class="btn btn--outline">Contact Us</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Footer ─── -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="/" class="nav-logo">Melo<span>dra</span></a>
+          <p>Turn any sheet music into instant audio playback. Built for orchestra musicians and educators.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Product</h4>
+          <ul>
+            <li><a href="/studio">Studio</a></li>
+            <li><a href="/#features">Features</a></li>
+            <li><a href="/#how-it-works">How It Works</a></li>
+            <li><a href="/#faq">FAQ</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Company</h4>
+          <ul>
+            <li><a href="/about">About</a></li>
+            <li><a href="/blog">Blog</a></li>
+            <li><a href="/contact">Contact</a></li>
+        <li><a href="/studio">Studio</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Terms of Service</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2026 Melodra. All rights reserved.</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('navToggle').addEventListener('click', () => {
+      document.getElementById('navLinks').classList.toggle('open');
+    });
+  </script>
+</body>
+</html>

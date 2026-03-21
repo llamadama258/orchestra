@@ -6,12 +6,12 @@
 #screen-loading {
   position: fixed;
   inset: 0;
-  background: #0A0C10;
+  background: #FFFFFF;
   display: flex;
   flex-direction: column;
   z-index: 999;
   font-family: var(--font-body, "Inter", system-ui, sans-serif);
-  color: #F9FAFB;
+  color: #1A1A1A;
   overflow: hidden;
 }
 
@@ -24,7 +24,7 @@
 /* ── Slim top progress bar (2px) ─────────────────── */
 .ls-progress-line {
   height: 2px;
-  background: rgba(255,255,255,0.06);
+  background: rgba(0,0,0,0.04);
   flex-shrink: 0;
   position: relative;
   overflow: hidden;
@@ -43,8 +43,8 @@
 /* ── Skeleton header ─────────────────────────────── */
 .skel-header {
   height: 48px;
-  background: rgba(255,255,255,0.03);
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  background: #F5F5F7;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
   display: flex;
   align-items: center;
   padding: 0 1.25rem;
@@ -54,7 +54,7 @@
 
 .skel-pill {
   border-radius: 4px;
-  background: rgba(255,255,255,0.06);
+  background: rgba(0,0,0,0.06);
   animation: skel-shimmer 2s ease-in-out infinite;
 }
 .skel-pill.w40  { width: 40px;  height: 16px; }
@@ -88,14 +88,14 @@
   width: 100%;
   max-width: 720px;
   flex: 1;
-  background: rgba(255,255,255,0.02);
+  background: #FFFFFF;
   border-radius: 8px;
-  border: 1px solid rgba(255,255,255,0.04);
+  border: 1px solid rgba(0,0,0,0.06);
   padding: 2rem 2.5rem;
   display: flex;
   flex-direction: column;
   gap: 2.5rem;
-  box-shadow: inset 0 0 40px rgba(93,92,255,0.02);
+  box-shadow: 0 2px 16px rgba(0,0,0,0.04);
 }
 
 /* Staff line groups */
@@ -111,7 +111,7 @@
 }
 .skel-line {
   height: 1px;
-  background: rgba(255,255,255,0.06);
+  background: #1A1A1A;
   border-radius: 1px;
   animation: skel-shimmer 2.5s ease-in-out infinite;
 }
@@ -131,28 +131,27 @@
 .skel-note {
   width: 10px; height: 10px;
   border-radius: 50%;
-  background: rgba(93,92,255,0.15);
   animation: skel-noteAppear 2s ease-in-out infinite;
 }
-.skel-note:nth-child(1) { animation-delay: 0.2s; }
-.skel-note:nth-child(2) { animation-delay: 0.5s; }
-.skel-note:nth-child(3) { animation-delay: 0.8s; }
-.skel-note:nth-child(4) { animation-delay: 1.1s; }
-.skel-note:nth-child(5) { animation-delay: 1.4s; }
-.skel-note:nth-child(6) { animation-delay: 1.7s; }
-.skel-note:nth-child(7) { animation-delay: 0.3s; }
-.skel-note:nth-child(8) { animation-delay: 0.9s; }
+.skel-note:nth-child(1) { background: #5D5CFF; animation-delay: 0.2s; }
+.skel-note:nth-child(2) { background: #7C3AED; animation-delay: 0.5s; }
+.skel-note:nth-child(3) { background: #3B82F6; animation-delay: 0.8s; }
+.skel-note:nth-child(4) { background: #ec4899; animation-delay: 1.1s; }
+.skel-note:nth-child(5) { background: #f59e0b; animation-delay: 1.4s; }
+.skel-note:nth-child(6) { background: #10b981; animation-delay: 1.7s; }
+.skel-note:nth-child(7) { background: #ef4444; animation-delay: 0.3s; }
+.skel-note:nth-child(8) { background: #8b5cf6; animation-delay: 0.9s; }
 
 @keyframes skel-noteAppear {
   0%, 100% { opacity: 0.3; transform: scale(0.8); }
-  50%      { opacity: 1; transform: scale(1); background: rgba(93,92,255,0.35); }
+  50%      { opacity: 1; transform: scale(1.2); }
 }
 
 /* Sidebar skeleton */
 .skel-sidebar {
   width: 260px;
-  background: rgba(255,255,255,0.02);
-  border-left: 1px solid rgba(255,255,255,0.06);
+  background: #F5F5F7;
+  border-left: 1px solid rgba(0,0,0,0.06);
   padding: 1.25rem;
   display: flex;
   flex-direction: column;
@@ -172,7 +171,7 @@
 .skel-sb-line {
   height: 32px;
   border-radius: 6px;
-  background: rgba(255,255,255,0.04);
+  background: rgba(0,0,0,0.04);
   animation: skel-shimmer 2s ease-in-out infinite;
 }
 .skel-sb-line:nth-child(2) { animation-delay: 0.3s; }
@@ -200,7 +199,7 @@
   font-variant-numeric: tabular-nums;
   transition: color 0.3s ease;
 }
-.ls-pct-num.ls-done { color: #6ee7b7; }
+.ls-pct-num.ls-done { color: #16a34a; }
 
 .ls-status {
   font-family: var(--font-mono, monospace);
@@ -208,7 +207,7 @@
   font-weight: 500;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: rgba(255,255,255,0.3);
+  color: #888888;
   min-height: 1rem;
   transition: opacity 0.3s ease;
 }

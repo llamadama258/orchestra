@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blog Post – Melodra</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" />
+  <link rel="stylesheet" href="/static/marketing.css" />
+</head>
+<body class="marketing">
+
+  <!-- ─── Navbar ─── -->
+  <nav class="navbar">
+    <div class="container">
+      <a href="/" class="nav-logo">Melo<span>dra</span></a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="/">Home</a></li>
+        <li><a href="/about">About</a></li>
+        <li><a href="/blog" class="active">Blog</a></li>
+        <li><a href="/contact">Contact</a></li>
+        <li><a href="/studio">Studio</a></li>
+      </ul>
+      <a href="/studio" class="nav-cta">Open App</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Menu">&#9776;</button>
+    </div>
+  </nav>
+
+  <!-- ─── Post Header ─── -->
+  <section class="post-hero">
+    <div class="container">
+      <p class="eyebrow">Tutorial</p>
+      <h1>Getting Started with Melodra</h1>
+      <p class="meta">By the Melodra Team &middot; March 15, 2026 &middot; 5 min read</p>
+    </div>
+  </section>
+
+  <!-- ─── Post Body ─── -->
+  <article class="post-body">
+    <p>Whether you're a seasoned orchestra musician or a student picking up your instrument for the first time, Melodra makes it easy to hear your sheet music come to life. In this guide, we'll walk you through everything you need to know to get started.</p>
+
+    <h2>Step 1: Upload Your Score</h2>
+    <p>Melodra supports several file formats. You can upload PDF scans of printed sheet music, MusicXML files (.xml or .musicxml), or compressed MusicXML (.mxl) files. For the best results, we recommend using MusicXML exports from notation software like MuseScore, Finale, or Sibelius.</p>
+    <p>Simply drag and drop your file onto the upload area, or click to browse your files. Melodra will automatically detect the format and begin processing.</p>
+
+    <h2>Step 2: Configure Your Parts</h2>
+    <p>Once your score is loaded, you'll see it rendered on screen with full notation. If you uploaded an ensemble piece, you can switch between parts using the tabs at the top of the player.</p>
+    <p>Use the Properties panel on the right to:</p>
+    <ul>
+      <li>Adjust the tempo with the BPM slider</li>
+      <li>Select a realistic instrument sound for each part</li>
+      <li>Control individual part volumes with the mixer</li>
+      <li>Toggle features like metronome, count-in, and note labels</li>
+    </ul>
+
+    <h2>Step 3: Play and Listen</h2>
+    <p>Hit the Play button and your score comes to life with realistic instrument samples powered by our soundfont engine. The score follows along as the music plays, highlighting the current measure so you can follow along.</p>
+    <p>Use the floating dock at the bottom for quick playback controls without scrolling away from the score.</p>
+
+    <h2>Step 4: Export Your Audio</h2>
+    <p>Want to take your audio offline? Use the Export MP3 button in the Properties panel to render your score as a high-quality MP3 file. This is great for practice, sharing with students, or reviewing parts on the go.</p>
+
+    <h2>Tips for Best Results</h2>
+    <ul>
+      <li>Use MusicXML files for the most accurate playback</li>
+      <li>When scanning PDFs, ensure they're at least 300 DPI</li>
+      <li>Clean, clearly printed scores work best with optical music recognition</li>
+      <li>Try the ensemble setup for multi-part pieces with independent volume control</li>
+    </ul>
+
+    <p>Ready to try it? <a href="/studio">Open Melodra</a> and upload your first score today.</p>
+  </article>
+
+  <!-- ─── Testimonial ─── -->
+  <section class="section text-center" style="background: var(--m-surface);">
+    <div class="container" style="max-width: 720px;">
+      <div class="testimonial" style="border: none; background: none;">
+        <p class="testimonial-quote" style="font-size: 1.15rem; border-left: none; padding-left: 0; text-align: center;">"Melodra made it so easy for my students to hear their parts before our first rehearsal. The difference in preparedness was remarkable."</p>
+        <div class="testimonial-author" style="justify-content: center;">
+          <div class="testimonial-avatar">MJ</div>
+          <div style="text-align: left;">
+            <div class="testimonial-name">Michael J.</div>
+            <div class="testimonial-role">Music Educator</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── CTA ─── -->
+  <section class="section cta-section">
+    <div class="container">
+      <div class="cta-box">
+        <div class="blob blob--1"></div>
+        <div class="blob blob--2"></div>
+        <h2>Ready to hear your music?</h2>
+        <p class="subtitle">Try Melodra for free — upload any score and hear it performed instantly.</p>
+        <div class="btn-group">
+          <a href="/studio" class="btn btn--primary">Try Melodra Free</a>
+          <a href="/blog" class="btn btn--outline">Read More Posts</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Footer ─── -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="/" class="nav-logo">Melo<span>dra</span></a>
+          <p>Turn any sheet music into instant audio playback. Built for orchestra musicians and educators.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Product</h4>
+          <ul>
+            <li><a href="/studio">Studio</a></li>
+            <li><a href="/#features">Features</a></li>
+            <li><a href="/#how-it-works">How It Works</a></li>
+            <li><a href="/#faq">FAQ</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Company</h4>
+          <ul>
+            <li><a href="/about">About</a></li>
+            <li><a href="/blog">Blog</a></li>
+            <li><a href="/contact">Contact</a></li>
+        <li><a href="/studio">Studio</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Terms of Service</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2026 Melodra. All rights reserved.</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('navToggle').addEventListener('click', () => {
+      document.getElementById('navLinks').classList.toggle('open');
+    });
+  </script>
+</body>
+</html>

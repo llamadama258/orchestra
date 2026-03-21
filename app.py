@@ -1,14 +1,21 @@
 import os
 import uuid
 import glob
+import hashlib
 import shutil
 import subprocess
 import threading
 import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from flask import Flask, request, jsonify, render_template, send_file
 from werkzeug.utils import secure_filename
-from music21 import converter
+from music21 import converter, environment
+
+# ── music21 optimization: disable unnecessary analysis ────────────────────────
+_m21env = environment.Environment()
+_m21env['autoDownload'] = 'deny'          # don't fetch remote resources
+_m21env['warnings'] = 0                   # suppress warnings overhead
 
 app = Flask(__name__)
 app.config["UPLOAD_FOLDER"] = os.path.join(os.path.dirname(__file__), "uploads")
@@ -129,6 +136,23 @@ _SETUP_MSG = (
 _jobs = {}
 _jobs_lock = threading.Lock()
 
+# ── PDF hash cache ────────────────────────────────────────────────────────────
+# sha256 -> path to already-converted .mxl/.xml file
+_pdf_cache = {}
+_pdf_cache_lock = threading.Lock()
+
+
+def _hash_file(path, chunk_size=65536):
+    """Fast SHA-256 hash of a file."""
+    h = hashlib.sha256()
+    with open(path, "rb") as f:
+        while True:
+            chunk = f.read(chunk_size)
+            if not chunk:
+                break
+            h.update(chunk)
+    return h.hexdigest()
+
 
 def _set_job(job_id, **kwargs):
     with _jobs_lock:
@@ -161,11 +185,15 @@ def _run_job(job_id, upload_path, ext, export_dir):
             prog(25, "Reading score\u2026")
 
         prog(75, "Parsing MusicXML\u2026")
-        score = converter.parse(parse_path)
+        score = converter.parse(parse_path, forceSource=True, quantizePost=False)
 
-        prog(88, "Writing score\u2026")
+        prog(85, "Writing score\u2026")
         xml_path = os.path.join(export_dir, "score.xml")
-        score.write("musicxml", fp=xml_path)
+        # If source is already MusicXML, just copy it instead of re-serializing
+        if ext != "pdf" and parse_path.lower().endswith((".xml", ".mxl", ".musicxml")):
+            shutil.copy2(parse_path, xml_path)
+        else:
+            score.write("musicxml", fp=xml_path)
 
         prog(94, "Generating MIDI\u2026")
         midi_path = os.path.join(export_dir, f"{job_id}.mid")
@@ -183,70 +211,71 @@ def _run_job(job_id, upload_path, ext, export_dir):
         _set_job(job_id, status="error", error=str(exc))
 
 
+def _process_single_part(part, export_dir, sub_id):
+    """Process one part (PDF or MusicXML) and return its result dict.
+    Runs independently so multiple parts can be processed in parallel.
+    """
+    parse_path = part["upload_path"]
+
+    if part["ext"] == "pdf":
+        omr_dir = os.path.join(export_dir, "omr_out")
+        os.makedirs(omr_dir, exist_ok=True)
+        parse_path = convert_pdf_to_mxl(part["upload_path"], omr_dir)
+
+    score = converter.parse(parse_path)
+
+    xml_path = os.path.join(export_dir, "score.xml")
+    score.write("musicxml", fp=xml_path)
+
+    midi_path = os.path.join(export_dir, f"{sub_id}.mid")
+    score.write("midi", fp=midi_path)
+
+    return {
+        "part_name": part["name"],
+        "mxl_url":  f"/mxl/{sub_id}",
+        "midi_url": f"/midi/{sub_id}",
+    }
+
+
 def _run_setup_job(job_id, piece_name, setup_type, parts_info, output_folder):
-    """Process each part file sequentially for the setup flow.
+    """Process parts in parallel for the setup flow.
 
     parts_info: list of {name: str, upload_path: str, ext: str}
     """
     total = len(parts_info)
-    results = []
 
-    for idx, part in enumerate(parts_info):
-        base_pct = int(idx * 100 / total)
-        end_pct  = int((idx + 1) * 100 / total)
-
+    # Prepare export dirs for each part
+    part_tasks = []
+    for part in parts_info:
         sub_id     = uuid.uuid4().hex[:12]
         export_dir = os.path.join(output_folder, sub_id)
         os.makedirs(export_dir, exist_ok=True)
+        part_tasks.append((part, export_dir, sub_id))
 
-        def prog(pct, text=None, _base=base_pct, _rng=end_pct - base_pct,
-                 _i=idx, _t=total):
-            scaled = _base + int(pct * _rng / 100)
-            update = {"progress": scaled}
-            if text:
-                update["status_text"] = f"Part {_i + 1}/{_t}: {text}"
-            _set_job(job_id, **update)
+    results = [None] * total
+    _set_job(job_id, progress=5, status_text=f"Processing {total} part(s)\u2026")
 
-        try:
-            parse_path = part["upload_path"]
+    # Process parts in parallel (up to 4 at a time)
+    max_workers = min(total, 4)
+    with ThreadPoolExecutor(max_workers=max_workers) as pool:
+        future_to_idx = {}
+        for idx, (part, export_dir, sub_id) in enumerate(part_tasks):
+            fut = pool.submit(_process_single_part, part, export_dir, sub_id)
+            future_to_idx[fut] = idx
 
-            if part["ext"] == "pdf":
-                omr_dir = os.path.join(export_dir, "omr_out")
-                os.makedirs(omr_dir, exist_ok=True)
-                prog(10, "Launching OMR\u2026")
-                parse_path = convert_pdf_to_mxl(
-                    part["upload_path"], omr_dir,
-                    progress_cb=lambda p, _p=prog: _p(int(p * 0.6), "Recognising score\u2026"),
-                )
-                prog(72, "Score detected\u2026")
-            else:
-                prog(25, "Reading score\u2026")
-
-            prog(75, "Parsing MusicXML\u2026")
-            score = converter.parse(parse_path)
-
-            prog(88, "Writing score\u2026")
-            xml_path = os.path.join(export_dir, "score.xml")
-            score.write("musicxml", fp=xml_path)
-
-            prog(94, "Generating MIDI\u2026")
-            midi_path = os.path.join(export_dir, f"{sub_id}.mid")
-            score.write("midi", fp=midi_path)
-
-            results.append({
-                "part_name": part["name"],
-                "mxl_url":  f"/mxl/{sub_id}",
-                "midi_url": f"/midi/{sub_id}",
-            })
-
-        except RuntimeError as exc:
-            _set_job(job_id, status="error",
-                     error=f"Part \u2018{part['name']}\u2019: {exc}")
-            return
-        except Exception as exc:
-            _set_job(job_id, status="error",
-                     error=f"Part \u2018{part['name']}\u2019: {exc}")
-            return
+        done_count = 0
+        for fut in as_completed(future_to_idx):
+            idx = future_to_idx[fut]
+            try:
+                results[idx] = fut.result()
+                done_count += 1
+                pct = int(done_count * 95 / total)
+                _set_job(job_id, progress=pct,
+                         status_text=f"Finished part {done_count}/{total}\u2026")
+            except (RuntimeError, Exception) as exc:
+                _set_job(job_id, status="error",
+                         error=f"Part \u2018{parts_info[idx]['name']}\u2019: {exc}")
+                return
 
     _set_job(job_id,
              progress=100,
@@ -258,7 +287,20 @@ def _run_setup_job(job_id, piece_name, setup_type, parts_info, output_folder):
 def convert_pdf_to_mxl(pdf_path, output_dir, progress_cb=None):
     """Run Audiveris OMR on pdf_path; return path of the produced .mxl file.
     Optionally calls progress_cb(pct) with values 12–68 as output lines come in.
+    Uses SHA-256 cache to skip re-processing identical PDFs.
     """
+    # ── Check cache first ─────────────────────────────────────────────────
+    pdf_hash = _hash_file(pdf_path)
+    with _pdf_cache_lock:
+        cached = _pdf_cache.get(pdf_hash)
+    if cached and os.path.isfile(cached):
+        if progress_cb:
+            progress_cb(68)
+        # Copy cached result into this job's output dir
+        dest = os.path.join(output_dir, os.path.basename(cached))
+        shutil.copy2(cached, dest)
+        return dest
+
     if not java_available():
         raise RuntimeError(
             "Java is required for PDF conversion but was not found.\n"
@@ -280,7 +322,7 @@ def convert_pdf_to_mxl(pdf_path, output_dir, progress_cb=None):
         ]
     else:
         cmd = [
-            "java", "-Xmx1g", "-jar", runner,
+            "java", "-Xmx2g", "-jar", runner,
             "-batch", "-export",
             "-output", output_dir,
             "--", pdf_path,
@@ -337,6 +379,9 @@ def convert_pdf_to_mxl(pdf_path, output_dir, progress_cb=None):
             break
 
     if found_music:
+        # Cache the result for future uploads of the same PDF
+        with _pdf_cache_lock:
+            _pdf_cache[pdf_hash] = found_music
         return found_music
 
     # Nothing produced — give a human-friendly diagnosis
@@ -353,10 +398,10 @@ def convert_pdf_to_mxl(pdf_path, output_dir, progress_cb=None):
             "  3. Export directly from MuseScore as MusicXML (.mxl) for best results"
         )
 
-    if result.returncode != 0:
+    if return_code != 0:
         tail = combined_output[-800:].strip()
         raise RuntimeError(
-            f"Audiveris could not process this PDF (exit code {result.returncode}).\n\n"
+            f"Audiveris could not process this PDF (exit code {return_code}).\n\n"
             f"{tail}\n\n"
             "Tip: For best results, export directly as MusicXML (.mxl) from MuseScore."
         )
@@ -374,6 +419,36 @@ def allowed_file(filename):
 
 # ── Routes ────────────────────────────────────────────────────────────────────
 @app.route("/")
+def home():
+    return render_template("home.html")
+
+
+@app.route("/about")
+def about():
+    return render_template("about.html")
+
+
+@app.route("/blog")
+def blog():
+    return render_template("blog.html")
+
+
+@app.route("/blog/<slug>")
+def blog_post(slug):
+    return render_template("blog_post.html", slug=slug)
+
+
+@app.route("/contact")
+def contact():
+    return render_template("contact.html")
+
+
+@app.route("/studio")
+def studio():
+    return render_template("studio.html")
+
+
+@app.route("/app")
 def index():
     return render_template("index.html")
 

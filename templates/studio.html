@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Melodra – Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" />
+  <link rel="stylesheet" href="/static/marketing.css" />
+  <style>
+    /* ── Aurora Background (big animated bubbles) ── */
+    .studio-aurora {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .studio-aurora .blob {
+      position: absolute;
+      border-radius: 50%;
+      animation: studioAuroraPulse 8s ease-in-out infinite alternate;
+    }
+    .studio-aurora .blob--1 {
+      width: 600px; height: 600px;
+      background: #5D5CFF;
+      opacity: 0.12;
+      top: -15%; left: 20%;
+    }
+    .studio-aurora .blob--2 {
+      width: 500px; height: 500px;
+      background: #7C3AED;
+      opacity: 0.10;
+      bottom: -10%; right: 15%;
+      animation-delay: 2s;
+    }
+    .studio-aurora .blob--3 {
+      width: 400px; height: 400px;
+      background: #3B82F6;
+      opacity: 0.08;
+      top: 30%; right: 30%;
+      animation-delay: 4s;
+    }
+    @keyframes studioAuroraPulse {
+      0%   { transform: scale(1)   translate(0, 0);       opacity: 0.12; }
+      50%  { transform: scale(1.1) translate(20px, -10px); opacity: 0.22; }
+      100% { transform: scale(1)   translate(-10px, 5px);  opacity: 0.15; }
+    }
+
+    /* ── Studio Page ── */
+    .studio-section {
+      position: relative;
+      z-index: 1;
+      min-height: calc(100vh - 72px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 120px 24px 80px;
+    }
+
+    .studio-content {
+      max-width: 600px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .studio-eyebrow {
+      font-family: var(--m-mono);
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--m-primary);
+      margin-bottom: 16px;
+    }
+
+    .studio-title {
+      font-family: var(--m-mono);
+      font-size: 2.25rem;
+      font-weight: 700;
+      color: var(--m-text);
+      margin-bottom: 12px;
+      line-height: 1.2;
+    }
+
+    .studio-subtitle {
+      font-size: 1.05rem;
+      color: var(--m-text-mid);
+      margin-bottom: 48px;
+      line-height: 1.6;
+    }
+
+    /* ── Flashy Start Button ── */
+    .start-btn-wrapper {
+      position: relative;
+      display: inline-block;
+      margin-bottom: 48px;
+    }
+
+    .start-btn {
+      position: relative;
+      z-index: 1;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--m-mono);
+      font-size: 1.1rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #fff;
+      background: linear-gradient(135deg, #5D5CFF 0%, #7C3AED 100%);
+      padding: 20px 52px;
+      border: none;
+      border-radius: 60px;
+      cursor: pointer;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      box-shadow:
+        0 4px 24px rgba(93, 92, 255, 0.3),
+        0 8px 48px rgba(124, 58, 237, 0.15);
+    }
+
+    .start-btn:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow:
+        0 8px 32px rgba(93, 92, 255, 0.4),
+        0 16px 64px rgba(124, 58, 237, 0.2);
+    }
+
+    .start-btn:active {
+      transform: translateY(-1px) scale(1.0);
+      box-shadow:
+        0 4px 16px rgba(93, 92, 255, 0.3),
+        0 4px 24px rgba(124, 58, 237, 0.12);
+    }
+
+    .start-btn-icon {
+      font-size: 1.4rem;
+      display: flex;
+      animation: pulse-icon 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-icon {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.15); }
+    }
+
+    /* Glow ring behind the button */
+    .start-btn-glow {
+      position: absolute;
+      inset: -6px;
+      border-radius: 60px;
+      background: linear-gradient(135deg, rgba(93,92,255,0.2) 0%, rgba(124,58,237,0.15) 100%);
+      z-index: 0;
+      animation: glow-pulse 3s ease-in-out infinite;
+    }
+
+    @keyframes glow-pulse {
+      0%, 100% { opacity: 0.5; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.04); }
+    }
+
+    /* ── Supported Formats Row ── */
+    .studio-formats {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 32px;
+      flex-wrap: wrap;
+    }
+
+    .studio-fmt {
+      font-family: var(--m-mono);
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      background: var(--m-surface);
+      color: var(--m-text-lo);
+      padding: 6px 16px;
+      border-radius: 20px;
+      border: 1px solid var(--m-border);
+    }
+
+    /* ── Features Row ── */
+    .studio-features {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    .studio-feat {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.8rem;
+      color: var(--m-text-lo);
+    }
+
+    .studio-feat-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--m-primary);
+      opacity: 0.5;
+    }
+
+    /* ── Music Note Decoration ── */
+    .studio-notes {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 20px;
+      font-size: 1.5rem;
+      opacity: 0.12;
+      color: var(--m-primary);
+    }
+
+    .studio-notes span {
+      animation: float-note 3s ease-in-out infinite;
+    }
+    .studio-notes span:nth-child(1) { animation-delay: 0s; }
+    .studio-notes span:nth-child(2) { animation-delay: 0.3s; }
+    .studio-notes span:nth-child(3) { animation-delay: 0.6s; }
+    .studio-notes span:nth-child(4) { animation-delay: 0.9s; }
+    .studio-notes span:nth-child(5) { animation-delay: 1.2s; }
+
+    @keyframes float-note {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+
+    @media (max-width: 640px) {
+      .studio-title { font-size: 1.6rem; }
+      .start-btn { font-size: 0.95rem; padding: 16px 36px; }
+      .studio-features { gap: 12px; }
+      .studio-feat { font-size: 0.75rem; }
+    }
+  </style>
+</head>
+<body class="marketing">
+
+  <!-- ─── Navbar ─── -->
+  <nav class="navbar">
+    <div class="container">
+      <a href="/" class="nav-logo">Melo<span>dra</span></a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="/">Home</a></li>
+        <li><a href="/about">About</a></li>
+        <li><a href="/blog">Blog</a></li>
+        <li><a href="/contact">Contact</a></li>
+        <li><a href="/studio" class="active">Studio</a></li>
+      </ul>
+      <a href="/studio" class="nav-cta">Open App</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Menu">&#9776;</button>
+    </div>
+  </nav>
+
+  <!-- ─── Aurora Background ─── -->
+  <div class="studio-aurora">
+    <div class="blob blob--1"></div>
+    <div class="blob blob--2"></div>
+    <div class="blob blob--3"></div>
+  </div>
+
+  <!-- ─── Studio Section ─── -->
+  <section class="studio-section">
+    <div class="studio-content">
+      <div class="studio-notes">
+        <span>&#9834;</span>
+        <span>&#9835;</span>
+        <span>&#9836;</span>
+        <span>&#9835;</span>
+        <span>&#9834;</span>
+      </div>
+
+      <p class="studio-eyebrow">Studio</p>
+      <h1 class="studio-title">Ready to bring your music to life?</h1>
+      <p class="studio-subtitle">Upload your sheet music and hear it played back instantly with realistic instruments. Solo pieces or full ensemble — we've got you covered.</p>
+
+      <div class="start-btn-wrapper">
+        <div class="start-btn-glow"></div>
+        <button type="button" id="start-btn" class="start-btn" onclick="window.location.href='/setup'">
+          <span class="start-btn-icon">&#9835;</span>
+          Start Your Song
+        </button>
+      </div>
+
+      <div class="studio-formats">
+        <span class="studio-fmt">PDF</span>
+        <span class="studio-fmt">MXL</span>
+        <span class="studio-fmt">XML</span>
+        <span class="studio-fmt">MusicXML</span>
+      </div>
+
+      <div class="studio-features">
+        <div class="studio-feat"><span class="studio-feat-dot"></span> Follow-along cursor</div>
+        <div class="studio-feat"><span class="studio-feat-dot"></span> Tempo & instrument control</div>
+        <div class="studio-feat"><span class="studio-feat-dot"></span> Synced playback</div>
+        <div class="studio-feat"><span class="studio-feat-dot"></span> Export MP3</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Footer ─── -->
+  <footer class="site-footer" style="position:relative;z-index:1;">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="/" class="nav-logo" style="margin-bottom:12px;display:inline-block;">Melo<span>dra</span></a>
+          <p>Turn sheet music into instant audio playback. Built for orchestra musicians and educators.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Product</h4>
+          <ul>
+            <li><a href="/studio">Studio</a></li>
+            <li><a href="/#features">Features</a></li>
+            <li><a href="/#how-it-works">How It Works</a></li>
+            <li><a href="/#faq">FAQ</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Company</h4>
+          <ul>
+            <li><a href="/about">About</a></li>
+            <li><a href="/blog">Blog</a></li>
+            <li><a href="/contact">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Terms of Service</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2026 Melodra. All rights reserved.</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('navToggle').addEventListener('click', () => {
+      document.getElementById('navLinks').classList.toggle('open');
+    });
+  </script>
+</body>
+</html>
