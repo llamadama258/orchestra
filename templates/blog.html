@@ -23,7 +23,11 @@
         <li><a href="/contact">Contact</a></li>
         <li><a href="/studio">Studio</a></li>
       </ul>
-      <a href="/studio" class="nav-cta">Open App</a>
+      {% if current_user %}
+      <a href="/dashboard" class="nav-cta">Dashboard</a>
+      {% else %}
+      <a href="/login" class="nav-cta">Open App</a>
+      {% endif %}
       <button class="nav-toggle" id="navToggle" aria-label="Menu">&#9776;</button>
     </div>
   </nav>

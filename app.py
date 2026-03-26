@@ -1,4 +1,5 @@
 import os
+import json
 import uuid
 import glob
 import hashlib
@@ -8,9 +9,14 @@ import threading
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-from flask import Flask, request, jsonify, render_template, send_file
+from flask import Flask, request, jsonify, render_template, send_file, g, redirect
 from werkzeug.utils import secure_filename
 from music21 import converter, environment
+
+from db import (init_db, create_project, get_project,
+                get_user_projects_enriched, record_play, get_recent_plays,
+                toggle_favorite, delete_project, rename_project)
+from auth import auth_bp, login_required, get_current_user_from_cookie
 
 # ── music21 optimization: disable unnecessary analysis ────────────────────────
 _m21env = environment.Environment()
@@ -18,9 +24,17 @@ _m21env['autoDownload'] = 'deny'          # don't fetch remote resources
 _m21env['warnings'] = 0                   # suppress warnings overhead
 
 app = Flask(__name__)
+app.secret_key = os.environ.get("MELODRA_SECRET", "melodra-dev-secret-change-in-prod")
 app.config["UPLOAD_FOLDER"] = os.path.join(os.path.dirname(__file__), "uploads")
 app.config["OUTPUT_FOLDER"] = os.path.join(os.path.dirname(__file__), "outputs")
 app.config["MAX_CONTENT_LENGTH"] = 50 * 1024 * 1024  # 50 MB
+
+app.register_blueprint(auth_bp)
+
+
+@app.context_processor
+def inject_user():
+    return {"current_user": get_current_user_from_cookie()}
 
 ALLOWED_EXTENSIONS = {"mxl", "xml", "musicxml", "pdf"}
 
@@ -199,6 +213,14 @@ def _run_job(job_id, upload_path, ext, export_dir):
         midi_path = os.path.join(export_dir, f"{job_id}.mid")
         score.write("midi", fp=midi_path)
 
+        # Save project to database
+        with _jobs_lock:
+            job_meta = _jobs.get(job_id, {})
+            user_id = job_meta.get("user_id")
+            title = job_meta.get("title", "Untitled")
+        if user_id:
+            create_project(user_id, title, "solo", job_id)
+
         _set_job(job_id,
                  progress=100,
                  status="done",
@@ -276,6 +298,12 @@ def _run_setup_job(job_id, piece_name, setup_type, parts_info, output_folder):
                 _set_job(job_id, status="error",
                          error=f"Part \u2018{parts_info[idx]['name']}\u2019: {exc}")
                 return
+
+    # Save project to database
+    with _jobs_lock:
+        user_id = _jobs.get(job_id, {}).get("user_id")
+    if user_id:
+        create_project(user_id, piece_name, setup_type, job_id, json.dumps(results))
 
     _set_job(job_id,
              progress=100,
@@ -445,20 +473,79 @@ def contact():
 
 @app.route("/studio")
 def studio():
+    user = get_current_user_from_cookie()
+    if user:
+        return redirect("/dashboard")
     return render_template("studio.html")
 
 
+@app.route("/dashboard")
+@login_required
+def dashboard():
+    projects = get_user_projects_enriched(g.user["id"])
+    recent_plays = get_recent_plays(g.user["id"], limit=10)
+    return render_template("dashboard.html", user=g.user, projects=projects, recent_plays=recent_plays)
+
+
+@app.route("/api/play/<int:project_id>", methods=["POST"])
+@login_required
+def api_play(project_id):
+    proj = get_project(project_id, g.user["id"])
+    if not proj:
+        return jsonify({"error": "Not found"}), 404
+    record_play(g.user["id"], project_id)
+    return jsonify({"ok": True})
+
+
+@app.route("/api/favorite/<int:project_id>", methods=["POST"])
+@login_required
+def api_favorite(project_id):
+    result = toggle_favorite(project_id, g.user["id"])
+    if result is None:
+        return jsonify({"error": "Not found"}), 404
+    return jsonify({"ok": True, "is_favorite": result})
+
+
+@app.route("/api/rename/<int:project_id>", methods=["POST"])
+@login_required
+def api_rename(project_id):
+    data = request.get_json(silent=True) or {}
+    new_title = (data.get("title") or "").strip()
+    if not new_title:
+        return jsonify({"error": "Title required"}), 400
+    if not rename_project(project_id, g.user["id"], new_title):
+        return jsonify({"error": "Not found"}), 404
+    return jsonify({"ok": True})
+
+
+@app.route("/api/project/<int:project_id>", methods=["DELETE"])
+@login_required
+def api_delete(project_id):
+    if not delete_project(project_id, g.user["id"]):
+        return jsonify({"error": "Not found"}), 404
+    return jsonify({"ok": True})
+
+
 @app.route("/app")
+@login_required
 def index():
-    return render_template("index.html")
+    project_id = request.args.get("project")
+    project_data = None
+    if project_id:
+        row = get_project(project_id, g.user["id"])
+        if row:
+            project_data = dict(row)
+    return render_template("index.html", project=project_data)
 
 
 @app.route("/setup")
+@login_required
 def setup():
-    return render_template("setup.html")
+    return render_template("setup.html", user=g.user)
 
 
 @app.route("/setup/upload", methods=["POST"])
+@login_required
 def setup_upload():
     setup_type = request.form.get("type", "solo")
     piece_name = (request.form.get("piece_name", "Untitled").strip() or "Untitled")
@@ -512,6 +599,8 @@ def setup_upload():
             "status_text": "Starting\u2026",
             "error": None,
             "result": None,
+            "user_id": g.user["id"],
+            "title": piece_name,
         }
 
     t = threading.Thread(
@@ -536,6 +625,7 @@ def check_deps():
 
 
 @app.route("/upload", methods=["POST"])
+@login_required
 def upload():
     if "file" not in request.files:
         return jsonify({"error": "No file part in request."}), 400
@@ -568,6 +658,8 @@ def upload():
             "status_text": "Starting\u2026",
             "error": None,
             "result": None,
+            "user_id": g.user["id"],
+            "title": file.filename.rsplit(".", 1)[0],
         }
 
     t = threading.Thread(target=_run_job, args=(job_id, upload_path, ext, export_dir), daemon=True)
@@ -610,4 +702,5 @@ def serve_midi(job_id):
 if __name__ == "__main__":
     os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
     os.makedirs(app.config["OUTPUT_FOLDER"], exist_ok=True)
+    init_db()
     app.run(debug=True, port=5000)

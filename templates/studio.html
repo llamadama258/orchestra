@@ -254,7 +254,11 @@
         <li><a href="/contact">Contact</a></li>
         <li><a href="/studio" class="active">Studio</a></li>
       </ul>
-      <a href="/studio" class="nav-cta">Open App</a>
+      {% if current_user %}
+      <a href="/dashboard" class="nav-cta">Dashboard</a>
+      {% else %}
+      <a href="/login" class="nav-cta">Open App</a>
+      {% endif %}
       <button class="nav-toggle" id="navToggle" aria-label="Menu">&#9776;</button>
     </div>
   </nav>
@@ -283,7 +287,7 @@
 
       <div class="start-btn-wrapper">
         <div class="start-btn-glow"></div>
-        <button type="button" id="start-btn" class="start-btn" onclick="window.location.href='/setup'">
+        <button type="button" id="start-btn" class="start-btn" onclick="window.location.href='/login'">
           <span class="start-btn-icon">&#9835;</span>
           Start Your Song
         </button>

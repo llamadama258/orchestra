@@ -894,6 +894,7 @@
       metroSeq.start(0);
 
       Tone.Transport.start();
+      if (window.__melodraProjectId) fetch(`/api/play/${window.__melodraProjectId}`, { method: 'POST' });
       startCursorRaf(beatIdx, 0);
       playerPlayBtn.innerHTML = "&#9646;&#9646; Pause";
       dockPlayBtn.innerHTML = "&#9646;&#9646; Pause";
@@ -1079,6 +1080,7 @@
       metroSeq.start(countinSecs);
 
       Tone.Transport.start();
+      if (window.__melodraProjectId) fetch(`/api/play/${window.__melodraProjectId}`, { method: 'POST' });
       startCursorRaf(0, countinSecs);
       playerPlayBtn.innerHTML = "&#9646;&#9646; Pause";
       dockPlayBtn.innerHTML = "&#9646;&#9646; Pause";
@@ -1604,6 +1606,42 @@
       }
     })();
 
+  </script>
+  <script>
+    window.__melodraProjectId = {{ project.id if project else 'null' }};
+    window.__melodraProject = {{ project | tojson if project else 'null' }};
+  </script>
+  <script>
+    /* ── Bootstrap from dashboard (project passed by server) ─── */
+    (async () => {
+      const proj = window.__melodraProject;
+      if (!proj) return;
+      if (currentParts.length > 0) return; // sessionStorage already handled it
+
+      try {
+        let parts;
+        if (proj.parts_json) {
+          parts = JSON.parse(proj.parts_json);
+        } else {
+          parts = [{ part_name: proj.title, mxl_url: '/mxl/' + proj.job_id, midi_url: '/midi/' + proj.job_id }];
+        }
+        currentParts   = parts;
+        activePartIdx  = 0;
+        currentMxlUrl  = parts[0].mxl_url;
+        currentMidiUrl = parts[0].midi_url;
+
+        trackTitle.textContent = proj.title;
+        renderPartTabs();
+        goTo("screen-player");
+        await new Promise(r => setTimeout(r, 80));
+        await initOSMD();
+        if (currentParts.length > 0) {
+          samplersLoadingPromise = ensurePartSamplersLoaded();
+        }
+      } catch (e) {
+        console.error("Failed to load project:", e);
+      }
+    })();
   </script>
   <script src="/static/loading.js"></script>
 </body>

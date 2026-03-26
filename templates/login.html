@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Melodra &ndash; Log In</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" />
+  <link rel="stylesheet" href="/static/marketing.css" />
+  <style>
+    /* ── Aurora Background ── */
+    .login-aurora {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .login-aurora .blob {
+      position: absolute;
+      border-radius: 50%;
+      animation: loginAuroraPulse 8s ease-in-out infinite alternate;
+    }
+    .login-aurora .blob--1 {
+      width: 600px; height: 600px;
+      background: #5D5CFF;
+      opacity: 0.12;
+      top: -15%; left: 20%;
+    }
+    .login-aurora .blob--2 {
+      width: 500px; height: 500px;
+      background: #7C3AED;
+      opacity: 0.10;
+      bottom: -10%; right: 15%;
+      animation-delay: 2s;
+    }
+    .login-aurora .blob--3 {
+      width: 400px; height: 400px;
+      background: #3B82F6;
+      opacity: 0.08;
+      top: 30%; right: 30%;
+      animation-delay: 4s;
+    }
+    @keyframes loginAuroraPulse {
+      0%   { transform: scale(1)   translate(0, 0);       opacity: 0.12; }
+      50%  { transform: scale(1.1) translate(20px, -10px); opacity: 0.22; }
+      100% { transform: scale(1)   translate(-10px, 5px);  opacity: 0.15; }
+    }
+
+    /* ── Login Section ── */
+    .login-section {
+      position: relative;
+      z-index: 1;
+      min-height: calc(100vh - 72px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 120px 24px 80px;
+    }
+
+    .login-card {
+      max-width: 440px;
+      width: 100%;
+      background: #fff;
+      border: 1px solid var(--m-border);
+      border-radius: 16px;
+      padding: 48px 40px;
+      box-shadow: 0 8px 32px rgba(0,0,0,.08);
+    }
+
+    .login-notes {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 16px;
+      font-size: 1.3rem;
+      opacity: 0.12;
+      color: var(--m-primary);
+    }
+    .login-notes span {
+      animation: floatNote 3s ease-in-out infinite;
+    }
+    .login-notes span:nth-child(1) { animation-delay: 0s; }
+    .login-notes span:nth-child(2) { animation-delay: 0.3s; }
+    .login-notes span:nth-child(3) { animation-delay: 0.6s; }
+    @keyframes floatNote {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+
+    .login-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .login-header h1 {
+      font-family: var(--m-mono);
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--m-text);
+      margin-bottom: 8px;
+    }
+    .login-header p {
+      font-size: 0.9rem;
+      color: var(--m-text-mid);
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-group label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--m-text);
+      margin-bottom: 6px;
+    }
+    .form-input {
+      width: 100%;
+      padding: 12px 14px;
+      font-family: var(--m-body);
+      font-size: 0.95rem;
+      color: var(--m-text);
+      background: var(--m-surface);
+      border: 1px solid var(--m-border);
+      border-radius: 8px;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .form-input:focus {
+      border-color: var(--m-primary);
+      box-shadow: 0 0 0 3px rgba(93, 92, 255, 0.1);
+    }
+    .form-input::placeholder {
+      color: var(--m-text-lo);
+    }
+
+    .form-error {
+      background: rgba(220, 38, 38, 0.06);
+      border: 1px solid rgba(220, 38, 38, 0.15);
+      color: #dc2626;
+      font-size: 0.85rem;
+      padding: 10px 14px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      display: none;
+    }
+    .form-error.visible { display: block; }
+
+    .submit-btn {
+      width: 100%;
+      padding: 14px;
+      font-family: var(--m-mono);
+      font-size: 0.95rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #fff;
+      background: linear-gradient(135deg, #5D5CFF 0%, #7C3AED 100%);
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 4px 16px rgba(93, 92, 255, 0.25);
+    }
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 24px rgba(93, 92, 255, 0.35);
+    }
+    .submit-btn:active {
+      transform: translateY(0);
+    }
+    .submit-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .toggle-text {
+      text-align: center;
+      margin-top: 24px;
+      font-size: 0.85rem;
+      color: var(--m-text-mid);
+    }
+    .toggle-text a {
+      color: var(--m-primary);
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .toggle-text a:hover {
+      text-decoration: underline;
+    }
+
+    .hidden { display: none !important; }
+
+    @media (max-width: 480px) {
+      .login-card { padding: 36px 24px; }
+      .login-header h1 { font-size: 1.3rem; }
+    }
+  </style>
+</head>
+<body class="marketing">
+
+  <!-- ─── Navbar ─── -->
+  <nav class="navbar">
+    <div class="container">
+      <a href="/" class="nav-logo">Melo<span>dra</span></a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="/">Home</a></li>
+        <li><a href="/about">About</a></li>
+        <li><a href="/blog">Blog</a></li>
+        <li><a href="/contact">Contact</a></li>
+        <li><a href="/studio">Studio</a></li>
+      </ul>
+      <a href="/login" class="nav-cta">Log In</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Menu">&#9776;</button>
+    </div>
+  </nav>
+
+  <!-- ─── Aurora Background ─── -->
+  <div class="login-aurora">
+    <div class="blob blob--1"></div>
+    <div class="blob blob--2"></div>
+    <div class="blob blob--3"></div>
+  </div>
+
+  <!-- ─── Login Section ─── -->
+  <section class="login-section">
+    <div class="login-card">
+      <div class="login-notes">
+        <span>&#9834;</span>
+        <span>&#9835;</span>
+        <span>&#9834;</span>
+      </div>
+
+      <div class="login-header">
+        <h1 id="auth-title">Welcome back</h1>
+        <p id="auth-subtitle">Log in to access your music library</p>
+      </div>
+
+      <div class="form-error" id="auth-error"></div>
+
+      <form id="auth-form" autocomplete="on">
+        <div class="form-group hidden" id="name-group">
+          <label for="name-input">Full name</label>
+          <input type="text" id="name-input" class="form-input" placeholder="Your name" autocomplete="name" />
+        </div>
+        <div class="form-group">
+          <label for="email-input">Email address</label>
+          <input type="email" id="email-input" class="form-input" placeholder="you@example.com" required autocomplete="email" />
+        </div>
+        <div class="form-group">
+          <label for="password-input">Password</label>
+          <input type="password" id="password-input" class="form-input" placeholder="At least 8 characters" required autocomplete="current-password" />
+        </div>
+        <button type="submit" class="submit-btn" id="submit-btn">Log In</button>
+      </form>
+
+      <p class="toggle-text">
+        <span id="toggle-prompt">Don't have an account?</span>
+        <a href="#" id="toggle-link">Sign up</a>
+      </p>
+    </div>
+  </section>
+
+  <script>
+    document.getElementById('navToggle').addEventListener('click', () => {
+      document.getElementById('navLinks').classList.toggle('open');
+    });
+
+    const form       = document.getElementById('auth-form');
+    const titleEl    = document.getElementById('auth-title');
+    const subtitleEl = document.getElementById('auth-subtitle');
+    const errorEl    = document.getElementById('auth-error');
+    const nameGroup  = document.getElementById('name-group');
+    const nameInput  = document.getElementById('name-input');
+    const emailInput = document.getElementById('email-input');
+    const passInput  = document.getElementById('password-input');
+    const submitBtn  = document.getElementById('submit-btn');
+    const toggleLink = document.getElementById('toggle-link');
+    const togglePrompt = document.getElementById('toggle-prompt');
+
+    let isSignup = false;
+
+    toggleLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      isSignup = !isSignup;
+      errorEl.classList.remove('visible');
+
+      if (isSignup) {
+        titleEl.textContent = 'Create your account';
+        subtitleEl.textContent = 'Sign up to start your music library';
+        nameGroup.classList.remove('hidden');
+        nameInput.setAttribute('required', '');
+        passInput.setAttribute('autocomplete', 'new-password');
+        submitBtn.textContent = 'Sign Up';
+        togglePrompt.textContent = 'Already have an account?';
+        toggleLink.textContent = 'Log in';
+      } else {
+        titleEl.textContent = 'Welcome back';
+        subtitleEl.textContent = 'Log in to access your music library';
+        nameGroup.classList.add('hidden');
+        nameInput.removeAttribute('required');
+        passInput.setAttribute('autocomplete', 'current-password');
+        submitBtn.textContent = 'Log In';
+        togglePrompt.textContent = "Don't have an account?";
+        toggleLink.textContent = 'Sign up';
+      }
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errorEl.classList.remove('visible');
+      submitBtn.disabled = true;
+      submitBtn.textContent = isSignup ? 'Creating account\u2026' : 'Logging in\u2026';
+
+      const url = isSignup ? '/signup' : '/login';
+      const body = {
+        email: emailInput.value.trim(),
+        password: passInput.value,
+      };
+      if (isSignup) body.name = nameInput.value.trim();
+
+      try {
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+          errorEl.textContent = data.error || 'Something went wrong.';
+          errorEl.classList.add('visible');
+          submitBtn.disabled = false;
+          submitBtn.textContent = isSignup ? 'Sign Up' : 'Log In';
+          return;
+        }
+
+        window.location.href = data.redirect || '/dashboard';
+      } catch (err) {
+        errorEl.textContent = 'Network error. Please try again.';
+        errorEl.classList.add('visible');
+        submitBtn.disabled = false;
+        submitBtn.textContent = isSignup ? 'Sign Up' : 'Log In';
+      }
+    });
+  </script>
+</body>
+</html>

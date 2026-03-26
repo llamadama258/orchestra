@@ -8,318 +8,451 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" />
-  <link rel="stylesheet" href="/static/marketing.css" />
   <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
     :root {
-      --c-primary:       #5D5CFF;
-      --c-primary-dark:  #4E4DE6;
-      --c-primary-tonal: rgba(93,92,255,0.06);
-      --c-bg:            #FFFFFF;
-      --c-surface:       #F5F5F7;
-      --c-surface-var:   #EFEFEF;
-      --c-border:        rgba(0,0,0,0.08);
-      --c-text-hi:       #1A1A1A;
-      --c-text-med:      #555555;
-      --c-text-lo:       #888888;
-      --c-error:         #dc2626;
-      --c-error-bg:      rgba(220,38,38,0.06);
-      --shadow-2: 0 4px 12px rgba(0,0,0,.06);
-      --shadow-4: 0 8px 32px rgba(0,0,0,.08);
+      --sidebar-w: 260px;
+      --purple: #5D5CFF;
+      --purple-dark: #4B4ACE;
+      --sidebar-bg: #1a1740;
+      --sidebar-text: rgba(255,255,255,0.65);
+      --sidebar-text-hi: #fff;
+      --sidebar-hover: rgba(255,255,255,0.08);
+      --sidebar-active: rgba(93,92,255,0.2);
+      --main-bg: #f5f5f9;
+      --card-bg: #fff;
+      --text: #1a1a2e;
+      --text-mid: #6b7280;
+      --text-lo: #9ca3af;
+      --border: #e5e7eb;
+      --border-light: rgba(0,0,0,0.08);
+      --surface: #f5f5f7;
+      --error: #dc2626;
+      --error-bg: rgba(220,38,38,0.06);
+      --font: 'Inter', -apple-system, sans-serif;
+      --mono: 'JetBrains Mono', monospace;
       --r-md: 6px; --r-lg: 8px; --r-xl: 14px;
       --ease: 200ms cubic-bezier(.4,0,.2,1);
-      --font-mono: "JetBrains Mono", "SF Mono", monospace;
-      --font-body: "Inter", system-ui, sans-serif;
     }
 
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-    html { font-size: 16px; }
     body {
-      font-family: var(--font-body);
-      background: var(--c-bg);
-      color: var(--c-text-hi);
+      font-family: var(--font);
+      background: var(--main-bg);
+      color: var(--text);
+      display: flex;
       min-height: 100vh;
-      -webkit-font-smoothing: antialiased;
     }
 
-    /* ── Slim progress line below navbar ─── */
-    .top-progress {
+    a { color: inherit; text-decoration: none; }
+    ul { list-style: none; }
+
+    /* ── Sidebar (same as dashboard) ── */
+    .sidebar {
+      width: var(--sidebar-w);
+      background: var(--sidebar-bg);
+      display: flex;
+      flex-direction: column;
       position: fixed;
-      top: 56px; left: 0; right: 0;
-      height: 3px;
-      background: rgba(0,0,0,0.04);
-      z-index: 99;
+      top: 0; left: 0; bottom: 0;
+      z-index: 100;
+      overflow-y: auto;
     }
-    .top-progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, #5D5CFF, #7C3AED);
-      border-radius: 0 1px 1px 0;
-      transition: width 0.3s ease;
+    .sidebar-logo {
+      padding: 28px 24px 24px;
+      font-family: var(--mono);
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--sidebar-text-hi);
+    }
+    .sidebar-logo span { color: var(--purple); }
+    .sidebar-user {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 24px 24px;
+    }
+    .sidebar-avatar {
+      width: 42px; height: 42px;
+      border-radius: 50%;
+      background: var(--purple);
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-weight: 700; font-size: 0.85rem; flex-shrink: 0;
+    }
+    .sidebar-user-info { min-width: 0; }
+    .sidebar-user-name {
+      font-weight: 600; font-size: 0.9rem;
+      color: var(--sidebar-text-hi);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .sidebar-user-plan {
+      font-size: 0.72rem; color: var(--purple); font-weight: 500;
+    }
+    .sidebar-section { padding: 0 16px; margin-bottom: 8px; }
+    .sidebar-label {
+      font-family: var(--mono);
+      font-size: 0.62rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.15em;
+      color: rgba(255,255,255,0.3);
+      padding: 16px 8px 8px;
+    }
+    .sidebar-link {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 12px; border-radius: 10px;
+      font-size: 0.88rem; color: var(--sidebar-text);
+      transition: background 0.15s, color 0.15s;
+      cursor: pointer;
+    }
+    .sidebar-link:hover {
+      background: var(--sidebar-hover); color: var(--sidebar-text-hi);
+    }
+    .sidebar-link.active {
+      background: var(--sidebar-active); color: var(--sidebar-text-hi); font-weight: 600;
+    }
+    .sidebar-link-icon {
+      font-size: 1.05rem; width: 22px; text-align: center; flex-shrink: 0;
+    }
+    .sidebar-badge {
+      margin-left: auto;
+      background: var(--purple); color: #fff;
+      font-size: 0.65rem; font-weight: 700;
+      padding: 2px 8px; border-radius: 10px;
+    }
+    .sidebar-bottom {
+      margin-top: auto; padding: 16px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+    .sidebar-link.logout { color: rgba(255,255,255,0.45); }
+    .sidebar-link.logout:hover {
+      color: #f87171; background: rgba(248,113,113,0.08);
     }
 
-    /* ── Page layout ─── */
-    .page {
+    /* ── Main ── */
+    .main {
+      flex: 1;
+      margin-left: var(--sidebar-w);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Top Bar ── */
+    .topbar {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 20px 32px;
+      background: var(--main-bg);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.88rem;
+      color: var(--purple);
+      font-weight: 500;
+      transition: opacity 0.15s;
+    }
+    .back-link:hover { opacity: 0.7; }
+    .topbar-title {
+      font-family: var(--mono);
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-left: 24px;
+    }
+
+    /* ── Content ── */
+    .content {
+      flex: 1;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 0 1rem 5rem;
+      padding: 0 32px 48px;
     }
 
-    /* ── Setup hero ─── */
-    .setup-hero {
-      padding: 120px 24px 40px;
-      text-align: center;
-      background: var(--c-bg);
+    /* ── Step Indicator ── */
+    .step-indicator {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      margin: 16px 0 8px;
     }
-    .setup-hero .eyebrow {
-      font-family: var(--font-mono);
-      font-size: 0.72rem;
-      font-weight: 600;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--c-primary);
-      margin-bottom: 12px;
+    .step-dot {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--mono);
+      font-size: 0.8rem; font-weight: 700;
+      color: var(--text-lo);
+      background: var(--card-bg);
+      transition: all 0.3s ease;
+      flex-shrink: 0;
     }
-    .setup-hero h1 {
-      font-family: var(--font-mono);
-      font-size: clamp(1.8rem, 4vw, 2.8rem);
-      font-weight: 700;
-      letter-spacing: -0.03em;
-      color: var(--c-text-hi);
-      margin-bottom: 0;
+    .step-dot.active {
+      border-color: var(--purple);
+      background: var(--purple);
+      color: #fff;
+      box-shadow: 0 0 0 4px rgba(93,92,255,0.15);
     }
-    .setup-hero .subtitle {
-      font-size: 1.05rem;
-      color: var(--c-text-med);
-      max-width: 500px;
-      margin: 12px auto 0;
-      line-height: 1.6;
+    .step-dot.done {
+      border-color: var(--purple);
+      background: rgba(93,92,255,0.08);
+      color: var(--purple);
     }
-    @media (max-width: 768px) {
-      .setup-hero { padding: 110px 16px 32px; }
-      .setup-hero h1 { font-size: 1.6rem; }
+    .step-line {
+      width: 60px; height: 2px;
+      background: var(--border);
+      transition: background 0.3s ease;
+    }
+    .step-line.done { background: var(--purple); }
+    .step-labels {
+      display: flex;
+      justify-content: center;
+      gap: 56px;
+      margin-top: 8px;
+      margin-bottom: 28px;
+    }
+    .step-labels span {
+      font-family: var(--mono);
+      font-size: 0.65rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      color: var(--text-lo);
+      text-align: center; width: 60px;
     }
 
+    /* ── Wizard Card ── */
     .wizard-card {
-      background: var(--c-bg);
-      border-radius: var(--r-xl);
+      background: var(--card-bg);
+      border-radius: 20px;
       padding: 2.5rem 2.25rem;
       max-width: 680px;
       width: 100%;
-      border: 1px solid var(--c-border);
-      box-shadow: var(--shadow-4);
+      border: 1px solid var(--border);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.04);
     }
 
-    /* ── Step indicator (hidden — replaced by top progress line) ─── */
-    .step-indicator { display: none; }
-    .step-labels { display: none; }
-
-    /* ── Step panes ─── */
+    /* ── Step panes ── */
     .step-pane h2 {
-      font-family: var(--font-mono);
+      font-family: var(--mono);
       font-size: 1.25rem; font-weight: 700;
-      color: var(--c-text-hi); margin-bottom: 0.35rem;
+      color: var(--text); margin-bottom: 0.35rem;
       letter-spacing: -0.02em;
     }
     .step-sub {
-      font-size: 0.875rem; color: var(--c-text-med);
+      font-size: 0.875rem; color: var(--text-mid);
       margin-bottom: 1.75rem;
     }
 
-    /* ── Choice cards (Bento tiles) ─── */
+    /* ── Choice cards ── */
     .choice-cards {
       display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
     }
     .choice-card {
       display: flex; flex-direction: column; align-items: center;
       padding: 2rem 1rem;
-      border: 1.5px solid var(--c-border);
-      border-radius: var(--r-lg);
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
       cursor: pointer;
       transition: border-color var(--ease), background var(--ease), box-shadow var(--ease);
       user-select: none;
-      background: var(--c-surface);
+      background: var(--surface);
     }
     .choice-card input[type="radio"] { display: none; }
     .choice-card:has(input:checked) {
       border-color: rgba(93,92,255,0.4);
-      background: var(--c-primary-tonal);
+      background: rgba(93,92,255,0.04);
       box-shadow: 0 0 0 3px rgba(93,92,255,.1);
     }
     .choice-card:hover { border-color: rgba(93,92,255,0.3); }
-    .card-icon  { font-size: 2rem; margin-bottom: 0.65rem; }
-    .card-title { font-family: var(--font-mono); font-size: 1rem; font-weight: 600; margin-bottom: 0.2rem; color: var(--c-text-hi); }
-    .card-desc  { font-size: 0.78rem; color: var(--c-text-med); text-align: center; }
+    .card-icon {
+      width: 52px; height: 52px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, rgba(93,92,255,0.12), rgba(124,58,237,0.08));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem;
+      color: var(--purple);
+      margin-bottom: 0.75rem;
+    }
+    .card-title {
+      font-family: var(--mono); font-size: 1rem; font-weight: 700;
+      margin-bottom: 0.35rem; color: var(--text);
+    }
+    .card-desc {
+      font-size: 0.78rem; color: var(--text-mid); text-align: center;
+      line-height: 1.4; margin-bottom: 0.75rem;
+    }
+    .card-badge {
+      font-family: var(--mono);
+      font-size: 0.62rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      background: rgba(93,92,255,0.06); color: var(--purple);
+      border: 1px solid rgba(93,92,255,0.12);
+      border-radius: 20px; padding: 3px 12px;
+    }
 
-    /* ── File drop zone ─── */
+    /* ── File drop zone ── */
     .file-drop-zone {
       display: flex; flex-direction: column; align-items: center; gap: 0.35rem;
-      border: 1.5px dashed var(--c-border);
-      border-radius: var(--r-lg);
+      border: 1.5px dashed var(--border);
+      border-radius: 14px;
       padding: 2.5rem 1.5rem;
       cursor: pointer; text-align: center;
       transition: border-color var(--ease), background var(--ease);
       margin-bottom: 0.875rem;
-      background: var(--c-surface);
+      background: var(--surface);
     }
     .file-drop-zone:hover,
-    .file-drop-zone:focus-within { border-color: rgba(93,92,255,0.4); background: var(--c-primary-tonal); }
+    .file-drop-zone:focus-within { border-color: rgba(93,92,255,0.4); background: rgba(93,92,255,0.03); }
     .file-drop-zone input[type="file"] { display: none; }
     .drop-icon    { font-size: 2rem; }
-    .drop-heading { font-size: 0.95rem; font-weight: 500; color: var(--c-text-hi); }
-    .drop-sub     { font-size: 0.825rem; color: var(--c-text-med); }
+    .drop-heading { font-size: 0.95rem; font-weight: 500; color: var(--text); }
+    .drop-sub     { font-size: 0.825rem; color: var(--text-mid); }
     .drop-formats { display: flex; gap: 0.4rem; margin-top: 0.4rem; flex-wrap: wrap; justify-content: center; }
     .drop-formats span {
-      font-family: var(--font-mono);
+      font-family: var(--mono);
       font-size: 0.6rem; font-weight: 500; letter-spacing: 0.08em;
       text-transform: uppercase;
-      background: rgba(93,92,255,0.06); color: var(--c-primary);
+      background: rgba(93,92,255,0.06); color: var(--purple);
       border: 1px solid rgba(93,92,255,0.12); border-radius: 4px;
       padding: 0.15rem 0.45rem;
     }
     .file-selected-name {
       display: flex; align-items: center; gap: 0.5rem;
-      font-size: 0.9rem; font-weight: 500; color: var(--c-text-hi);
+      font-size: 0.9rem; font-weight: 500; color: var(--text);
       min-height: 1.5rem;
     }
     .file-check { color: #16a34a; font-size: 1rem; }
 
-    /* ── Ensemble part rows ─── */
+    /* ── Ensemble part rows ── */
     .parts-list { display: flex; flex-direction: column; gap: 0.625rem; margin-bottom: 0.875rem; }
-
     .part-row { display: flex; gap: 0.5rem; align-items: center; }
-
     .part-name-input {
       flex: 0 0 185px;
       padding: 0.5rem 0.7rem;
-      border: 1px solid var(--c-border); border-radius: var(--r-md);
-      font-family: var(--font-body); font-size: 0.875rem;
-      color: var(--c-text-hi); background: var(--c-surface);
+      border: 1px solid var(--border); border-radius: var(--r-md);
+      font-family: var(--font); font-size: 0.875rem;
+      color: var(--text); background: var(--surface);
       transition: border-color var(--ease);
     }
-    .part-name-input:focus { outline: none; border-color: var(--c-primary); }
-    .part-name-input::placeholder { color: var(--c-text-lo); }
-
+    .part-name-input:focus { outline: none; border-color: var(--purple); }
+    .part-name-input::placeholder { color: var(--text-lo); }
     .part-file-label {
       flex: 1; display: flex; align-items: center; gap: 0.4rem;
       padding: 0.5rem 0.7rem;
-      border: 1px dashed var(--c-border); border-radius: var(--r-md);
-      cursor: pointer; font-size: 0.825rem; color: var(--c-text-med);
+      border: 1px dashed var(--border); border-radius: var(--r-md);
+      cursor: pointer; font-size: 0.825rem; color: var(--text-mid);
       transition: border-color var(--ease), background var(--ease);
       overflow: hidden; white-space: nowrap;
-      user-select: none;
-      background: var(--c-surface);
+      user-select: none; background: var(--surface);
     }
-    .part-file-label:hover { border-color: rgba(93,92,255,0.3); background: var(--c-primary-tonal); }
+    .part-file-label:hover { border-color: rgba(93,92,255,0.3); background: rgba(93,92,255,0.03); }
     .part-file-label input[type="file"] { display: none; }
     .part-file-display { overflow: hidden; text-overflow: ellipsis; }
-    .part-file-display.has-file { color: var(--c-text-hi); font-weight: 500; }
-
+    .part-file-display.has-file { color: var(--text); font-weight: 500; }
     .remove-part-btn {
       flex-shrink: 0; width: 30px; height: 30px; border-radius: 50%;
-      border: 1px solid var(--c-border); background: transparent;
-      color: var(--c-text-lo); font-size: 1rem; cursor: pointer;
+      border: 1px solid var(--border); background: transparent;
+      color: var(--text-lo); font-size: 1rem; cursor: pointer;
       display: flex; align-items: center; justify-content: center;
       transition: border-color var(--ease), background var(--ease), color var(--ease);
       font-family: inherit; padding: 0;
     }
     .remove-part-btn:hover { border-color: rgba(220,38,38,0.3); background: rgba(220,38,38,0.06); color: #dc2626; }
-
     .add-part-btn {
-      font-family: var(--font-body); font-size: 0.875rem; font-weight: 500;
-      color: var(--c-primary); background: transparent;
+      font-family: var(--font); font-size: 0.875rem; font-weight: 500;
+      color: var(--purple); background: transparent;
       border: 1.5px dashed rgba(93,92,255,0.3); border-radius: var(--r-md);
       padding: 0.5rem 1rem; cursor: pointer;
       transition: background var(--ease);
     }
-    .add-part-btn:hover { background: var(--c-primary-tonal); }
+    .add-part-btn:hover { background: rgba(93,92,255,0.03); }
 
-    /* ── Piece name input ─── */
+    /* ── Piece name input ── */
     .piece-name-input {
       width: 100%; padding: 0.875rem 1rem;
-      border: 1.5px solid var(--c-border); border-radius: var(--r-lg);
-      font-family: var(--font-body); font-size: 1.05rem;
-      color: var(--c-text-hi); background: var(--c-surface);
+      border: 1.5px solid var(--border); border-radius: 12px;
+      font-family: var(--font); font-size: 1.05rem;
+      color: var(--text); background: var(--surface);
       transition: border-color var(--ease);
     }
-    .piece-name-input:focus { outline: none; border-color: var(--c-primary); }
-    .piece-name-input::placeholder { color: var(--c-text-lo); }
+    .piece-name-input:focus { outline: none; border-color: var(--purple); }
+    .piece-name-input::placeholder { color: var(--text-lo); }
 
-    /* ── Error banner ─── */
+    /* ── Error banner ── */
     .step-error {
       margin-top: 1.25rem; padding: 0.75rem 1rem;
-      background: var(--c-error-bg); color: var(--c-error);
+      background: var(--error-bg); color: var(--error);
       border: 1px solid rgba(220,38,38,.12); border-radius: var(--r-md);
       font-size: 0.875rem; line-height: 1.45;
     }
 
-    /* ── Navigation bar ─── */
+    /* ── Navigation bar ── */
     .step-nav {
       display: flex; justify-content: space-between; align-items: center;
       margin-top: 2rem; padding-top: 1.5rem;
-      border-top: 1px solid var(--c-border);
+      border-top: 1px solid var(--border);
+    }
+    .step-nav-hint {
+      font-size: 0.82rem;
+      color: var(--text-lo);
+      font-style: italic;
     }
     .nav-btn {
-      font-family: var(--font-body); font-size: 0.875rem; font-weight: 600;
+      font-family: var(--font); font-size: 0.875rem; font-weight: 600;
       letter-spacing: 0.01em; padding: 0.625rem 1.5rem;
-      border-radius: 8px; cursor: pointer;
+      border-radius: 10px; cursor: pointer;
       transition: background var(--ease), box-shadow var(--ease), transform var(--ease);
       border: none;
     }
     .nav-btn.secondary {
-      background: transparent; color: var(--c-text-med);
-      border: 1px solid var(--c-border);
+      background: transparent; color: var(--text-mid);
+      border: 1px solid var(--border);
     }
-    .nav-btn.secondary:hover { background: var(--c-surface); }
+    .nav-btn.secondary:hover { background: var(--surface); }
     .nav-btn.secondary.invisible { visibility: hidden; pointer-events: none; }
     .nav-btn.primary {
-      background: var(--c-primary); color: #fff;
+      background: var(--purple); color: #fff;
       box-shadow: 0 2px 12px rgba(93,92,255,.2);
     }
     .nav-btn.primary:hover {
-      background: var(--c-primary-dark);
+      background: var(--purple-dark);
       box-shadow: 0 4px 16px rgba(93,92,255,.25);
       transform: translateY(-1px);
     }
-    .nav-btn.primary:active { transform: translateY(0); box-shadow: 0 2px 12px rgba(93,92,255,.2); }
+    .nav-btn.primary:active { transform: translateY(0); }
 
-    /* ── Loading overlay (Skeleton Screen) — WHITE background, BLACK lines, colorful dots ─── */
+    /* ── Loading overlay ── */
     .loading-overlay {
       position: fixed; inset: 0;
       background: #FFFFFF;
       display: flex; flex-direction: column;
       z-index: 999;
     }
-
     .loading-progress-line {
-      height: 3px;
-      background: rgba(0,0,0,0.04);
-      flex-shrink: 0;
-      position: relative;
-      overflow: hidden;
+      height: 3px; background: rgba(0,0,0,0.04);
+      flex-shrink: 0; position: relative; overflow: hidden;
     }
     .loading-bar-fill {
-      position: absolute;
-      left: 0; top: 0; bottom: 0;
+      position: absolute; left: 0; top: 0; bottom: 0;
       width: 0%;
       background: linear-gradient(90deg, #5D5CFF, #7C3AED);
       border-radius: 0 1px 1px 0;
       transition: width 0.35s ease;
     }
-
     .loading-skel-header {
-      height: 48px;
-      background: #F5F5F7;
+      height: 48px; background: #F5F5F7;
       border-bottom: 1px solid rgba(0,0,0,0.06);
-      display: flex;
-      align-items: center;
-      padding: 0 1.25rem;
-      gap: 0.75rem;
-      flex-shrink: 0;
+      display: flex; align-items: center;
+      padding: 0 1.25rem; gap: 0.75rem; flex-shrink: 0;
     }
-
     .loading-skel-pill {
-      border-radius: 4px;
-      background: rgba(0,0,0,0.06);
+      border-radius: 4px; background: rgba(0,0,0,0.06);
       animation: loading-shimmer 2s ease-in-out infinite;
     }
     .loading-skel-pill.w40  { width: 40px;  height: 16px; }
@@ -327,47 +460,28 @@
     .loading-skel-pill.w60  { width: 60px;  height: 28px; border-radius: 14px; }
     .loading-skel-pill.w50  { width: 50px;  height: 28px; border-radius: 14px; }
     .loading-skel-spacer    { flex: 1; }
-
     @keyframes loading-shimmer {
       0%, 100% { opacity: 1; }
       50%      { opacity: 0.4; }
     }
-
-    .loading-skel-body {
-      flex: 1;
-      display: flex;
-      overflow: hidden;
-    }
-
+    .loading-skel-body { flex: 1; display: flex; overflow: hidden; }
     .loading-skel-sheet {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 2.5rem;
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; padding: 2.5rem;
     }
-
     .loading-skel-paper {
-      width: 100%;
-      max-width: 720px;
-      flex: 1;
-      background: #FFFFFF;
-      border-radius: 8px;
+      width: 100%; max-width: 720px; flex: 1;
+      background: #FFFFFF; border-radius: 8px;
       border: 1px solid rgba(0,0,0,0.06);
       padding: 2rem 2.5rem;
-      display: flex;
-      flex-direction: column;
-      gap: 2.5rem;
+      display: flex; flex-direction: column; gap: 2.5rem;
       box-shadow: 0 2px 16px rgba(0,0,0,0.04);
     }
-
     .loading-skel-staff-group {
       display: flex; flex-direction: column; gap: 6px; margin-bottom: 1.5rem;
     }
     .loading-skel-line {
-      height: 1px;
-      background: #1A1A1A;
-      border-radius: 1px;
+      height: 1px; background: #1A1A1A; border-radius: 1px;
       animation: loading-shimmer 2.5s ease-in-out infinite;
     }
     .loading-skel-line:nth-child(1) { animation-delay: 0s; }
@@ -375,16 +489,13 @@
     .loading-skel-line:nth-child(3) { animation-delay: 0.3s; }
     .loading-skel-line:nth-child(4) { animation-delay: 0.45s; }
     .loading-skel-line:nth-child(5) { animation-delay: 0.6s; }
-
     .loading-skel-notes {
       display: flex; gap: 1.8rem; padding: 0.5rem 2rem; margin-top: -0.5rem;
     }
     .loading-skel-note {
-      width: 10px; height: 10px;
-      border-radius: 50%;
+      width: 10px; height: 10px; border-radius: 50%;
       animation: loading-noteAppear 2s ease-in-out infinite;
     }
-    /* Colorful dots */
     .loading-skel-note:nth-child(1) { background: #5D5CFF; animation-delay: 0.2s; }
     .loading-skel-note:nth-child(2) { background: #7C3AED; animation-delay: 0.5s; }
     .loading-skel-note:nth-child(3) { background: #3B82F6; animation-delay: 0.8s; }
@@ -393,23 +504,18 @@
     .loading-skel-note:nth-child(6) { background: #10b981; animation-delay: 1.7s; }
     .loading-skel-note:nth-child(7) { background: #ef4444; animation-delay: 0.3s; }
     .loading-skel-note:nth-child(8) { background: #8b5cf6; animation-delay: 0.9s; }
-
     @keyframes loading-noteAppear {
       0%, 100% { opacity: 0.3; transform: scale(0.8); }
       50%      { opacity: 1; transform: scale(1.2); }
     }
-
     .loading-skel-sidebar {
-      width: 260px;
-      background: #F5F5F7;
+      width: 260px; background: #F5F5F7;
       border-left: 1px solid rgba(0,0,0,0.06);
       padding: 1.25rem;
-      display: flex; flex-direction: column; gap: 1.5rem;
-      flex-shrink: 0;
+      display: flex; flex-direction: column; gap: 1.5rem; flex-shrink: 0;
     }
     .loading-skel-sb-title {
-      width: 70px; height: 10px;
-      border-radius: 2px;
+      width: 70px; height: 10px; border-radius: 2px;
       background: rgba(93,92,255,0.15);
     }
     .loading-skel-sb-block { display: flex; flex-direction: column; gap: 0.5rem; }
@@ -420,29 +526,17 @@
     }
     .loading-skel-sb-line:nth-child(2) { animation-delay: 0.3s; }
     .loading-skel-sb-line:nth-child(3) { animation-delay: 0.6s; }
-
     .loading-status-center {
-      position: fixed;
-      bottom: 3rem;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.6rem;
-      z-index: 10;
+      position: fixed; bottom: 3rem; left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 0.6rem; z-index: 10;
     }
     .loading-pct {
-      font-family: var(--font-mono);
-      font-size: 0.85rem; font-weight: 600;
-      color: #5D5CFF; letter-spacing: 0.05em;
-      font-variant-numeric: tabular-nums;
+      font-family: var(--mono); font-size: 0.85rem; font-weight: 600;
+      color: #5D5CFF; letter-spacing: 0.05em; font-variant-numeric: tabular-nums;
     }
     .loading-status-text {
-      font-family: var(--font-mono);
-      font-size: 0.65rem; font-weight: 500;
-      letter-spacing: 0.2em; text-transform: uppercase;
-      color: #888888;
+      font-family: var(--mono); font-size: 0.65rem; font-weight: 500;
+      letter-spacing: 0.2em; text-transform: uppercase; color: #888888;
     }
 
     @media (max-width: 768px) {
@@ -451,512 +545,545 @@
     }
 
     .hidden { display: none !important; }
+
+    /* ── Mobile ── */
+    .mobile-header {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      background: var(--sidebar-bg);
+    }
+    .mobile-header .sidebar-logo { padding: 0; }
+    .mobile-toggle {
+      background: none; border: none;
+      color: var(--sidebar-text); font-size: 1.4rem; cursor: pointer;
+    }
+    .sidebar-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.5); z-index: 99;
+    }
+
+    @media (max-width: 768px) {
+      .mobile-header { display: flex; }
+      .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.25s ease;
+      }
+      .sidebar.open { transform: translateX(0); }
+      .sidebar-overlay.open { display: block; }
+      .main { margin-left: 0; }
+      .topbar { padding: 12px 16px; }
+      .content { padding: 0 16px 32px; }
+      .choice-cards { grid-template-columns: 1fr; }
+      .part-row { flex-wrap: wrap; }
+      .part-name-input { flex: 1 1 100%; }
+    }
   </style>
 </head>
-<body class="marketing">
+<body>
 
-<!-- Navbar -->
-<nav class="navbar">
-  <div class="container">
-    <a href="/" class="nav-logo">Melo<span>dra</span></a>
-    <ul class="nav-links" id="navLinks">
-      <li><a href="/">Home</a></li>
-      <li><a href="/about">About</a></li>
-      <li><a href="/blog">Blog</a></li>
-      <li><a href="/contact">Contact</a></li>
-      <li><a href="/studio">Studio</a></li>
-    </ul>
-    <a href="/studio" class="nav-cta">Open App</a>
-    <button class="nav-toggle" id="navToggle" aria-label="Menu">&#9776;</button>
+  <!-- ─── Mobile Header ─── -->
+  <div class="mobile-header">
+    <a href="/" class="sidebar-logo">Melo<span>dra</span></a>
+    <button class="mobile-toggle" id="mobileToggle" aria-label="Menu">&#9776;</button>
   </div>
-</nav>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-<!-- Slim progress line -->
-<div class="top-progress">
-  <div class="top-progress-fill" id="top-progress-fill" style="width: 33%"></div>
-</div>
+  <!-- ─── Sidebar ─── -->
+  <aside class="sidebar" id="sidebar">
+    <a href="/" class="sidebar-logo">Melo<span>dra</span></a>
 
-<!-- Hero section -->
-<section class="setup-hero">
-  <p class="eyebrow">New Score</p>
-  <h1>Set up your score</h1>
-  <p class="subtitle">Upload your sheet music and configure your performance in just a few steps.</p>
-</section>
-
-<div class="page">
-
-  <div class="wizard-card">
-
-    <!-- Step indicator (hidden, replaced by top line) -->
-    <div class="step-indicator">
-      <div class="step-dot active" id="dot-1">1</div>
-      <div class="step-line" id="line-1"></div>
-      <div class="step-dot" id="dot-2">2</div>
-      <div class="step-line" id="line-2"></div>
-      <div class="step-dot" id="dot-3">3</div>
-    </div>
-    <div class="step-labels">
-      <span>Type</span>
-      <span>Files</span>
-      <span>Title</span>
-    </div>
-
-    <!-- ─── Pane 1: Solo vs Ensemble ─── -->
-    <div class="step-pane" id="pane-1">
-      <h2>What are you performing?</h2>
-      <p class="step-sub">Choose the type of score you&rsquo;re uploading.</p>
-      <div class="choice-cards">
-        <label class="choice-card" id="card-solo">
-          <input type="radio" name="type" value="solo" checked />
-          <div class="card-icon">&#9835;</div>
-          <div class="card-title">Solo</div>
-          <div class="card-desc">One instrument,&nbsp;one file</div>
-        </label>
-        <label class="choice-card" id="card-ensemble">
-          <input type="radio" name="type" value="ensemble" />
-          <div class="card-icon">&#9836;</div>
-          <div class="card-title">Ensemble</div>
-          <div class="card-desc">Multiple parts playing together</div>
-        </label>
+    <div class="sidebar-user">
+      <div class="sidebar-avatar">{{ user.name[:2] | upper }}</div>
+      <div class="sidebar-user-info">
+        <div class="sidebar-user-name">{{ user.name }}</div>
+        <div class="sidebar-user-plan">Free plan</div>
       </div>
     </div>
 
-    <!-- ─── Pane 2a: Solo file upload ─── -->
-    <div class="step-pane hidden" id="pane-2-solo">
-      <h2>Upload your score</h2>
-      <p class="step-sub">PDF, MXL, XML, or MusicXML &mdash; up to 50&thinsp;MB</p>
-      <label class="file-drop-zone" id="solo-drop">
-        <input type="file" id="solo-file-input" accept=".pdf,.mxl,.xml,.musicxml" />
-        <div class="drop-icon">&#9835;</div>
-        <p class="drop-heading">Drop your file here</p>
-        <p class="drop-sub">or click to browse</p>
-        <div class="drop-formats">
-          <span>PDF</span><span>MXL</span><span>XML</span><span>MusicXML</span>
-        </div>
-      </label>
-      <div id="solo-filename" class="file-selected-name"></div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Main</div>
+      <a href="/dashboard" class="sidebar-link">
+        <span class="sidebar-link-icon">&#9638;</span>
+        Dashboard
+      </a>
+      <a href="/dashboard" class="sidebar-link">
+        <span class="sidebar-link-icon">&#9835;</span>
+        My Songs
+      </a>
+      <a href="/setup" class="sidebar-link active">
+        <span class="sidebar-link-icon">+</span>
+        New Song
+      </a>
     </div>
 
-    <!-- ─── Pane 2b: Ensemble parts ─── -->
-    <div class="step-pane hidden" id="pane-2-ensemble">
-      <h2>Upload each part</h2>
-      <p class="step-sub">Add a name and score file for each instrument.</p>
-      <div id="parts-list" class="parts-list"></div>
-      <button type="button" id="add-part-btn" class="add-part-btn">+ Add Part</button>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Library</div>
+      <a href="/dashboard" class="sidebar-link">
+        <span class="sidebar-link-icon">&#128196;</span>
+        Solo Pieces
+      </a>
+      <a href="/dashboard" class="sidebar-link">
+        <span class="sidebar-link-icon">&#128101;</span>
+        Ensemble
+      </a>
     </div>
 
-    <!-- ─── Pane 3: Piece name ─── -->
-    <div class="step-pane hidden" id="pane-3">
-      <h2>Name your piece</h2>
-      <p class="step-sub">This appears as the title in the player.</p>
-      <input type="text" id="piece-name-input" class="piece-name-input"
-             placeholder="e.g. Beethoven Symphony No. 5"
-             autocomplete="off" spellcheck="false" />
+    <div class="sidebar-bottom">
+      <a href="/logout" class="sidebar-link logout">
+        <span class="sidebar-link-icon">&#8618;</span>
+        Log out
+      </a>
+    </div>
+  </aside>
+
+  <!-- ─── Main Content ─── -->
+  <div class="main">
+
+    <!-- Top Bar -->
+    <div class="topbar">
+      <a href="/dashboard" class="back-link">&#8249; Back to dashboard</a>
+      <span class="topbar-title">New song</span>
     </div>
 
-    <!-- Error banner -->
-    <div id="step-error" class="step-error hidden"></div>
+    <!-- Content -->
+    <div class="content">
 
-    <!-- Navigation -->
-    <div class="step-nav">
-      <button type="button" id="prev-btn" class="nav-btn secondary invisible">&#8592; Back</button>
-      <button type="button" id="next-btn" class="nav-btn primary">Continue &#8594;</button>
-    </div>
-
-  </div><!-- /wizard-card -->
-</div><!-- /page -->
-
-<!-- Footer -->
-<footer class="site-footer">
-  <div class="container">
-    <div class="footer-grid">
-      <div class="footer-brand">
-        <a href="/" class="nav-logo" style="margin-bottom:12px;display:inline-block;">Melo<span>dra</span></a>
-        <p>Turn sheet music into instant audio playback. Built for orchestra musicians and educators.</p>
+      <!-- Step Indicator -->
+      <div class="step-indicator">
+        <div class="step-dot active" id="dot-1">1</div>
+        <div class="step-line" id="line-1"></div>
+        <div class="step-dot" id="dot-2">2</div>
+        <div class="step-line" id="line-2"></div>
+        <div class="step-dot" id="dot-3">3</div>
       </div>
-      <div class="footer-col">
-        <h4>Product</h4>
-        <ul>
-          <li><a href="/studio">Studio</a></li>
-          <li><a href="/#features">Features</a></li>
-          <li><a href="/#how-it-works">How It Works</a></li>
-          <li><a href="/#faq">FAQ</a></li>
-        </ul>
+      <div class="step-labels">
+        <span>Type</span>
+        <span>Upload</span>
+        <span>Finalize</span>
       </div>
-      <div class="footer-col">
-        <h4>Company</h4>
-        <ul>
-          <li><a href="/about">About</a></li>
-          <li><a href="/blog">Blog</a></li>
-          <li><a href="/contact">Contact</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h4>Legal</h4>
-        <ul>
-          <li><a href="#">Privacy Policy</a></li>
-          <li><a href="#">Terms of Service</a></li>
-        </ul>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <span>&copy; 2026 Melodra. All rights reserved.</span>
-    </div>
-  </div>
-</footer>
 
-<!-- Loading overlay (Skeleton Screen) -->
-<div id="loading-overlay" class="loading-overlay hidden">
-  <!-- Slim top progress -->
-  <div class="loading-progress-line">
-    <div id="loading-bar-fill" class="loading-bar-fill"></div>
-  </div>
+      <!-- Wizard Card -->
+      <div class="wizard-card">
 
-  <!-- Skeleton header -->
-  <div class="loading-skel-header">
-    <div class="loading-skel-pill w40"></div>
-    <div class="loading-skel-pill w200"></div>
-    <div class="loading-skel-spacer"></div>
-    <div class="loading-skel-pill w60"></div>
-    <div class="loading-skel-pill w50"></div>
-  </div>
-
-  <!-- Skeleton body -->
-  <div class="loading-skel-body">
-    <div class="loading-skel-sheet">
-      <div class="loading-skel-paper">
-        <!-- Staff group 1 -->
-        <div>
-          <div class="loading-skel-staff-group">
-            <div class="loading-skel-line"></div>
-            <div class="loading-skel-line"></div>
-            <div class="loading-skel-line"></div>
-            <div class="loading-skel-line"></div>
-            <div class="loading-skel-line"></div>
-          </div>
-          <div class="loading-skel-notes">
-            <div class="loading-skel-note"></div>
-            <div class="loading-skel-note"></div>
-            <div class="loading-skel-note"></div>
-            <div class="loading-skel-note"></div>
-            <div class="loading-skel-note"></div>
-            <div class="loading-skel-note"></div>
-            <div class="loading-skel-note"></div>
-            <div class="loading-skel-note"></div>
+        <!-- ─── Pane 1: Solo vs Ensemble ─── -->
+        <div class="step-pane" id="pane-1">
+          <h2>What are you performing?</h2>
+          <p class="step-sub">Choose the type of score &mdash; this helps Melodra read it correctly.</p>
+          <div class="choice-cards">
+            <label class="choice-card" id="card-solo">
+              <input type="radio" name="type" value="solo" checked />
+              <div class="card-icon">&#9835;</div>
+              <div class="card-title">Solo</div>
+              <div class="card-desc">One instrument, one part.<br>Violin, piano, flute sheets.</div>
+              <div class="card-badge">Single part</div>
+            </label>
+            <label class="choice-card" id="card-ensemble">
+              <input type="radio" name="type" value="ensemble" />
+              <div class="card-icon">&#9836;</div>
+              <div class="card-title">Ensemble</div>
+              <div class="card-desc">Multiple parts together.<br>Orchestral scores, quartets.</div>
+              <div class="card-badge">Multiple parts</div>
+            </label>
           </div>
         </div>
-        <!-- Staff group 2 -->
-        <div>
-          <div class="loading-skel-staff-group">
-            <div class="loading-skel-line" style="animation-delay:0.8s"></div>
-            <div class="loading-skel-line" style="animation-delay:0.95s"></div>
-            <div class="loading-skel-line" style="animation-delay:1.1s"></div>
-            <div class="loading-skel-line" style="animation-delay:1.25s"></div>
-            <div class="loading-skel-line" style="animation-delay:1.4s"></div>
-          </div>
-          <div class="loading-skel-notes">
-            <div class="loading-skel-note"></div>
-            <div class="loading-skel-note"></div>
-            <div class="loading-skel-note"></div>
-            <div class="loading-skel-note"></div>
-            <div class="loading-skel-note"></div>
-            <div class="loading-skel-note"></div>
-          </div>
+
+        <!-- ─── Pane 2a: Solo file upload ─── -->
+        <div class="step-pane hidden" id="pane-2-solo">
+          <h2>Upload your score</h2>
+          <p class="step-sub">PDF, MXL, XML, or MusicXML &mdash; up to 50&thinsp;MB</p>
+          <label class="file-drop-zone" id="solo-drop">
+            <input type="file" id="solo-file-input" accept=".pdf,.mxl,.xml,.musicxml" />
+            <div class="drop-icon">&#9835;</div>
+            <p class="drop-heading">Drop your file here</p>
+            <p class="drop-sub">or click to browse</p>
+            <div class="drop-formats">
+              <span>PDF</span><span>MXL</span><span>XML</span><span>MusicXML</span>
+            </div>
+          </label>
+          <div id="solo-filename" class="file-selected-name"></div>
         </div>
-        <!-- Staff group 3 -->
-        <div>
-          <div class="loading-skel-staff-group">
-            <div class="loading-skel-line" style="animation-delay:1.6s"></div>
-            <div class="loading-skel-line" style="animation-delay:1.75s"></div>
-            <div class="loading-skel-line" style="animation-delay:1.9s"></div>
-            <div class="loading-skel-line" style="animation-delay:2.05s"></div>
-            <div class="loading-skel-line" style="animation-delay:2.2s"></div>
+
+        <!-- ─── Pane 2b: Ensemble parts ─── -->
+        <div class="step-pane hidden" id="pane-2-ensemble">
+          <h2>Upload each part</h2>
+          <p class="step-sub">Add a name and score file for each instrument.</p>
+          <div id="parts-list" class="parts-list"></div>
+          <button type="button" id="add-part-btn" class="add-part-btn">+ Add Part</button>
+        </div>
+
+        <!-- ─── Pane 3: Piece name ─── -->
+        <div class="step-pane hidden" id="pane-3">
+          <h2>Name your piece</h2>
+          <p class="step-sub">This appears as the title in the player.</p>
+          <input type="text" id="piece-name-input" class="piece-name-input"
+                 placeholder="e.g. Beethoven Symphony No. 5"
+                 autocomplete="off" spellcheck="false" />
+        </div>
+
+        <!-- Error banner -->
+        <div id="step-error" class="step-error hidden"></div>
+
+        <!-- Navigation -->
+        <div class="step-nav">
+          <button type="button" id="prev-btn" class="nav-btn secondary invisible">&#8592; Back</button>
+          <span class="step-nav-hint" id="step-hint"></span>
+          <button type="button" id="next-btn" class="nav-btn primary">Continue &#8594;</button>
+        </div>
+
+      </div><!-- /wizard-card -->
+    </div><!-- /content -->
+  </div><!-- /main -->
+
+  <!-- Loading overlay -->
+  <div id="loading-overlay" class="loading-overlay hidden">
+    <div class="loading-progress-line">
+      <div id="loading-bar-fill" class="loading-bar-fill"></div>
+    </div>
+    <div class="loading-skel-header">
+      <div class="loading-skel-pill w40"></div>
+      <div class="loading-skel-pill w200"></div>
+      <div class="loading-skel-spacer"></div>
+      <div class="loading-skel-pill w60"></div>
+      <div class="loading-skel-pill w50"></div>
+    </div>
+    <div class="loading-skel-body">
+      <div class="loading-skel-sheet">
+        <div class="loading-skel-paper">
+          <div>
+            <div class="loading-skel-staff-group">
+              <div class="loading-skel-line"></div>
+              <div class="loading-skel-line"></div>
+              <div class="loading-skel-line"></div>
+              <div class="loading-skel-line"></div>
+              <div class="loading-skel-line"></div>
+            </div>
+            <div class="loading-skel-notes">
+              <div class="loading-skel-note"></div><div class="loading-skel-note"></div>
+              <div class="loading-skel-note"></div><div class="loading-skel-note"></div>
+              <div class="loading-skel-note"></div><div class="loading-skel-note"></div>
+              <div class="loading-skel-note"></div><div class="loading-skel-note"></div>
+            </div>
           </div>
-          <div class="loading-skel-notes">
-            <div class="loading-skel-note"></div>
-            <div class="loading-skel-note"></div>
-            <div class="loading-skel-note"></div>
-            <div class="loading-skel-note"></div>
-            <div class="loading-skel-note"></div>
-            <div class="loading-skel-note"></div>
-            <div class="loading-skel-note"></div>
+          <div>
+            <div class="loading-skel-staff-group">
+              <div class="loading-skel-line" style="animation-delay:0.8s"></div>
+              <div class="loading-skel-line" style="animation-delay:0.95s"></div>
+              <div class="loading-skel-line" style="animation-delay:1.1s"></div>
+              <div class="loading-skel-line" style="animation-delay:1.25s"></div>
+              <div class="loading-skel-line" style="animation-delay:1.4s"></div>
+            </div>
+            <div class="loading-skel-notes">
+              <div class="loading-skel-note"></div><div class="loading-skel-note"></div>
+              <div class="loading-skel-note"></div><div class="loading-skel-note"></div>
+              <div class="loading-skel-note"></div><div class="loading-skel-note"></div>
+            </div>
+          </div>
+          <div>
+            <div class="loading-skel-staff-group">
+              <div class="loading-skel-line" style="animation-delay:1.6s"></div>
+              <div class="loading-skel-line" style="animation-delay:1.75s"></div>
+              <div class="loading-skel-line" style="animation-delay:1.9s"></div>
+              <div class="loading-skel-line" style="animation-delay:2.05s"></div>
+              <div class="loading-skel-line" style="animation-delay:2.2s"></div>
+            </div>
+            <div class="loading-skel-notes">
+              <div class="loading-skel-note"></div><div class="loading-skel-note"></div>
+              <div class="loading-skel-note"></div><div class="loading-skel-note"></div>
+              <div class="loading-skel-note"></div><div class="loading-skel-note"></div>
+              <div class="loading-skel-note"></div>
+            </div>
           </div>
         </div>
       </div>
+      <div class="loading-skel-sidebar">
+        <div class="loading-skel-sb-title"></div>
+        <div class="loading-skel-sb-block">
+          <div class="loading-skel-sb-line"></div>
+          <div class="loading-skel-sb-line"></div>
+        </div>
+        <div class="loading-skel-sb-title" style="width:50px"></div>
+        <div class="loading-skel-sb-block">
+          <div class="loading-skel-sb-line" style="height:36px"></div>
+        </div>
+        <div class="loading-skel-sb-title" style="width:60px"></div>
+        <div class="loading-skel-sb-block">
+          <div class="loading-skel-sb-line"></div>
+          <div class="loading-skel-sb-line"></div>
+          <div class="loading-skel-sb-line"></div>
+        </div>
+      </div>
     </div>
-
-    <!-- Sidebar skeleton -->
-    <div class="loading-skel-sidebar">
-      <div class="loading-skel-sb-title"></div>
-      <div class="loading-skel-sb-block">
-        <div class="loading-skel-sb-line"></div>
-        <div class="loading-skel-sb-line"></div>
-      </div>
-      <div class="loading-skel-sb-title" style="width:50px"></div>
-      <div class="loading-skel-sb-block">
-        <div class="loading-skel-sb-line" style="height:36px"></div>
-      </div>
-      <div class="loading-skel-sb-title" style="width:60px"></div>
-      <div class="loading-skel-sb-block">
-        <div class="loading-skel-sb-line"></div>
-        <div class="loading-skel-sb-line"></div>
-        <div class="loading-skel-sb-line"></div>
-      </div>
+    <div class="loading-status-center">
+      <span id="loading-pct" class="loading-pct">0%</span>
+      <span id="loading-status" class="loading-status-text">Starting&hellip;</span>
     </div>
   </div>
 
-  <!-- Loading status -->
-  <div class="loading-status-center">
-    <span id="loading-pct" class="loading-pct">0%</span>
-    <span id="loading-status" class="loading-status-text">Starting&hellip;</span>
-  </div>
-</div>
+  <script>
+    const TOTAL_STEPS = 3;
+    let currentStep = 1;
+    let partCount   = 0;
 
-<script>
-  const TOTAL_STEPS = 3;
-  let currentStep = 1;
-  let partCount   = 0;
+    const prevBtn    = document.getElementById("prev-btn");
+    const nextBtn    = document.getElementById("next-btn");
+    const stepError  = document.getElementById("step-error");
+    const stepHint   = document.getElementById("step-hint");
+    const partsList  = document.getElementById("parts-list");
 
-  const prevBtn    = document.getElementById("prev-btn");
-  const nextBtn    = document.getElementById("next-btn");
-  const stepError  = document.getElementById("step-error");
-  const partsList  = document.getElementById("parts-list");
-  const topFill    = document.getElementById("top-progress-fill");
-
-  /* ── Step navigation ─────────────────────────────────── */
-  function getActivePaneId(step) {
-    if (step === 1) return "pane-1";
-    if (step === 2) {
-      const type = document.querySelector("input[name='type']:checked").value;
-      return type === "ensemble" ? "pane-2-ensemble" : "pane-2-solo";
+    /* ── Step navigation ── */
+    function getActivePaneId(step) {
+      if (step === 1) return "pane-1";
+      if (step === 2) {
+        const type = document.querySelector("input[name='type']:checked").value;
+        return type === "ensemble" ? "pane-2-ensemble" : "pane-2-solo";
+      }
+      return "pane-3";
     }
-    return "pane-3";
-  }
 
-  function showStep(n) {
-    document.querySelectorAll(".step-pane").forEach(p => p.classList.add("hidden"));
-    document.getElementById(getActivePaneId(n)).classList.remove("hidden");
+    function showStep(n) {
+      document.querySelectorAll(".step-pane").forEach(p => p.classList.add("hidden"));
+      document.getElementById(getActivePaneId(n)).classList.remove("hidden");
 
-    // Update slim top progress bar
-    topFill.style.width = ((n / TOTAL_STEPS) * 100) + "%";
+      // Dots and lines
+      [1, 2, 3].forEach(i => {
+        const dot = document.getElementById(`dot-${i}`);
+        dot.classList.toggle("active", i === n);
+        dot.classList.toggle("done",   i < n);
+      });
+      [1, 2].forEach(i => {
+        document.getElementById(`line-${i}`).classList.toggle("done", i < n);
+      });
 
-    // Dots and lines (kept for compatibility)
-    [1, 2, 3].forEach(i => {
-      const dot  = document.getElementById(`dot-${i}`);
-      dot.classList.toggle("active", i === n);
-      dot.classList.toggle("done",   i < n);
-    });
-    [1, 2].forEach(i => {
-      document.getElementById(`line-${i}`).classList.toggle("done", i < n);
-    });
+      prevBtn.classList.toggle("invisible", n === 1);
+      nextBtn.textContent = n === TOTAL_STEPS ? "Start \u2192" : "Continue \u2192";
 
-    prevBtn.classList.toggle("invisible", n === 1);
-    nextBtn.textContent = n === TOTAL_STEPS ? "Start \u2192" : "Continue \u2192";
-    clearError();
-  }
-
-  function showError(msg) {
-    stepError.textContent = msg;
-    stepError.classList.remove("hidden");
-  }
-  function clearError() { stepError.classList.add("hidden"); }
-
-  /* ── Validation ──────────────────────────────────────── */
-  function validateStep(n) {
-    if (n === 1) return true;
-
-    if (n === 2) {
-      const type = document.querySelector("input[name='type']:checked").value;
-      if (type === "solo") {
-        if (!document.getElementById("solo-file-input").files.length) {
-          showError("Please select a file before continuing.");
-          return false;
-        }
+      // Hint text
+      if (n === 1) {
+        const type = document.querySelector("input[name='type']:checked").value;
+        stepHint.textContent = type.charAt(0).toUpperCase() + type.slice(1) + " selected";
       } else {
-        const rows = partsList.querySelectorAll(".part-row");
-        const hasFile = [...rows].some(r => r.querySelector(".part-file-input").files.length > 0);
-        if (!hasFile) {
-          showError("Please upload at least one part file before continuing.");
+        stepHint.textContent = "";
+      }
+
+      clearError();
+    }
+
+    // Update hint when selection changes
+    document.querySelectorAll("input[name='type']").forEach(r => {
+      r.addEventListener("change", () => {
+        if (currentStep === 1) {
+          const type = r.value;
+          stepHint.textContent = type.charAt(0).toUpperCase() + type.slice(1) + " selected";
+        }
+      });
+    });
+
+    function showError(msg) {
+      stepError.textContent = msg;
+      stepError.classList.remove("hidden");
+    }
+    function clearError() { stepError.classList.add("hidden"); }
+
+    /* ── Validation ── */
+    function validateStep(n) {
+      if (n === 1) return true;
+      if (n === 2) {
+        const type = document.querySelector("input[name='type']:checked").value;
+        if (type === "solo") {
+          if (!document.getElementById("solo-file-input").files.length) {
+            showError("Please select a file before continuing.");
+            return false;
+          }
+        } else {
+          const rows = partsList.querySelectorAll(".part-row");
+          const hasFile = [...rows].some(r => r.querySelector(".part-file-input").files.length > 0);
+          if (!hasFile) {
+            showError("Please upload at least one part file before continuing.");
+            return false;
+          }
+        }
+      }
+      if (n === 3) {
+        const v = document.getElementById("piece-name-input").value.trim();
+        if (!v) {
+          showError("Please enter a title for the piece.");
+          document.getElementById("piece-name-input").focus();
           return false;
         }
       }
+      return true;
     }
 
-    if (n === 3) {
-      const v = document.getElementById("piece-name-input").value.trim();
-      if (!v) {
-        showError("Please enter a title for the piece.");
-        document.getElementById("piece-name-input").focus();
-        return false;
+    /* ── Continue / Back ── */
+    nextBtn.addEventListener("click", () => {
+      if (!validateStep(currentStep)) return;
+      if (currentStep === TOTAL_STEPS) {
+        submitSetup();
+      } else {
+        currentStep++;
+        showStep(currentStep);
       }
-    }
-    return true;
-  }
+    });
 
-  /* ── Continue / Back ─────────────────────────────────── */
-  nextBtn.addEventListener("click", () => {
-    if (!validateStep(currentStep)) return;
-    if (currentStep === TOTAL_STEPS) {
-      submitSetup();
-    } else {
-      currentStep++;
-      showStep(currentStep);
-    }
-  });
+    prevBtn.addEventListener("click", () => {
+      if (currentStep > 1) { currentStep--; showStep(currentStep); }
+    });
 
-  prevBtn.addEventListener("click", () => {
-    if (currentStep > 1) { currentStep--; showStep(currentStep); }
-  });
+    /* ── Keyboard: Enter advances ── */
+    document.addEventListener("keydown", e => {
+      if (e.key === "Enter" && e.target.tagName !== "BUTTON") nextBtn.click();
+    });
 
-  /* ── Keyboard: Enter advances ────────────────────────── */
-  document.addEventListener("keydown", e => {
-    if (e.key === "Enter" && e.target.tagName !== "BUTTON") nextBtn.click();
-  });
-
-  /* ── Solo file pick ──────────────────────────────────── */
-  document.getElementById("solo-file-input").addEventListener("change", function () {
-    const fname  = document.getElementById("solo-filename");
-    if (this.files.length) {
-      fname.innerHTML = `<span class="file-check">&#10003;</span> ${this.files[0].name}`;
-    } else {
-      fname.textContent = "";
-    }
-  });
-
-  /* Drag-over highlight on solo drop zone */
-  const soloDropLabel = document.getElementById("solo-drop");
-  soloDropLabel.addEventListener("dragover",  e => { e.preventDefault(); soloDropLabel.style.borderColor = "rgba(93,92,255,0.5)"; });
-  soloDropLabel.addEventListener("dragleave", ()  => soloDropLabel.style.borderColor = "");
-  soloDropLabel.addEventListener("drop",      e  => {
-    e.preventDefault();
-    soloDropLabel.style.borderColor = "";
-    const fi = document.getElementById("solo-file-input");
-    if (e.dataTransfer.files.length) {
-      fi.files = e.dataTransfer.files;
-      fi.dispatchEvent(new Event("change"));
-    }
-  });
-
-  /* ── Ensemble parts ──────────────────────────────────── */
-  function addPart(defaultName) {
-    const idx = partCount++;
-    const row = document.createElement("div");
-    row.className = "part-row";
-
-    row.innerHTML = `
-      <input type="text" class="part-name-input"
-             placeholder="Part name (e.g. Violin 1)"
-             value="${defaultName || ""}" />
-      <label class="part-file-label">
-        <input type="file" class="part-file-input" accept=".pdf,.mxl,.xml,.musicxml" />
-        <span class="part-file-icon">&#128196;</span>
-        <span class="part-file-display">Choose file</span>
-      </label>
-      <button type="button" class="remove-part-btn" title="Remove part">&times;</button>
-    `;
-
-    row.querySelector(".part-file-input").addEventListener("change", function () {
-      const disp = row.querySelector(".part-file-display");
+    /* ── Solo file pick ── */
+    document.getElementById("solo-file-input").addEventListener("change", function () {
+      const fname = document.getElementById("solo-filename");
       if (this.files.length) {
-        disp.textContent = this.files[0].name;
-        disp.classList.add("has-file");
+        fname.innerHTML = `<span class="file-check">&#10003;</span> ${this.files[0].name}`;
       } else {
-        disp.textContent = "Choose file";
-        disp.classList.remove("has-file");
+        fname.textContent = "";
       }
     });
 
-    row.querySelector(".remove-part-btn").addEventListener("click", () => {
-      if (partsList.querySelectorAll(".part-row").length > 1) row.remove();
+    /* Drag-over highlight on solo drop zone */
+    const soloDropLabel = document.getElementById("solo-drop");
+    soloDropLabel.addEventListener("dragover",  e => { e.preventDefault(); soloDropLabel.style.borderColor = "rgba(93,92,255,0.5)"; });
+    soloDropLabel.addEventListener("dragleave", ()  => soloDropLabel.style.borderColor = "");
+    soloDropLabel.addEventListener("drop",      e  => {
+      e.preventDefault();
+      soloDropLabel.style.borderColor = "";
+      const fi = document.getElementById("solo-file-input");
+      if (e.dataTransfer.files.length) {
+        fi.files = e.dataTransfer.files;
+        fi.dispatchEvent(new Event("change"));
+      }
     });
 
-    partsList.appendChild(row);
-  }
-
-  document.getElementById("add-part-btn").addEventListener("click", () => addPart(""));
-
-  /* Initialise ensemble with 2 rows */
-  addPart("Part 1");
-  addPart("Part 2");
-
-  /* ── Form submission ─────────────────────────────────── */
-  async function submitSetup() {
-    const fd        = new FormData();
-    const type      = document.querySelector("input[name='type']:checked").value;
-    const pieceName = document.getElementById("piece-name-input").value.trim() || "Untitled";
-
-    fd.append("type",       type);
-    fd.append("piece_name", pieceName);
-
-    if (type === "solo") {
-      fd.append("file", document.getElementById("solo-file-input").files[0]);
-    } else {
-      let idx = 0;
-      partsList.querySelectorAll(".part-row").forEach(row => {
-        const fi = row.querySelector(".part-file-input");
-        if (fi.files.length > 0) {
-          const name = row.querySelector(".part-name-input").value.trim() || `Part ${idx + 1}`;
-          fd.append(`part_name_${idx}`, name);
-          fd.append(`part_file_${idx}`, fi.files[0]);
-          idx++;
+    /* ── Ensemble parts ── */
+    function addPart(defaultName) {
+      const idx = partCount++;
+      const row = document.createElement("div");
+      row.className = "part-row";
+      row.innerHTML = `
+        <input type="text" class="part-name-input"
+               placeholder="Part name (e.g. Violin 1)"
+               value="${defaultName || ""}" />
+        <label class="part-file-label">
+          <input type="file" class="part-file-input" accept=".pdf,.mxl,.xml,.musicxml" />
+          <span class="part-file-icon">&#128196;</span>
+          <span class="part-file-display">Choose file</span>
+        </label>
+        <button type="button" class="remove-part-btn" title="Remove part">&times;</button>
+      `;
+      row.querySelector(".part-file-input").addEventListener("change", function () {
+        const disp = row.querySelector(".part-file-display");
+        if (this.files.length) {
+          disp.textContent = this.files[0].name;
+          disp.classList.add("has-file");
+        } else {
+          disp.textContent = "Choose file";
+          disp.classList.remove("has-file");
         }
+      });
+      row.querySelector(".remove-part-btn").addEventListener("click", () => {
+        if (partsList.querySelectorAll(".part-row").length > 1) row.remove();
+      });
+      partsList.appendChild(row);
+    }
+
+    document.getElementById("add-part-btn").addEventListener("click", () => addPart(""));
+    addPart("Part 1");
+    addPart("Part 2");
+
+    /* ── Form submission ── */
+    async function submitSetup() {
+      const fd        = new FormData();
+      const type      = document.querySelector("input[name='type']:checked").value;
+      const pieceName = document.getElementById("piece-name-input").value.trim() || "Untitled";
+
+      fd.append("type",       type);
+      fd.append("piece_name", pieceName);
+
+      if (type === "solo") {
+        fd.append("file", document.getElementById("solo-file-input").files[0]);
+      } else {
+        let idx = 0;
+        partsList.querySelectorAll(".part-row").forEach(row => {
+          const fi = row.querySelector(".part-file-input");
+          if (fi.files.length > 0) {
+            const name = row.querySelector(".part-name-input").value.trim() || `Part ${idx + 1}`;
+            fd.append(`part_name_${idx}`, name);
+            fd.append(`part_file_${idx}`, fi.files[0]);
+            idx++;
+          }
+        });
+      }
+
+      document.getElementById("loading-overlay").classList.remove("hidden");
+
+      try {
+        const res  = await fetch("/setup/upload", { method: "POST", body: fd });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Upload failed.");
+        await pollStatus(data.job_id);
+      } catch (err) {
+        document.getElementById("loading-overlay").classList.add("hidden");
+        showError(err.message);
+      }
+    }
+
+    async function pollStatus(jobId) {
+      while (true) {
+        await new Promise(r => setTimeout(r, 500));
+        let data;
+        try {
+          const res = await fetch(`/status/${jobId}`);
+          data = await res.json();
+        } catch (e) {
+          document.getElementById("loading-overlay").classList.add("hidden");
+          showError("Lost connection to server.");
+          return;
+        }
+
+        if (typeof data.progress === "number") {
+          document.getElementById("loading-bar-fill").style.width = data.progress + "%";
+          document.getElementById("loading-pct").textContent        = data.progress + "%";
+        }
+        if (data.status_text) {
+          document.getElementById("loading-status").textContent = data.status_text;
+        }
+
+        if (data.status === "done") {
+          sessionStorage.setItem("melodra_setup", JSON.stringify(data.result));
+          window.location.href = "/app";
+          return;
+        }
+        if (data.status === "error") {
+          document.getElementById("loading-overlay").classList.add("hidden");
+          showError(data.error || "Conversion failed.");
+          return;
+        }
+      }
+    }
+
+    /* Mobile sidebar toggle */
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    const toggle  = document.getElementById('mobileToggle');
+    if (toggle) {
+      toggle.addEventListener('click', () => {
+        sidebar.classList.toggle('open');
+        overlay.classList.toggle('open');
+      });
+      overlay.addEventListener('click', () => {
+        sidebar.classList.remove('open');
+        overlay.classList.remove('open');
       });
     }
 
-    document.getElementById("loading-overlay").classList.remove("hidden");
-
-    try {
-      const res  = await fetch("/setup/upload", { method: "POST", body: fd });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Upload failed.");
-      await pollStatus(data.job_id);
-    } catch (err) {
-      document.getElementById("loading-overlay").classList.add("hidden");
-      showError(err.message);
-    }
-  }
-
-  async function pollStatus(jobId) {
-    while (true) {
-      await new Promise(r => setTimeout(r, 500));
-      let data;
-      try {
-        const res = await fetch(`/status/${jobId}`);
-        data = await res.json();
-      } catch (e) {
-        document.getElementById("loading-overlay").classList.add("hidden");
-        showError("Lost connection to server.");
-        return;
-      }
-
-      if (typeof data.progress === "number") {
-        document.getElementById("loading-bar-fill").style.width = data.progress + "%";
-        document.getElementById("loading-pct").textContent        = data.progress + "%";
-      }
-      if (data.status_text) {
-        document.getElementById("loading-status").textContent = data.status_text;
-      }
-
-      if (data.status === "done") {
-        sessionStorage.setItem("melodra_setup", JSON.stringify(data.result));
-        window.location.href = "/app";
-        return;
-      }
-      if (data.status === "error") {
-        document.getElementById("loading-overlay").classList.add("hidden");
-        showError(data.error || "Conversion failed.");
-        return;
-      }
-    }
-  }
-
-  /* Mobile nav toggle */
-  document.getElementById('navToggle').addEventListener('click', () => {
-    document.getElementById('navLinks').classList.toggle('open');
-  });
-
-  /* Initialise first step */
-  showStep(1);
-</script>
+    /* Initialise first step */
+    showStep(1);
+  </script>
 </body>
 </html>
