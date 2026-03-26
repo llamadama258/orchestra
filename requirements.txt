@@ -1,3 +1,5 @@
 flask>=3.0
 music21>=9.1
 werkzeug>=3.0
+PyJWT>=2.8
+bcrypt>=4.1

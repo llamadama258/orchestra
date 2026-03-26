@@ -1,0 +1,15 @@
+.git
+.claude
+__pycache__
+*.pyc
+outputs/
+uploads/
+melodra.db*
+.gitignore
+.dockerignore
+docker-compose.yml
+Dockerfile
+*.md
+venv/
+.venv/
+.env

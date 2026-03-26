@@ -2,7 +2,10 @@ import os
 import sqlite3
 import threading
 
-DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "melodra.db")
+DB_PATH = os.environ.get(
+    "MELODRA_DB_PATH",
+    os.path.join(os.path.dirname(os.path.abspath(__file__)), "melodra.db")
+)
 
 _local = threading.local()
 

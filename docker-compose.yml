@@ -1,0 +1,17 @@
+services:
+  melodra:
+    build: .
+    ports:
+      - "5000:5000"
+    volumes:
+      - melodra-uploads:/app/uploads
+      - melodra-outputs:/app/outputs
+      - melodra-db:/app/data
+    environment:
+      - MELODRA_SECRET=${MELODRA_SECRET:-melodra-dev-secret-change-in-prod}
+      - FLASK_DEBUG=${FLASK_DEBUG:-0}
+
+volumes:
+  melodra-uploads:
+  melodra-outputs:
+  melodra-db:

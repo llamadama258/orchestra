@@ -1,5 +1,6 @@
 import os
 import json
+import platform
 import uuid
 import glob
 import hashlib
@@ -41,61 +42,87 @@ ALLOWED_EXTENSIONS = {"mxl", "xml", "musicxml", "pdf"}
 # ── Audiveris discovery ────────────────────────────────────────────────────────
 _APP_DIR = os.path.dirname(os.path.abspath(__file__))
 _HOME    = os.path.expanduser("~")
-
-# Candidate exe/bat launchers (binary distribution — preferred on Windows)
-_AUDIVERIS_EXE_PATHS = [
-    # MSI installer default (5.10.0 on this machine)
-    r"C:\Program Files\Audiveris\Audiveris.exe",
-    r"C:\Program Files (x86)\Audiveris\Audiveris.exe",
-    # .bat variants (older releases)
-    r"C:\Program Files\Audiveris\bin\Audiveris.bat",
-    r"C:\Program Files (x86)\Audiveris\bin\Audiveris.bat",
-    # Manual extraction next to app.py
-    os.path.join(_APP_DIR, "Audiveris", "Audiveris.exe"),
-    os.path.join(_APP_DIR, "audiveris", "Audiveris.exe"),
-    os.path.join(_APP_DIR, "Audiveris", "bin", "Audiveris.bat"),
-    r"C:\Audiveris\bin\Audiveris.bat",
-    os.path.join(_HOME, "Audiveris", "bin", "Audiveris.bat"),
-    os.path.join(_HOME, "Downloads", "Audiveris", "bin", "Audiveris.bat"),
-]
-_AUDIVERIS_BAT_GLOBS = [
-    r"C:\Program Files\Audiveris*\Audiveris.exe",
-    r"C:\Program Files (x86)\Audiveris*\Audiveris.exe",
-    r"C:\Program Files\Audiveris*\bin\Audiveris.bat",
-    os.path.join(_APP_DIR, "Audiveris*", "bin", "Audiveris.bat"),
-    r"C:\Audiveris*\bin\Audiveris.bat",
-    os.path.join(_HOME, "Downloads", "Audiveris*", "bin", "Audiveris.bat"),
-    os.path.join(_HOME, "Audiveris*", "bin", "Audiveris.bat"),
-]
-
-# Candidate fat JARs (fallback)
-_AUDIVERIS_JAR_PATHS = [
-    # MSI installer puts it here in 5.10.0
-    r"C:\Program Files\Audiveris\app\audiveris.jar",
-    r"C:\Program Files (x86)\Audiveris\app\audiveris.jar",
-    os.path.join(_APP_DIR, "Audiveris.jar"),
-    os.path.join(_APP_DIR, "audiveris.jar"),
-    os.path.join(_APP_DIR, "audiveris", "lib", "Audiveris.jar"),
-    os.path.join(_APP_DIR, "Audiveris", "lib", "Audiveris.jar"),
-    r"C:\Audiveris\lib\Audiveris.jar",
-    r"C:\Program Files\Audiveris\lib\Audiveris.jar",
-    os.path.join(_HOME, "Audiveris", "lib", "Audiveris.jar"),
-    os.path.join(_HOME, "Downloads", "Audiveris", "lib", "Audiveris.jar"),
-]
-_AUDIVERIS_JAR_GLOBS = [
-    os.path.join(_APP_DIR, "Audiveris*", "lib", "Audiveris.jar"),
-    r"C:\Audiveris*\lib\Audiveris.jar",
-    os.path.join(_HOME, "Downloads", "Audiveris*", "lib", "Audiveris.jar"),
-    os.path.join(_HOME, "Audiveris*", "lib", "Audiveris.jar"),
-]
+_IS_WINDOWS = platform.system() == "Windows"
 
 
 def _first_glob(patterns):
-    for pattern in patterns:
-        matches = glob.glob(pattern)
+    for pat in patterns:
+        matches = glob.glob(pat)
         if matches:
             return matches[0]
     return None
+
+
+def _get_audiveris_paths():
+    """Return (exe_paths, exe_globs, jar_paths, jar_globs) for the current OS."""
+    exe_paths = [
+        os.path.join(_APP_DIR, "Audiveris", "Audiveris.exe"),
+        os.path.join(_APP_DIR, "audiveris", "Audiveris.exe"),
+        os.path.join(_APP_DIR, "Audiveris", "bin", "Audiveris.bat"),
+    ]
+    exe_globs = [
+        os.path.join(_APP_DIR, "Audiveris*", "bin", "Audiveris.bat"),
+    ]
+    jar_paths = [
+        os.path.join(_APP_DIR, "audiveris.jar"),
+        os.path.join(_APP_DIR, "Audiveris.jar"),
+        os.path.join(_APP_DIR, "audiveris", "lib", "Audiveris.jar"),
+        os.path.join(_APP_DIR, "Audiveris", "lib", "Audiveris.jar"),
+    ]
+    jar_globs = [
+        os.path.join(_APP_DIR, "Audiveris*", "lib", "Audiveris.jar"),
+        os.path.join(_APP_DIR, "audiveris*", "lib", "*.jar"),
+    ]
+
+    if _IS_WINDOWS:
+        exe_paths += [
+            r"C:\Program Files\Audiveris\Audiveris.exe",
+            r"C:\Program Files (x86)\Audiveris\Audiveris.exe",
+            r"C:\Program Files\Audiveris\bin\Audiveris.bat",
+            r"C:\Program Files (x86)\Audiveris\bin\Audiveris.bat",
+            r"C:\Audiveris\bin\Audiveris.bat",
+            os.path.join(_HOME, "Audiveris", "bin", "Audiveris.bat"),
+            os.path.join(_HOME, "Downloads", "Audiveris", "bin", "Audiveris.bat"),
+        ]
+        exe_globs += [
+            r"C:\Program Files\Audiveris*\Audiveris.exe",
+            r"C:\Program Files (x86)\Audiveris*\Audiveris.exe",
+            r"C:\Program Files\Audiveris*\bin\Audiveris.bat",
+            r"C:\Audiveris*\bin\Audiveris.bat",
+            os.path.join(_HOME, "Downloads", "Audiveris*", "bin", "Audiveris.bat"),
+            os.path.join(_HOME, "Audiveris*", "bin", "Audiveris.bat"),
+        ]
+        jar_paths += [
+            r"C:\Program Files\Audiveris\app\audiveris.jar",
+            r"C:\Program Files (x86)\Audiveris\app\audiveris.jar",
+            r"C:\Audiveris\lib\Audiveris.jar",
+            r"C:\Program Files\Audiveris\lib\Audiveris.jar",
+            os.path.join(_HOME, "Audiveris", "lib", "Audiveris.jar"),
+            os.path.join(_HOME, "Downloads", "Audiveris", "lib", "Audiveris.jar"),
+        ]
+        jar_globs += [
+            r"C:\Audiveris*\lib\Audiveris.jar",
+            os.path.join(_HOME, "Downloads", "Audiveris*", "lib", "Audiveris.jar"),
+            os.path.join(_HOME, "Audiveris*", "lib", "Audiveris.jar"),
+        ]
+    else:
+        # Linux / macOS
+        exe_paths += [
+            "/opt/audiveris/bin/Audiveris",
+            "/usr/local/bin/audiveris",
+        ]
+        jar_paths += [
+            "/opt/audiveris/lib/audiveris.jar",
+            "/usr/share/audiveris/lib/audiveris.jar",
+            os.path.join(_HOME, "audiveris", "lib", "audiveris.jar"),
+            os.path.join(_HOME, ".local", "share", "audiveris", "lib", "audiveris.jar"),
+        ]
+        jar_globs += [
+            "/opt/audiveris*/lib/*.jar",
+            os.path.join(_HOME, "audiveris*", "lib", "*.jar"),
+        ]
+
+    return exe_paths, exe_globs, jar_paths, jar_globs
 
 
 def find_audiveris():
@@ -108,21 +135,28 @@ def find_audiveris():
     if env_jar and os.path.isfile(env_jar):
         return ("jar", env_jar)
 
+    # Check PATH (works on all platforms)
+    on_path = shutil.which("audiveris") or shutil.which("Audiveris")
+    if on_path:
+        return ("exe", on_path)
+
+    exe_paths, exe_globs, jar_paths, jar_globs = _get_audiveris_paths()
+
     # Prefer exe/bat launcher (binary distribution)
-    for p in _AUDIVERIS_EXE_PATHS:
+    for p in exe_paths:
         if os.path.isfile(p):
             mode = "bat" if p.endswith(".bat") else "exe"
             return (mode, p)
-    found = _first_glob(_AUDIVERIS_BAT_GLOBS)
+    found = _first_glob(exe_globs)
     if found:
         mode = "bat" if found.endswith(".bat") else "exe"
         return (mode, found)
 
     # Fallback: fat JAR
-    for p in _AUDIVERIS_JAR_PATHS:
+    for p in jar_paths:
         if os.path.isfile(p):
             return ("jar", p)
-    found = _first_glob(_AUDIVERIS_JAR_GLOBS)
+    found = _first_glob(jar_globs)
     if found:
         return ("jar", found)
 
@@ -133,16 +167,29 @@ def java_available():
     return shutil.which("java") is not None
 
 
-_SETUP_MSG = (
-    "Audiveris OMR engine not found.\n\n"
-    "Setup (one-time):\n"
-    "  1. Go to  https://github.com/Audiveris/audiveris/releases\n"
-    "  2. Download the BINARY zip — look for 'Audiveris-5.x.x.zip'\n"
-    "     (NOT the 'Source code' links at the bottom of the page)\n"
-    "  3. Extract the zip to  C:\\Audiveris\\\n"
-    "     You should see  C:\\Audiveris\\bin\\Audiveris.bat  inside.\n"
-    "  4. Restart this server — it will find Audiveris automatically."
-)
+if _IS_WINDOWS:
+    _SETUP_MSG = (
+        "Audiveris OMR engine not found.\n\n"
+        "Setup (one-time):\n"
+        "  1. Go to  https://github.com/Audiveris/audiveris/releases\n"
+        "  2. Download the BINARY zip — look for 'Audiveris-5.x.x.zip'\n"
+        "     (NOT the 'Source code' links at the bottom of the page)\n"
+        "  3. Extract the zip to  C:\\Audiveris\\\n"
+        "     You should see  C:\\Audiveris\\bin\\Audiveris.bat  inside.\n"
+        "  4. Restart this server — it will find Audiveris automatically."
+    )
+else:
+    _SETUP_MSG = (
+        "Audiveris OMR engine not found.\n\n"
+        "Setup (one-time):\n"
+        "  1. Go to  https://github.com/Audiveris/audiveris/releases\n"
+        "  2. Download the JAR file — look for 'Audiveris-5.x.x.jar'\n"
+        "  3. Place it in this project folder as  audiveris.jar\n"
+        "     Or set:  export AUDIVERIS_JAR=/path/to/audiveris.jar\n"
+        "  4. Make sure Java 11+ is installed:  java -version\n"
+        "  5. Restart this server — it will find Audiveris automatically.\n\n"
+        "Or use Docker:  docker compose up --build"
+    )
 
 
 # ── Job store ─────────────────────────────────────────────────────────────────
@@ -703,4 +750,4 @@ if __name__ == "__main__":
     os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
     os.makedirs(app.config["OUTPUT_FOLDER"], exist_ok=True)
     init_db()
-    app.run(debug=True, port=5000)
+    app.run(host="0.0.0.0", debug=os.environ.get("FLASK_DEBUG", "1") == "1", port=5000)
