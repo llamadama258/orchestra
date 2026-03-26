@@ -489,7 +489,7 @@
       osmdReady = false; cursorPositions = [];
       scoreWrapper.innerHTML = "";
       renderPartTabs();
-      goTo("screen-upload");
+      window.location.href = "/studio";
     });
 
     /* ── sidebar toggle ──────────────────────────────── */
@@ -707,7 +707,10 @@
 
     function highlightCurrentMeasure() {
       try {
-        const mi   = osmd.cursor.iterator.CurrentMeasureIndex ?? 0;
+        // Prefer cursorPositions measure index (stays correct across part switches)
+        const mi = cursorPositions[currentBeat]?.measureIdx
+                   ?? osmd.cursor.iterator.CurrentMeasureIndex
+                   ?? 0;
         const bbox = measureBboxes[mi];
         if (!bbox) return;
         const hl = getHighlightEl();
@@ -819,6 +822,7 @@
       audioFilters = [];
       audioLimiter = new Tone.Limiter(0).toDestination();
       audioReverb  = new Tone.Reverb({ decay: 1.5, wet: 0.15, preDelay: 0.01 }).connect(audioLimiter);
+      await audioReverb.ready;
 
       // Ensure sample-based instruments are loaded
       await ensurePartSamplersLoaded();
@@ -1011,6 +1015,7 @@
       audioFilters = [];
       audioLimiter = new Tone.Limiter(0).toDestination();
       audioReverb  = new Tone.Reverb({ decay: 1.5, wet: 0.15, preDelay: 0.01 }).connect(audioLimiter);
+      await audioReverb.ready;
 
       // Ensure sample-based instruments are loaded (waits for pre-load or loads now)
       playerPlayBtn.innerHTML = "Loading instruments…";
@@ -1117,10 +1122,8 @@
           if (measureChanged) {
             lastHighlightedMeasure = mi;
             highlightCurrentMeasure();
-          }
-          drawLabelsForCursor();
-          // Only scroll when measure changes AND cursor is off-screen
-          if (measureChanged) {
+            drawLabelsForCursor();
+            // Only scroll when measure changes AND cursor is off-screen
             const el = osmd.cursor.cursorElement;
             if (el) {
               const r = el.getBoundingClientRect();
@@ -1538,6 +1541,10 @@
       // Yield a frame so the browser can paint the new div and refill the audio buffer
       // before we start the expensive cursor walk
       await new Promise(r => requestAnimationFrame(r));
+
+      // Recalculate bboxes now that the part div is visible and painted
+      buildMeasureBboxes();
+      if (osmdCache[idx]) osmdCache[idx].bboxes = measureBboxes;
 
       // Second frame: reposition cursor + restart rAF
       requestAnimationFrame(() => {

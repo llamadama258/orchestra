@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" />
+  <link rel="stylesheet" href="/static/marketing.css" />
   <style>
     :root {
       --c-primary:       #5D5CFF;
@@ -40,13 +41,13 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* ── Slim progress line at top ─── */
+    /* ── Slim progress line below navbar ─── */
     .top-progress {
       position: fixed;
-      top: 0; left: 0; right: 0;
+      top: 56px; left: 0; right: 0;
       height: 3px;
       background: rgba(0,0,0,0.04);
-      z-index: 100;
+      z-index: 99;
     }
     .top-progress-fill {
       height: 100%;
@@ -57,24 +58,46 @@
 
     /* ── Page layout ─── */
     .page {
-      min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 3rem 1rem 5rem;
+      padding: 0 1rem 5rem;
     }
 
-    .home-link {
-      align-self: flex-start;
-      margin-bottom: 2rem;
-      font-family: var(--font-mono);
-      font-size: 0.8rem;
-      font-weight: 500;
-      color: var(--c-primary);
-      text-decoration: none;
-      letter-spacing: 0.02em;
+    /* ── Setup hero ─── */
+    .setup-hero {
+      padding: 120px 24px 40px;
+      text-align: center;
+      background: var(--c-bg);
     }
-    .home-link:hover { text-decoration: underline; }
+    .setup-hero .eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--c-primary);
+      margin-bottom: 12px;
+    }
+    .setup-hero h1 {
+      font-family: var(--font-mono);
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      color: var(--c-text-hi);
+      margin-bottom: 0;
+    }
+    .setup-hero .subtitle {
+      font-size: 1.05rem;
+      color: var(--c-text-med);
+      max-width: 500px;
+      margin: 12px auto 0;
+      line-height: 1.6;
+    }
+    @media (max-width: 768px) {
+      .setup-hero { padding: 110px 16px 32px; }
+      .setup-hero h1 { font-size: 1.6rem; }
+    }
 
     .wizard-card {
       background: var(--c-bg);
@@ -430,15 +453,37 @@
     .hidden { display: none !important; }
   </style>
 </head>
-<body>
+<body class="marketing">
+
+<!-- Navbar -->
+<nav class="navbar">
+  <div class="container">
+    <a href="/" class="nav-logo">Melo<span>dra</span></a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="/">Home</a></li>
+      <li><a href="/about">About</a></li>
+      <li><a href="/blog">Blog</a></li>
+      <li><a href="/contact">Contact</a></li>
+      <li><a href="/studio">Studio</a></li>
+    </ul>
+    <a href="/studio" class="nav-cta">Open App</a>
+    <button class="nav-toggle" id="navToggle" aria-label="Menu">&#9776;</button>
+  </div>
+</nav>
 
 <!-- Slim progress line -->
 <div class="top-progress">
   <div class="top-progress-fill" id="top-progress-fill" style="width: 33%"></div>
 </div>
 
+<!-- Hero section -->
+<section class="setup-hero">
+  <p class="eyebrow">New Score</p>
+  <h1>Set up your score</h1>
+  <p class="subtitle">Upload your sheet music and configure your performance in just a few steps.</p>
+</section>
+
 <div class="page">
-  <a href="/studio" class="home-link">&larr; Melodra</a>
 
   <div class="wizard-card">
 
@@ -520,6 +565,45 @@
 
   </div><!-- /wizard-card -->
 </div><!-- /page -->
+
+<!-- Footer -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="/" class="nav-logo" style="margin-bottom:12px;display:inline-block;">Melo<span>dra</span></a>
+        <p>Turn sheet music into instant audio playback. Built for orchestra musicians and educators.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Product</h4>
+        <ul>
+          <li><a href="/studio">Studio</a></li>
+          <li><a href="/#features">Features</a></li>
+          <li><a href="/#how-it-works">How It Works</a></li>
+          <li><a href="/#faq">FAQ</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="/about">About</a></li>
+          <li><a href="/blog">Blog</a></li>
+          <li><a href="/contact">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms of Service</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 Melodra. All rights reserved.</span>
+    </div>
+  </div>
+</footer>
 
 <!-- Loading overlay (Skeleton Screen) -->
 <div id="loading-overlay" class="loading-overlay hidden">
@@ -865,6 +949,11 @@
       }
     }
   }
+
+  /* Mobile nav toggle */
+  document.getElementById('navToggle').addEventListener('click', () => {
+    document.getElementById('navLinks').classList.toggle('open');
+  });
 
   /* Initialise first step */
   showStep(1);

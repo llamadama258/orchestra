@@ -1,0 +1,119 @@
+2026-03-20 19:56:34,490 INFO [4fc9ab180528_impresario_bass]                 Book.java:560  | 2 sheets in C:\Users\llama\OneDrive\Documents\orchestra\uploads\4fc9ab180528_impresario_bass.pdf
+2026-03-20 19:56:34,569 INFO []                 Book.java:2565 | Stored /book.xml
+2026-03-20 19:56:34,569 INFO []                 Book.java:2525 | Book stored as C:\Users\llama\OneDrive\Documents\orchestra\outputs\d1e43d2c9b47\omr_out\4fc9ab180528_impresario_bass.omr
+2026-03-20 19:56:34,572 INFO []                 Book.java:1929 | Book reaching PAGE on sheets:[#1#2]
+2026-03-20 19:56:34,573 INFO [4fc9ab180528_impresario_bass#1]       StepMonitoring.java:98   | LOAD
+2026-03-20 19:56:34,797 INFO [4fc9ab180528_impresario_bass#1]            SheetStub.java:1278 | Loaded image #1 2550x3299 from C:\Users\llama\OneDrive\Documents\orchestra\uploads\4fc9ab180528_impresario_bass.pdf
+2026-03-20 19:56:34,800 INFO [4fc9ab180528_impresario_bass#1]       StepMonitoring.java:98   | BINARY
+2026-03-20 19:56:35,025 INFO [4fc9ab180528_impresario_bass#1]       StepMonitoring.java:98   | SCALE
+2026-03-20 19:56:35,035 INFO [4fc9ab180528_impresario_bass#1]         ScaleBuilder.java:241  | Beam  guessed height:  9 -- 0.50 of 18 interline
+2026-03-20 19:56:35,036 INFO [4fc9ab180528_impresario_bass#1]         ScaleBuilder.java:264  | Beam measured height: 10 -- 0.33 of [6..18] range at 224% of needed quorum
+2026-03-20 19:56:35,036 INFO [4fc9ab180528_impresario_bass#1]         ScaleBuilder.java:392  | Normalized black jitter: 15.79 %
+2026-03-20 19:56:35,037 INFO [4fc9ab180528_impresario_bass#1]            ScaleStep.java:65   | Scale{ interline(18,19,21) line(3,5,6) beam(10)}
+2026-03-20 19:56:35,037 INFO [4fc9ab180528_impresario_bass#1]       StepMonitoring.java:98   | GRID
+2026-03-20 19:56:35,434 INFO [4fc9ab180528_impresario_bass#1]       LinesRetriever.java:1500 | Global slope: -0.01135
+2026-03-20 19:56:35,468 INFO [4fc9ab180528_impresario_bass#1]    ClustersRetriever.java:326  | Retrieved raw line clusters: 10 of sizes [5] with interline(18,19,21)
+2026-03-20 19:56:35,604 INFO [4fc9ab180528_impresario_bass#1]            PeakGraph.java:310  | Systems: #1[1] #2[2] #3[3] #4[4] #5[5] #6[6] #7[7] #8[8] #9[9] #10[10]
+2026-03-20 19:56:35,865 INFO [4fc9ab180528_impresario_bass#1]        SystemManager.java:779  | 1 part along 10 systems
+2026-03-20 19:56:35,866 INFO [4fc9ab180528_impresario_bass#1]                 Book.java:543  | Created scores: [{Score 1}]
+2026-03-20 19:56:35,866 INFO [4fc9ab180528_impresario_bass#1]       StepMonitoring.java:98   | HEADERS
+2026-03-20 19:56:36,618 INFO [4fc9ab180528_impresario_bass#1]       StepMonitoring.java:98   | STEM_SEEDS
+2026-03-20 19:56:36,695 INFO [4fc9ab180528_impresario_bass#1]        StemSeedsStep.java:86   | stem(3 max:6)
+2026-03-20 19:56:36,768 INFO [4fc9ab180528_impresario_bass#1]       StepMonitoring.java:98   | BEAMS
+2026-03-20 19:56:40,035 INFO [4fc9ab180528_impresario_bass#1]       StepMonitoring.java:98   | LEDGERS
+2026-03-20 19:56:40,188 INFO [4fc9ab180528_impresario_bass#1]       StepMonitoring.java:98   | HEADS
+2026-03-20 19:56:43,813 INFO [4fc9ab180528_impresario_bass#1]        HeadSeedTally.java:235  | Scale information: HeadSeeds{NOTEHEAD_BLACK[L:0.2,R:-0.4]}
+2026-03-20 19:56:43,814 INFO [4fc9ab180528_impresario_bass#1]       StepMonitoring.java:98   | STEMS
+2026-03-20 19:56:44,076 INFO [4fc9ab180528_impresario_bass#1]       StepMonitoring.java:98   | REDUCTION
+2026-03-20 19:56:44,130 INFO [4fc9ab180528_impresario_bass#1]        ReductionStep.java:105  | Stems free length median value: 70 pixels, 3.7 interlines
+2026-03-20 19:56:44,133 INFO [4fc9ab180528_impresario_bass#1]       StepMonitoring.java:98   | CUE_BEAMS
+2026-03-20 19:56:44,134 INFO [4fc9ab180528_impresario_bass#1]         CueBeamsStep.java:81   | Step CUE_BEAMS is skipped because small heads switch is off
+2026-03-20 19:56:44,134 INFO [4fc9ab180528_impresario_bass#1]       StepMonitoring.java:98   | TEXTS
+2026-03-20 19:56:45,565 INFO [4fc9ab180528_impresario_bass#1]       StepMonitoring.java:98   | MEASURES
+2026-03-20 19:56:45,575 INFO [4fc9ab180528_impresario_bass#1]                 Page.java:307  | 37 raw measures: [4 in system#1, 4 in system#2, 4 in system#3, 4 in system#4, 4 in system#5, 4 in system#6, 4 in system#7, 4 in system#8, 4 in system#9, 1 in system#10]
+2026-03-20 19:56:45,576 INFO [4fc9ab180528_impresario_bass#1]       StepMonitoring.java:98   | CHORDS
+2026-03-20 19:56:45,591 INFO [4fc9ab180528_impresario_bass#1]       StepMonitoring.java:98   | CURVES
+2026-03-20 19:56:46,588 INFO [4fc9ab180528_impresario_bass#1]         SlursBuilder.java:240  | Slurs: 5
+2026-03-20 19:56:46,609 INFO [4fc9ab180528_impresario_bass#1]      SegmentsBuilder.java:155  | Segments: 9
+2026-03-20 19:56:46,734 INFO [4fc9ab180528_impresario_bass#1]    RehearsalsBuilder.java:199  | No text found in rehearsal enclosure java.awt.Rectangle[x=1274,y=1581,width=66,height=60]
+2026-03-20 19:56:46,870 INFO [4fc9ab180528_impresario_bass#1]    RehearsalsBuilder.java:199  | No text found in rehearsal enclosure java.awt.Rectangle[x=1372,y=2409,width=65,height=58]
+2026-03-20 19:56:46,871 INFO [4fc9ab180528_impresario_bass#1]       StepMonitoring.java:98   | SYMBOLS
+2026-03-20 19:56:47,322 INFO [4fc9ab180528_impresario_bass#1]       StepMonitoring.java:98   | LINKS
+2026-03-20 19:56:47,325 INFO [4fc9ab180528_impresario_bass#1]        SymbolsLinker.java:258  | No chord linked to OctaveShiftInter#4638{(0.171) staff:1 VENTIDUESIMA ALTA} at java.awt.Point[x=286,y=302]
+2026-03-20 19:56:47,349 INFO [4fc9ab180528_impresario_bass#1]             KeyInter.java:1189 | No effective key before AlterInter#4736{(0.800) staff:7 NATURAL pitch:-3.0}
+2026-03-20 19:56:47,356 INFO [4fc9ab180528_impresario_bass#1]             KeyInter.java:1189 | No effective key before AlterInter#4777{(0.696) staff:9 NATURAL pitch:1.0}
+2026-03-20 19:56:47,358 INFO [4fc9ab180528_impresario_bass#1]        SymbolsLinker.java:258  | No chord linked to OctaveShiftInter#4786{(0.266) staff:10 OTTAVA ALTA} at java.awt.Point[x=1413,y=2896]
+2026-03-20 19:56:47,361 INFO [4fc9ab180528_impresario_bass#1]       StepMonitoring.java:98   | RHYTHMS
+2026-03-20 19:56:47,394 INFO [4fc9ab180528_impresario_bass#1]                Voice.java:257  | Measure{#23} Voice{#1 excess:1/8} too long
+2026-03-20 19:56:47,395 INFO [4fc9ab180528_impresario_bass#1]          StackRhythm.java:224  | S6 MeasureStack#23 no correct rhythm
+2026-03-20 19:56:47,397 INFO [4fc9ab180528_impresario_bass#1]                Voice.java:257  | Measure{#24} Voice{#1 excess:1/8} too long
+2026-03-20 19:56:47,397 INFO [4fc9ab180528_impresario_bass#1]          StackRhythm.java:224  | S6 MeasureStack#24 no correct rhythm
+2026-03-20 19:56:47,408 INFO [4fc9ab180528_impresario_bass#1]       StepMonitoring.java:98   | PAGE
+2026-03-20 19:56:47,415 INFO [4fc9ab180528_impresario_bass#1]                Voice.java:257  | Measure{#23} Voice{#1 excess:1/8} too long
+2026-03-20 19:56:47,416 INFO [4fc9ab180528_impresario_bass#1]                Voice.java:257  | Measure{#24} Voice{#1 excess:1/8} too long
+2026-03-20 19:56:47,418 INFO [4fc9ab180528_impresario_bass#1]                 Book.java:2584 | Book{4fc9ab180528_impresario_bass} storing
+2026-03-20 19:56:47,483 INFO [4fc9ab180528_impresario_bass#1]                 Book.java:2565 | Stored /book.xml
+2026-03-20 19:56:47,607 INFO [4fc9ab180528_impresario_bass#1]           DataHolder.java:348  | Stored /sheet#1/BINARY.png
+2026-03-20 19:56:48,275 INFO [4fc9ab180528_impresario_bass#1]                Sheet.java:1583 | Stored /sheet#1/sheet#1.xml
+2026-03-20 19:56:48,276 INFO [4fc9ab180528_impresario_bass#1]                 Book.java:2525 | Book stored as C:\Users\llama\OneDrive\Documents\orchestra\outputs\d1e43d2c9b47\omr_out\4fc9ab180528_impresario_bass.omr
+2026-03-20 19:56:48,280 INFO [4fc9ab180528_impresario_bass#1]            SheetStub.java:1654 | Sheet#1 disposed
+2026-03-20 19:56:48,312 INFO [4fc9ab180528_impresario_bass#1]                 Book.java:2050 | End of Stub#1
+2026-03-20 19:56:48,313 INFO [4fc9ab180528_impresario_bass#2]       StepMonitoring.java:98   | LOAD
+2026-03-20 19:56:48,555 INFO [4fc9ab180528_impresario_bass#2]            SheetStub.java:1278 | Loaded image #2 2550x3299 from C:\Users\llama\OneDrive\Documents\orchestra\uploads\4fc9ab180528_impresario_bass.pdf
+2026-03-20 19:56:48,556 INFO [4fc9ab180528_impresario_bass#2]       StepMonitoring.java:98   | BINARY
+2026-03-20 19:56:48,997 INFO [4fc9ab180528_impresario_bass#2]       StepMonitoring.java:98   | SCALE
+2026-03-20 19:56:49,021 INFO [4fc9ab180528_impresario_bass#2]         ScaleBuilder.java:241  | Beam  guessed height: 10 -- 0.50 of 19 interline
+2026-03-20 19:56:49,021 INFO [4fc9ab180528_impresario_bass#2]         ScaleBuilder.java:264  | Beam measured height: 12 -- 0.46 of [6..19] range at 175% of needed quorum
+2026-03-20 19:56:49,021 INFO [4fc9ab180528_impresario_bass#2]         ScaleBuilder.java:392  | Normalized black jitter: 15.00 %
+2026-03-20 19:56:49,021 INFO [4fc9ab180528_impresario_bass#2]            ScaleStep.java:65   | Scale{ interline(19,20,22) line(3,5,6) beam(12)}
+2026-03-20 19:56:49,021 INFO [4fc9ab180528_impresario_bass#2]       StepMonitoring.java:98   | GRID
+2026-03-20 19:56:49,657 INFO [4fc9ab180528_impresario_bass#2]       LinesRetriever.java:1500 | Global slope: -0.00949
+2026-03-20 19:56:49,672 INFO [4fc9ab180528_impresario_bass#2]    ClustersRetriever.java:326  | Retrieved raw line clusters: 11 of sizes [5] with interline(19,20,22)
+2026-03-20 19:56:49,889 INFO [4fc9ab180528_impresario_bass#2]            PeakGraph.java:310  | Systems: #1[1] #2[2] #3[3] #4[4] #5[5] #6[6] #7[7] #8[8] #9[9] #10[10] #11[11]
+2026-03-20 19:56:50,348 INFO [4fc9ab180528_impresario_bass#2]        SystemManager.java:779  | 1 part along 11 systems
+2026-03-20 19:56:50,349 INFO [4fc9ab180528_impresario_bass#2]       StepMonitoring.java:98   | HEADERS
+2026-03-20 19:56:50,918 INFO [4fc9ab180528_impresario_bass#2]       StepMonitoring.java:98   | STEM_SEEDS
+2026-03-20 19:56:50,956 INFO [4fc9ab180528_impresario_bass#2]        StemSeedsStep.java:86   | stem(4 max:5)
+2026-03-20 19:56:50,977 INFO [4fc9ab180528_impresario_bass#2]       StepMonitoring.java:98   | BEAMS
+2026-03-20 19:56:54,381 INFO [4fc9ab180528_impresario_bass#2]       StepMonitoring.java:98   | LEDGERS
+2026-03-20 19:56:54,478 INFO [4fc9ab180528_impresario_bass#2]       StepMonitoring.java:98   | HEADS
+2026-03-20 19:56:59,181 INFO [4fc9ab180528_impresario_bass#2]        HeadSeedTally.java:235  | Scale information: HeadSeeds{NOTEHEAD_VOID[L:0.4] NOTEHEAD_BLACK[L:0.4,R:-0.2]}
+2026-03-20 19:56:59,182 INFO [4fc9ab180528_impresario_bass#2]       StepMonitoring.java:98   | STEMS
+2026-03-20 19:56:59,381 INFO [4fc9ab180528_impresario_bass#2]       StepMonitoring.java:98   | REDUCTION
+2026-03-20 19:56:59,427 INFO [4fc9ab180528_impresario_bass#2]        ReductionStep.java:105  | Stems free length median value: 73 pixels, 3.7 interlines
+2026-03-20 19:56:59,429 INFO [4fc9ab180528_impresario_bass#2]       StepMonitoring.java:98   | CUE_BEAMS
+2026-03-20 19:56:59,429 INFO [4fc9ab180528_impresario_bass#2]         CueBeamsStep.java:81   | Step CUE_BEAMS is skipped because small heads switch is off
+2026-03-20 19:56:59,429 INFO [4fc9ab180528_impresario_bass#2]       StepMonitoring.java:98   | TEXTS
+2026-03-20 19:56:59,905 INFO [4fc9ab180528_impresario_bass#2]       StepMonitoring.java:98   | MEASURES
+2026-03-20 19:56:59,907 INFO [4fc9ab180528_impresario_bass#2]                 Page.java:307  | 48 raw measures: [5 in system#1, 5 in system#2, 6 in system#3, 4 in system#4, 4 in system#5, 4 in system#6, 4 in system#7, 4 in system#8, 4 in system#9, 4 in system#10, 4 in system#11]
+2026-03-20 19:56:59,907 INFO [4fc9ab180528_impresario_bass#2]       StepMonitoring.java:98   | CHORDS
+2026-03-20 19:56:59,912 INFO [4fc9ab180528_impresario_bass#2]       StepMonitoring.java:98   | CURVES
+2026-03-20 19:57:00,951 INFO [4fc9ab180528_impresario_bass#2]         SlursBuilder.java:240  | Slurs: 17
+2026-03-20 19:57:00,955 INFO [4fc9ab180528_impresario_bass#2]      SegmentsBuilder.java:155  | Segments: 12
+2026-03-20 19:57:01,127 INFO [4fc9ab180528_impresario_bass#2]    RehearsalsBuilder.java:229  | RehearsalInter#4398{(0.610) staff:4 mFont:I-89 Rehearsal enclosure:java.awt.Rectangle[x=1120,y=1024,width=64,height=64]}
+2026-03-20 19:57:01,259 INFO [4fc9ab180528_impresario_bass#2]    RehearsalsBuilder.java:229  | RehearsalInter#4403{(0.474) staff:6 mFont:IMS-71 Rehearsal enclosure:java.awt.Rectangle[x=1515,y=1564,width=67,height=59]}
+2026-03-20 19:57:01,259 INFO [4fc9ab180528_impresario_bass#2]       StepMonitoring.java:98   | SYMBOLS
+2026-03-20 19:57:01,602 INFO [4fc9ab180528_impresario_bass#2]       StepMonitoring.java:98   | LINKS
+2026-03-20 19:57:01,603 INFO [4fc9ab180528_impresario_bass#2]        SentenceInter.java:463  | No chord near SentenceInter#3842{(0.686) staff:1 mFont:46 Direction} Bass - 2
+2026-03-20 19:57:01,628 INFO [4fc9ab180528_impresario_bass#2]             KeyInter.java:1189 | No effective key before AlterInter#6203{(0.525) staff:9 NATURAL pitch:5.0}
+2026-03-20 19:57:01,634 INFO [4fc9ab180528_impresario_bass#2]             KeyInter.java:1189 | No effective key before AlterInter#6241{(0.126) staff:11 NATURAL pitch:2.0}
+2026-03-20 19:57:01,638 INFO [4fc9ab180528_impresario_bass#2]       StepMonitoring.java:98   | RHYTHMS
+2026-03-20 19:57:01,640 INFO [4fc9ab180528_impresario_bass#2]           PageRhythm.java:199  | {Page#2.1} Time value reused from sheet#1
+2026-03-20 19:57:01,673 INFO [4fc9ab180528_impresario_bass#2]       StepMonitoring.java:98   | PAGE
+2026-03-20 19:57:01,677 INFO [4fc9ab180528_impresario_bass#2]                 Book.java:2584 | Book{4fc9ab180528_impresario_bass} storing
+2026-03-20 19:57:01,751 INFO [4fc9ab180528_impresario_bass#2]                 Book.java:2565 | Stored /book.xml
+2026-03-20 19:57:01,854 INFO [4fc9ab180528_impresario_bass#2]           DataHolder.java:348  | Stored /sheet#2/BINARY.png
+2026-03-20 19:57:02,429 INFO [4fc9ab180528_impresario_bass#2]                Sheet.java:1583 | Stored /sheet#2/sheet#2.xml
+2026-03-20 19:57:02,429 INFO [4fc9ab180528_impresario_bass#2]                 Book.java:2525 | Book stored as C:\Users\llama\OneDrive\Documents\orchestra\outputs\d1e43d2c9b47\omr_out\4fc9ab180528_impresario_bass.omr
+2026-03-20 19:57:02,436 INFO [4fc9ab180528_impresario_bass#2]            SheetStub.java:1654 | Sheet#2 disposed
+2026-03-20 19:57:02,465 INFO [4fc9ab180528_impresario_bass#2]                 Book.java:2050 | End of Stub#2
+2026-03-20 19:57:02,466 INFO [4fc9ab180528_impresario_bass]                 Book.java:2057 | End of Book{4fc9ab180528_impresario_bass}
+2026-03-20 19:57:02,798 INFO [4fc9ab180528_impresario_bass]            SheetStub.java:1000 | Loaded /sheet#1/sheet#1.xml
+2026-03-20 19:57:03,103 INFO [4fc9ab180528_impresario_bass]            SheetStub.java:1000 | Loaded /sheet#2/sheet#2.xml
+2026-03-20 19:57:03,468 INFO [4fc9ab180528_impresario_bass]      PartwiseBuilder.java:2706 | Exporting sheet(s): [#1#2]
+2026-03-20 19:57:03,481 WARN [4fc9ab180528_impresario_bass]      PartwiseBuilder.java:983  | Measure{#7} Multirest with no measure count, using default value 1
+2026-03-20 19:57:03,491 WARN [4fc9ab180528_impresario_bass]      PartwiseBuilder.java:983  | Measure{#29} Multirest with no measure count, using default value 1
+2026-03-20 19:57:03,493 WARN [4fc9ab180528_impresario_bass]      PartwiseBuilder.java:983  | Measure{#35} Multirest with no measure count, using default value 1
+2026-03-20 19:57:03,504 WARN [4fc9ab180528_impresario_bass]      PartwiseBuilder.java:983  | Measure{#28} Multirest with no measure count, using default value 1
+2026-03-20 19:57:03,600 INFO [4fc9ab180528_impresario_bass]        ScoreExporter.java:164  | Score 4fc9ab180528_impresario_bass exported to C:\Users\llama\OneDrive\Documents\orchestra\outputs\d1e43d2c9b47\omr_out\4fc9ab180528_impresario_bass.mxl
+2026-03-20 19:57:03,669 INFO [4fc9ab180528_impresario_bass]                Score.java:181  | Closing {Score 1}
