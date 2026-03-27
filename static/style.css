@@ -734,10 +734,13 @@ select:focus { outline: none; border-color: var(--c-primary); box-shadow: 0 0 0 
    ═══════════════════════════════════════════════════════ */
 .mixer-row {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.25rem 0;
+  gap: 0.35rem 0.5rem;
+  padding: 0.4rem 0;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
 }
+.mixer-row:last-child { border-bottom: none; }
 .mixer-label {
   font-size: 0.78rem;
   font-weight: 500;
@@ -746,6 +749,21 @@ select:focus { outline: none; border-color: var(--c-primary); box-shadow: 0 0 0 
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+.mixer-instrument {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.72rem;
+  padding: 0.2rem 0.3rem;
+  border-radius: 6px;
+  border: 1px solid var(--c-border);
+  background: var(--c-surface-2);
+  color: var(--c-text);
+  cursor: pointer;
+}
+.mixer-instrument:disabled {
+  opacity: 0.5;
+  cursor: wait;
 }
 .mixer-slider {
   flex: 1;

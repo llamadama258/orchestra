@@ -208,15 +208,70 @@
           <span class="tb-label">Tempo &mdash; <span id="tempo-val">120</span> BPM</span>
           <input type="range" id="tempo-slider" min="25" max="200" value="100" />
         </div>
-        <div class="sidebar-section">
+        <div id="sound-section" class="sidebar-section">
           <span class="tb-label">Sound</span>
           <select id="instrument-select">
-            <option value="acoustic_grand_piano">Piano</option>
-            <option value="violin">Violin</option>
-            <option value="cello">Cello</option>
-            <option value="flute">Flute</option>
-            <option value="clarinet">Clarinet</option>
-            <option value="trumpet">Trumpet</option>
+            <optgroup label="Keyboards">
+              <option value="acoustic_grand_piano">Piano</option>
+              <option value="bright_acoustic_piano">Bright Piano</option>
+              <option value="harpsichord">Harpsichord</option>
+              <option value="celesta">Celesta</option>
+            </optgroup>
+            <optgroup label="Strings">
+              <option value="violin">Violin</option>
+              <option value="viola">Viola</option>
+              <option value="cello">Cello</option>
+              <option value="contrabass">Double Bass</option>
+              <option value="orchestral_harp">Harp</option>
+              <option value="pizzicato_strings">Pizzicato Strings</option>
+              <option value="string_ensemble_1">String Ensemble</option>
+            </optgroup>
+            <optgroup label="Woodwinds">
+              <option value="flute">Flute</option>
+              <option value="piccolo">Piccolo</option>
+              <option value="clarinet">Clarinet</option>
+              <option value="oboe">Oboe</option>
+              <option value="english_horn">English Horn</option>
+              <option value="bassoon">Bassoon</option>
+              <option value="recorder">Recorder</option>
+            </optgroup>
+            <optgroup label="Brass">
+              <option value="trumpet">Trumpet</option>
+              <option value="trombone">Trombone</option>
+              <option value="tuba">Tuba</option>
+              <option value="french_horn">French Horn</option>
+              <option value="muted_trumpet">Muted Trumpet</option>
+              <option value="brass_section">Brass Section</option>
+            </optgroup>
+            <optgroup label="Saxophones">
+              <option value="soprano_sax">Soprano Sax</option>
+              <option value="alto_sax">Alto Sax</option>
+              <option value="tenor_sax">Tenor Sax</option>
+              <option value="baritone_sax">Baritone Sax</option>
+            </optgroup>
+            <optgroup label="Percussion">
+              <option value="timpani">Timpani</option>
+              <option value="glockenspiel">Glockenspiel</option>
+              <option value="xylophone">Xylophone</option>
+              <option value="vibraphone">Vibraphone</option>
+              <option value="marimba">Marimba</option>
+              <option value="tubular_bells">Tubular Bells</option>
+            </optgroup>
+            <optgroup label="Guitar & Bass">
+              <option value="acoustic_guitar_nylon">Classical Guitar</option>
+              <option value="acoustic_guitar_steel">Acoustic Guitar</option>
+              <option value="electric_guitar_clean">Electric Guitar</option>
+              <option value="acoustic_bass">Acoustic Bass</option>
+              <option value="electric_bass_finger">Electric Bass</option>
+            </optgroup>
+            <optgroup label="Other">
+              <option value="accordion">Accordion</option>
+              <option value="harmonica">Harmonica</option>
+              <option value="church_organ">Church Organ</option>
+              <option value="pan_flute">Pan Flute</option>
+              <option value="sitar">Sitar</option>
+              <option value="banjo">Banjo</option>
+            </optgroup>
           </select>
         </div>
         <div id="mixer-section" class="sidebar-section hidden">
@@ -308,30 +363,67 @@
     });
 
     const INSTRUMENT_NAME_MAP = {
+      // Strings
       "violin": "violin", "violin 1": "violin", "violin 2": "violin",
       "violin i": "violin", "violin ii": "violin", "vln": "violin",
       "viola": "viola", "vla": "viola",
       "cello": "cello", "violoncello": "cello", "vcl": "cello", "vc": "cello",
       "bass": "contrabass", "double bass": "contrabass", "contrabass": "contrabass",
-      "cb": "contrabass", "db": "contrabass",
+      "cb": "contrabass", "db": "contrabass", "string bass": "contrabass",
+      "harp": "orchestral_harp",
+      // Woodwinds
       "flute": "flute", "fl": "flute",
+      "piccolo": "piccolo", "picc": "piccolo",
       "oboe": "oboe", "ob": "oboe",
+      "english horn": "english_horn", "cor anglais": "english_horn",
       "clarinet": "clarinet", "cl": "clarinet",
       "bassoon": "bassoon", "bsn": "bassoon",
+      "recorder": "recorder",
+      // Brass
       "trumpet": "trumpet", "tpt": "trumpet", "tr": "trumpet",
-      "horn": "french_horn", "french horn": "french_horn",
+      "horn": "french_horn", "french horn": "french_horn", "hn": "french_horn",
       "trombone": "trombone", "tbn": "trombone",
       "tuba": "tuba",
-      "piano": "acoustic_grand_piano",
-      "acoustic_grand_piano": "acoustic_grand_piano",
-      "violin": "violin", "cello": "cello", "flute": "flute",
-      "clarinet": "clarinet", "trumpet": "trumpet",
+      // Saxophones
+      "soprano sax": "soprano_sax", "alto sax": "alto_sax",
+      "tenor sax": "tenor_sax", "baritone sax": "baritone_sax",
+      "saxophone": "alto_sax", "sax": "alto_sax",
+      // Keyboards
+      "piano": "acoustic_grand_piano", "acoustic_grand_piano": "acoustic_grand_piano",
+      // Guitar
+      "guitar": "acoustic_guitar_nylon", "acoustic guitar": "acoustic_guitar_steel",
+      "electric guitar": "electric_guitar_clean",
+      // Percussion
+      "timpani": "timpani", "glockenspiel": "glockenspiel",
+      "xylophone": "xylophone", "vibraphone": "vibraphone",
+      "marimba": "marimba",
     };
 
     let partSamplers = [];          // one Sampler per ensemble part (persists across play/stop)
+    let partInstrumentNames = [];   // tracks SoundFont name per ensemble part (user overrides)
     let soloSampler  = null;        // single Sampler for solo mode
     let soloSamplerInstrument = null;
     let samplersLoadingPromise = null;
+
+    function instrumentOptionsHtml(selectedValue) {
+      const groups = [
+        ["Keyboards", [["acoustic_grand_piano","Piano"],["bright_acoustic_piano","Bright Piano"],["harpsichord","Harpsichord"],["celesta","Celesta"]]],
+        ["Strings", [["violin","Violin"],["viola","Viola"],["cello","Cello"],["contrabass","Double Bass"],["orchestral_harp","Harp"],["pizzicato_strings","Pizzicato Strings"],["string_ensemble_1","String Ensemble"]]],
+        ["Woodwinds", [["flute","Flute"],["piccolo","Piccolo"],["clarinet","Clarinet"],["oboe","Oboe"],["english_horn","English Horn"],["bassoon","Bassoon"],["recorder","Recorder"]]],
+        ["Brass", [["trumpet","Trumpet"],["trombone","Trombone"],["tuba","Tuba"],["french_horn","French Horn"],["muted_trumpet","Muted Trumpet"],["brass_section","Brass Section"]]],
+        ["Saxophones", [["soprano_sax","Soprano Sax"],["alto_sax","Alto Sax"],["tenor_sax","Tenor Sax"],["baritone_sax","Baritone Sax"]]],
+        ["Percussion", [["timpani","Timpani"],["glockenspiel","Glockenspiel"],["xylophone","Xylophone"],["vibraphone","Vibraphone"],["marimba","Marimba"],["tubular_bells","Tubular Bells"]]],
+        ["Guitar & Bass", [["acoustic_guitar_nylon","Classical Guitar"],["acoustic_guitar_steel","Acoustic Guitar"],["electric_guitar_clean","Electric Guitar"],["acoustic_bass","Acoustic Bass"],["electric_bass_finger","Electric Bass"]]],
+        ["Other", [["accordion","Accordion"],["harmonica","Harmonica"],["church_organ","Church Organ"],["pan_flute","Pan Flute"],["sitar","Sitar"],["banjo","Banjo"]]],
+      ];
+      return groups.map(([label, opts]) =>
+        `<optgroup label="${label}">` +
+        opts.map(([val, name]) =>
+          `<option value="${val}"${val === selectedValue ? " selected" : ""}>${name}</option>`
+        ).join("") +
+        `</optgroup>`
+      ).join("");
+    }
 
     function guessInstrument(partName) {
       const lower = (partName || "").toLowerCase().trim();
@@ -346,14 +438,32 @@
       const urls = {};
       SAMPLER_NOTES_TO_LOAD.forEach(note => { urls[note] = note + ".mp3"; });
       return new Promise(resolve => {
+        let settled = false;
         const sampler = new Tone.Sampler({
           urls,
           baseUrl: SOUNDFONT_BASE + sfName + "-mp3/",
           release: 1.5,
-          onload: () => resolve(sampler),
-          onerror: () => resolve(sampler),
+          onload: () => {
+            if (settled) return;
+            settled = true;
+            sampler._loaded = true;
+            resolve(sampler);
+          },
+          onerror: (err) => {
+            if (settled) return;
+            settled = true;
+            console.warn("Sampler load error for", sfName, err);
+            sampler._loaded = false;
+            resolve(sampler);
+          },
         });
-        setTimeout(() => resolve(sampler), 30000);
+        setTimeout(() => {
+          if (settled) return;
+          settled = true;
+          console.warn("Sampler load timeout for", sfName);
+          sampler._loaded = false;
+          resolve(sampler);
+        }, 30000);
       });
     }
 
@@ -361,7 +471,8 @@
       if (currentParts.length > 0) {
         for (let i = 0; i < currentParts.length; i++) {
           if (!partSamplers[i]) {
-            const sfName = guessInstrument(currentParts[i].part_name);
+            const sfName = partInstrumentNames[i] || guessInstrument(currentParts[i].part_name);
+            partInstrumentNames[i] = sfName;
             partSamplers[i] = await createSamplerPromise(sfName);
           }
         }
@@ -391,6 +502,7 @@
     const tempoSlider     = document.getElementById("tempo-slider");
     const tempoVal        = document.getElementById("tempo-val");
     const instrumentSel   = document.getElementById("instrument-select");
+    const soundSection    = document.getElementById("sound-section");
     const metroBtn        = document.getElementById("metro-btn");
     const countinBtn      = document.getElementById("countin-btn");
     const labelsBtn       = document.getElementById("labels-btn");
@@ -481,6 +593,7 @@
       // Dispose cached samplers (they hold audio buffers)
       partSamplers.forEach(s => { try { s.dispose(); } catch (_) {} });
       partSamplers = [];
+      partInstrumentNames = [];
       if (soloSampler) { try { soloSampler.dispose(); } catch (_) {} }
       soloSampler = null; soloSamplerInstrument = null;
       samplersLoadingPromise = null;
@@ -1193,23 +1306,36 @@
     /* ── instrument selector ───────────────────────────── */
     instrumentSel.addEventListener("change", async () => {
       const sfName = instrumentSel.value;
-      // Always rebuild the solo sampler with the newly chosen instrument
+      const wasPlaying = Tone.Transport.state !== "stopped";
+      const resumeBeat = currentBeat;
+
+      // Show loading feedback
+      instrumentSel.disabled = true;
+      playerPlayBtn.innerHTML = "Loading\u2026";
+
+      // Load new sampler BEFORE disposing old one (prevents silence gap)
+      const newSoloSampler = await createSamplerPromise(sfName);
       if (soloSampler) { try { soloSampler.dispose(); } catch (_) {} }
-      soloSampler = await createSamplerPromise(sfName);
+      soloSampler = newSoloSampler;
       soloSamplerInstrument = sfName;
 
       // If we're in ensemble mode, also update the sampler for the active tab
       if (currentParts.length > 0) {
         const idx = Array.from(partTabsEl.querySelectorAll("button")).findIndex(b => b.classList.contains("active"));
         if (idx >= 0) {
+          const newPartSampler = await createSamplerPromise(sfName);
           if (partSamplers[idx]) { try { partSamplers[idx].dispose(); } catch (_) {} }
-          partSamplers[idx] = await createSamplerPromise(sfName);
+          partSamplers[idx] = newPartSampler;
         }
       }
 
-      // If currently playing, restart from current position with the new instrument
-      if (Tone.Transport.state !== "stopped") {
-        startPlaybackFrom(currentBeat);
+      instrumentSel.disabled = false;
+
+      // Restart playback with new instrument, or restore button text
+      if (wasPlaying) {
+        startPlaybackFrom(resumeBeat);
+      } else {
+        playerPlayBtn.innerHTML = "&#9654; Play";
       }
     });
 
@@ -1302,11 +1428,19 @@
       }
       partMixersEl.innerHTML = "";
       currentParts.forEach((part, i) => {
+        // Initialize instrument name if not set
+        if (!partInstrumentNames[i]) {
+          partInstrumentNames[i] = guessInstrument(part.part_name);
+        }
+
         const row = document.createElement("div");
         row.className = "mixer-row";
-        row.innerHTML = `<span class="mixer-label">${part.part_name}</span>` +
+        row.innerHTML =
+          `<span class="mixer-label">${part.part_name}</span>` +
+          `<select class="mixer-instrument" data-part="${i}">${instrumentOptionsHtml(partInstrumentNames[i])}</select>` +
           `<input type="range" class="mixer-slider" min="-40" max="6" value="0" data-part="${i}" />` +
           `<span class="mixer-val">0 dB</span>`;
+
         const slider = row.querySelector("input");
         const valSpan = row.querySelector(".mixer-val");
         slider.addEventListener("input", () => {
@@ -1314,6 +1448,30 @@
           valSpan.textContent = db + " dB";
           if (partSamplers[i]) partSamplers[i].volume.value = db + masterVolume;
         });
+
+        const instSel = row.querySelector("select");
+        instSel.addEventListener("change", async () => {
+          const sfName = instSel.value;
+          const wasPlaying = Tone.Transport.state !== "stopped";
+          const resumeBeat = currentBeat;
+
+          instSel.disabled = true;
+          playerPlayBtn.innerHTML = "Loading\u2026";
+
+          const newSampler = await createSamplerPromise(sfName);
+          if (partSamplers[i]) { try { partSamplers[i].dispose(); } catch (_) {} }
+          partSamplers[i] = newSampler;
+          partInstrumentNames[i] = sfName;
+
+          instSel.disabled = false;
+
+          if (wasPlaying) {
+            startPlaybackFrom(resumeBeat);
+          } else {
+            playerPlayBtn.innerHTML = "&#9654; Play";
+          }
+        });
+
         partMixersEl.appendChild(row);
       });
       mixerSection.classList.remove("hidden");
@@ -1462,6 +1620,7 @@
       if (!currentParts.length || currentParts.length <= 1) {
         partTabsEl.classList.add("hidden");
         partTabsEl.innerHTML = "";
+        soundSection.classList.remove("hidden");
         return;
       }
       partTabsEl.innerHTML = "";
@@ -1473,6 +1632,7 @@
         partTabsEl.appendChild(btn);
       });
       partTabsEl.classList.remove("hidden");
+      soundSection.classList.add("hidden");
       buildMixer();
     }
 
