@@ -9,7 +9,6 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" />
   <link rel="stylesheet" href="/static/marketing.css" />
-  <!-- GSAP + ScrollTrigger -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
 </head>
@@ -35,25 +34,13 @@
     </div>
   </nav>
 
-  <!-- ─── Hero ─── -->
+  <!-- ─── Hero – Living Waveform Canvas ─── -->
   <section class="hero" id="hero">
-    <div class="hero-aurora">
-      <div class="blob blob--1"></div>
-      <div class="blob blob--2"></div>
-      <div class="blob blob--3"></div>
-    </div>
-    <div class="hero-grid"></div>
-    <div class="hero-notes" aria-hidden="true">
-      <span class="hero-note">&#9833;</span>
-      <span class="hero-note">&#9834;</span>
-      <span class="hero-note">&#9835;</span>
-      <span class="hero-note">&#9836;</span>
-      <span class="hero-note">&#119070;</span>
-    </div>
+    <canvas id="heroCanvas"></canvas>
 
     <div class="hero-content" id="heroContent">
       <p class="eyebrow">Sheet Music, Brought to Life</p>
-      <h1 id="heroTitle">Turn any score into instant audio playback</h1>
+      <h1 id="heroTitle" data-text="Turn any score into instant audio playback"></h1>
       <p class="subtitle" id="heroSubtitle">Upload your sheet music and hear it performed instantly. Built for orchestra musicians, educators, and anyone who wants to hear the music on the page.</p>
       <div class="btn-group" id="heroCta">
         <a href="/studio" class="btn btn--primary">Try Melodra Free</a>
@@ -61,34 +48,49 @@
       </div>
     </div>
 
-    <div class="scroll-hint" id="scrollHint" aria-hidden="true">
-      <div class="scroll-hint-line"></div>
-      <span>Scroll</span>
+    <div class="scroll-rings" id="scrollRings" aria-hidden="true">
+      <span></span>
+      <span></span>
+      <span></span>
+      <div class="scroll-rings-label">Scroll</div>
     </div>
   </section>
 
-  <!-- ─── Features ─── -->
-  <section class="section text-center" id="features">
+  <!-- ─── Wave Divider ─── -->
+  <div class="wave-divider">
+    <svg viewBox="0 0 1440 60" preserveAspectRatio="none">
+      <path d="M0,30 C360,60 720,0 1080,30 C1260,45 1380,15 1440,30 L1440,60 L0,60 Z" fill="var(--m-surface)"/>
+    </svg>
+  </div>
+
+  <!-- ─── Features – Asymmetric Bento ─── -->
+  <section class="section" id="features" style="background: var(--m-surface);">
     <div class="container">
       <div class="section-header">
-        <p class="eyebrow" data-anim="fade-up">Features</p>
-        <h2 data-anim="fade-up">Everything you need to hear your music</h2>
-        <p class="subtitle" data-anim="fade-up">From upload to playback in seconds — no complicated setup required.</p>
+        <p class="eyebrow">Features</p>
+        <h2>Everything you need to hear your music</h2>
+        <p class="subtitle">From upload to playback in seconds — no complicated setup required.</p>
       </div>
 
-      <div class="features-grid">
-        <div class="feature-card" data-anim="flip-in">
-          <div class="feature-icon">&#9835;</div>
+      <div class="bento-grid">
+        <div class="bento-card bento-card--upload">
+          <div class="micro-upload">
+            <div class="micro-upload-page">
+              <span></span><span></span><span></span><span></span><span></span>
+            </div>
+          </div>
           <h3>Upload Any Score</h3>
           <p>Supports PDF, MusicXML, and MXL files. Simply drag and drop your sheet music and Melodra takes care of the rest.</p>
         </div>
-        <div class="feature-card" data-anim="flip-in">
-          <div class="feature-icon">&#9654;</div>
+        <div class="bento-card bento-card--playback">
+          <div class="micro-eq">
+            <span></span><span></span><span></span><span></span><span></span>
+          </div>
           <h3>Instant Audio Playback</h3>
           <p>Hear your score played back with realistic instrument samples. Adjust tempo, volume, and choose from a library of sounds.</p>
         </div>
-        <div class="feature-card" data-anim="flip-in">
-          <div class="feature-icon">&#127931;</div>
+        <div class="bento-card bento-card--musicians">
+          <div class="micro-note">&#9835;</div>
           <h3>Built for Musicians</h3>
           <p>Designed specifically for orchestra musicians and music educators who need to quickly hear parts, rehearse, or teach.</p>
         </div>
@@ -96,27 +98,64 @@
     </div>
   </section>
 
-  <!-- ─── How It Works ─── -->
-  <section class="section text-center" id="how-it-works">
-    <div class="container">
-      <div class="section-header">
-        <p class="eyebrow" data-anim="fade-up">How It Works</p>
-        <h2 data-anim="fade-up">Three simple steps</h2>
-        <p class="subtitle" data-anim="fade-up">Getting from printed music to audio has never been easier.</p>
-      </div>
+  <!-- ─── Wave Divider ─── -->
+  <div class="wave-divider">
+    <svg viewBox="0 0 1440 60" preserveAspectRatio="none">
+      <path d="M0,0 L0,30 C360,0 720,60 1080,30 C1260,15 1380,45 1440,30 L1440,0 Z" fill="var(--m-surface)"/>
+    </svg>
+  </div>
 
-      <div class="steps">
-        <div class="step" data-anim="tile-in">
+  <!-- ─── How It Works – Horizontal Scroll Timeline ─── -->
+  <section class="section how-section" id="how-it-works">
+    <div class="how-header">
+      <p class="eyebrow">How It Works</p>
+      <h2>Three simple steps</h2>
+      <p class="subtitle">Getting from printed music to audio has never been easier.</p>
+    </div>
+
+    <div class="how-progress">
+      <div class="how-progress-bg">
+        <div class="how-progress-fill" id="howProgressFill"></div>
+      </div>
+    </div>
+
+    <div class="steps-track" id="stepsTrack">
+      <div class="step-panel">
+        <div class="step-panel-inner">
+          <div class="step-illus">
+            <div class="illus-staff">
+              <span></span><span></span><span></span><span></span><span></span>
+              <div class="illus-staff-scan"></div>
+            </div>
+          </div>
           <div class="step-number">01</div>
           <h3>Upload Your Score</h3>
           <p>Drag and drop a PDF or MusicXML file into Melodra. Our OMR engine handles PDF recognition automatically.</p>
         </div>
-        <div class="step" data-anim="tile-in">
+      </div>
+      <div class="step-panel">
+        <div class="step-panel-inner">
+          <div class="step-illus">
+            <div class="illus-dots">
+              <span></span><span></span><span></span><span></span><span></span>
+              <div class="illus-dots-cursor"></div>
+            </div>
+          </div>
           <div class="step-number">02</div>
           <h3>Preview &amp; Configure</h3>
           <p>See your score rendered beautifully on screen. Name your parts, adjust instruments, and set your preferred tempo.</p>
         </div>
-        <div class="step" data-anim="tile-in">
+      </div>
+      <div class="step-panel">
+        <div class="step-panel-inner">
+          <div class="step-illus">
+            <div class="illus-play">
+              <div class="illus-play-btn"></div>
+              <div class="illus-play-ring"></div>
+              <div class="illus-play-ring"></div>
+              <div class="illus-play-ring"></div>
+            </div>
+          </div>
           <div class="step-number">03</div>
           <h3>Listen &amp; Export</h3>
           <p>Hit play and hear your music come to life with realistic instrument samples. Export as MP3 to take it anywhere.</p>
@@ -125,45 +164,59 @@
     </div>
   </section>
 
-  <!-- ─── Stats ─── -->
-  <section class="section text-center">
+  <!-- ─── Wave Divider ─── -->
+  <div class="wave-divider">
+    <svg viewBox="0 0 1440 60" preserveAspectRatio="none">
+      <path d="M0,30 C360,60 720,0 1080,30 C1260,45 1380,15 1440,30 L1440,60 L0,60 Z" fill="var(--m-surface)"/>
+    </svg>
+  </div>
+
+  <!-- ─── Stats – Digit Flip ─── -->
+  <section class="section text-center" style="background: var(--m-surface);">
     <div class="container">
       <div class="section-header">
-        <p class="eyebrow" data-anim="fade-up">By the Numbers</p>
-        <h2 data-anim="fade-up">Trusted by musicians everywhere</h2>
+        <p class="eyebrow">By the Numbers</p>
+        <h2>Trusted by musicians everywhere</h2>
       </div>
 
       <div class="stats-grid" id="statsGrid">
-        <div class="stat" data-anim="scale-in">
-          <div class="stat-number" data-count="10" data-suffix="K+">10K+</div>
+        <div class="stat">
+          <div class="stat-number" id="stat-0" data-target="10" data-suffix="K+"></div>
           <div class="stat-label">Scores Played</div>
         </div>
-        <div class="stat" data-anim="scale-in">
-          <div class="stat-number" data-count="2500" data-suffix="+">2,500+</div>
+        <div class="stat">
+          <div class="stat-number" id="stat-1" data-target="2500" data-suffix="+"></div>
           <div class="stat-label">Active Users</div>
         </div>
-        <div class="stat" data-anim="scale-in">
-          <div class="stat-number" data-count="50" data-suffix="+">50+</div>
+        <div class="stat">
+          <div class="stat-number" id="stat-2" data-target="50" data-suffix="+"></div>
           <div class="stat-label">Instruments</div>
         </div>
-        <div class="stat" data-anim="scale-in">
-          <div class="stat-number" data-count="98" data-suffix="%">98%</div>
+        <div class="stat">
+          <div class="stat-number" id="stat-3" data-target="98" data-suffix="%"></div>
           <div class="stat-label">Satisfaction Rate</div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ─── Testimonials ─── -->
-  <section class="section text-center" style="background: var(--m-surface);">
+  <!-- ─── Wave Divider ─── -->
+  <div class="wave-divider">
+    <svg viewBox="0 0 1440 60" preserveAspectRatio="none">
+      <path d="M0,0 L0,30 C360,0 720,60 1080,30 C1260,15 1380,45 1440,30 L1440,0 Z" fill="var(--m-surface)"/>
+    </svg>
+  </div>
+
+  <!-- ─── Testimonials – Fanning Card Deck ─── -->
+  <section class="section text-center" id="testimonials">
     <div class="container">
       <div class="section-header">
-        <p class="eyebrow" data-anim="fade-up">Testimonials</p>
-        <h2 data-anim="fade-up">Loved by musicians and educators</h2>
+        <p class="eyebrow">Testimonials</p>
+        <h2>Loved by musicians and educators</h2>
       </div>
 
-      <div class="testimonials-grid" id="testimonialsGrid">
-        <div class="testimonial" data-anim="slide-left">
+      <div class="testimonials-deck" id="testimonialsDeck">
+        <div class="testimonial" id="tCard0">
           <p class="testimonial-quote">Melodra has completely changed how I prepare for rehearsals. I can hear my part played back perfectly before I even pick up my instrument.</p>
           <div class="testimonial-author">
             <div class="testimonial-avatar">SR</div>
@@ -173,7 +226,7 @@
             </div>
           </div>
         </div>
-        <div class="testimonial" data-anim="fade-up">
+        <div class="testimonial" id="tCard1">
           <p class="testimonial-quote">As a music teacher, I use Melodra daily. Students can hear exactly what their part should sound like. It's an incredible teaching tool.</p>
           <div class="testimonial-author">
             <div class="testimonial-avatar">MJ</div>
@@ -183,7 +236,7 @@
             </div>
           </div>
         </div>
-        <div class="testimonial" data-anim="slide-right">
+        <div class="testimonial" id="tCard2">
           <p class="testimonial-quote">The PDF scanning works surprisingly well. I upload scanned parts from our library and within seconds I can hear the full arrangement.</p>
           <div class="testimonial-author">
             <div class="testimonial-avatar">DL</div>
@@ -197,14 +250,23 @@
     </div>
   </section>
 
-  <!-- ─── CTA ─── -->
-  <section class="section cta-section">
+  <!-- ─── Wave Divider ─── -->
+  <div class="wave-divider">
+    <svg viewBox="0 0 1440 60" preserveAspectRatio="none">
+      <path d="M0,30 C360,60 720,0 1080,30 C1260,45 1380,15 1440,30 L1440,60 L0,60 Z" fill="var(--m-surface)"/>
+    </svg>
+  </div>
+
+  <!-- ─── CTA – Interactive Piano ─── -->
+  <section class="section cta-section" style="background: var(--m-surface);">
     <div class="container">
-      <div class="cta-box" data-anim="scale-in">
-        <div class="blob blob--1"></div>
-        <div class="blob blob--2"></div>
+      <div class="cta-box">
         <h2>Ready to hear your music?</h2>
-        <p class="subtitle">Start using Melodra for free — no account required. Just upload and play.</p>
+        <p class="subtitle">Start using Melodra for free — no account required.</p>
+
+        <div class="piano-container" id="pianoContainer"></div>
+        <p class="piano-hint">Click or tap the keys to play</p>
+
         <div class="btn-group">
           <a href="/studio" class="btn btn--primary">Try Melodra Free</a>
           <a href="/contact" class="btn btn--outline">Get in Touch</a>
@@ -214,12 +276,12 @@
   </section>
 
   <!-- ─── Newsletter ─── -->
-  <section class="section--sm text-center" style="background: var(--m-surface);">
+  <section class="section--sm text-center">
     <div class="container">
-      <p class="eyebrow" data-anim="fade-up">Stay Updated</p>
-      <h2 data-anim="fade-up">Subscribe to our newsletter</h2>
-      <p class="subtitle" data-anim="fade-up">Get the latest updates, new features, and tips for getting the most out of Melodra.</p>
-      <form class="newsletter-form" data-anim="fade-up" onsubmit="event.preventDefault(); this.querySelector('button').textContent='Subscribed!'; this.querySelector('input').value='';">
+      <p class="eyebrow">Stay Updated</p>
+      <h2>Subscribe to our newsletter</h2>
+      <p class="subtitle">Get the latest updates, new features, and tips for getting the most out of Melodra.</p>
+      <form class="newsletter-form" onsubmit="event.preventDefault(); this.querySelector('button').textContent='Subscribed!'; this.querySelector('input').value='';">
         <input type="email" class="newsletter-input" placeholder="Enter your email address" required />
         <button type="submit" class="btn btn--primary">Subscribe</button>
       </form>
@@ -230,47 +292,47 @@
   <section class="section text-center" id="faq">
     <div class="container">
       <div class="section-header">
-        <p class="eyebrow" data-anim="fade-up">FAQ</p>
-        <h2 data-anim="fade-up">Frequently asked questions</h2>
+        <p class="eyebrow">FAQ</p>
+        <h2>Frequently asked questions</h2>
       </div>
 
       <div class="faq-list">
-        <div class="faq-item" data-anim="fade-up">
+        <div class="faq-item">
           <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">
             What file formats does Melodra support?
             <span class="faq-chevron">&#9660;</span>
           </button>
           <div class="faq-answer"><p>Melodra supports PDF sheet music (via optical music recognition), MusicXML (.xml, .musicxml), and compressed MusicXML (.mxl) files. For best results, we recommend exporting directly as MusicXML from notation software like MuseScore, Finale, or Sibelius.</p></div>
         </div>
-        <div class="faq-item" data-anim="fade-up">
+        <div class="faq-item">
           <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">
             Is Melodra free to use?
             <span class="faq-chevron">&#9660;</span>
           </button>
           <div class="faq-answer"><p>Yes! Melodra is completely free. Simply open the app, upload your sheet music, and start listening. No account or sign-up required.</p></div>
         </div>
-        <div class="faq-item" data-anim="fade-up">
+        <div class="faq-item">
           <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">
             How accurate is the PDF scanning?
             <span class="faq-chevron">&#9660;</span>
           </button>
           <div class="faq-answer"><p>Melodra uses Audiveris, a state-of-the-art optical music recognition (OMR) engine. Accuracy depends on scan quality — 300 DPI or higher works best. For the most accurate results, use MusicXML files exported directly from notation software.</p></div>
         </div>
-        <div class="faq-item" data-anim="fade-up">
+        <div class="faq-item">
           <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">
             Can I use Melodra for ensemble parts?
             <span class="faq-chevron">&#9660;</span>
           </button>
           <div class="faq-answer"><p>Absolutely. Melodra supports multi-part scores. You can upload individual parts for each instrument and hear them played back together with independent volume controls for each part.</p></div>
         </div>
-        <div class="faq-item" data-anim="fade-up">
+        <div class="faq-item">
           <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">
             Is my sheet music kept private?
             <span class="faq-chevron">&#9660;</span>
           </button>
           <div class="faq-answer"><p>Yes. All processing happens on your local machine. Your files are never stored on external servers or shared with anyone. Your music stays yours.</p></div>
         </div>
-        <div class="faq-item" data-anim="fade-up">
+        <div class="faq-item">
           <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">
             Can I export the audio?
             <span class="faq-chevron">&#9660;</span>
@@ -321,7 +383,11 @@
     </div>
   </footer>
 
+  <!-- ─── JavaScript ─── -->
   <script>
+  (function() {
+    'use strict';
+
     /* ── Nav toggle ─────────────────────────────────────────────────────── */
     document.getElementById('navToggle').addEventListener('click', () => {
       document.getElementById('navLinks').classList.toggle('open');
@@ -331,43 +397,363 @@
       navbar.classList.toggle('scrolled', window.scrollY > 40);
     }, { passive: true });
 
-    /* ── GSAP Animations ────────────────────────────────────────────────── */
+    /* ── Detect capabilities ────────────────────────────────────────────── */
+    const isMobile = window.matchMedia('(max-width: 768px)').matches;
+    const isTablet = window.matchMedia('(max-width: 1024px)').matches;
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    /* ================================================================== */
+    /*  1. WAVE CANVAS                                                     */
+    /* ================================================================== */
+    class WaveCanvas {
+      constructor(canvas) {
+        this.canvas = canvas;
+        this.ctx = canvas.getContext('2d');
+        this.mouseX = -1000;
+        this.mouseY = -1000;
+        this.amplitudeMultiplier = 1;
+        this.running = true;
+
+        this.waves = [
+          { color: 'rgba(93,92,255,0.12)',  freq: 0.008,  amp: 40, speed: 0.015, phase: 0 },
+          { color: 'rgba(59,130,246,0.08)', freq: 0.012,  amp: 30, speed: 0.02,  phase: 2 },
+          { color: 'rgba(124,58,237,0.06)', freq: 0.006,  amp: 50, speed: 0.01,  phase: 4 },
+        ];
+
+        this.particles = [];
+        this.initParticles(isMobile ? 8 : 15);
+
+        this.resize();
+        window.addEventListener('resize', () => this.resize());
+
+        if (!isMobile) {
+          window.addEventListener('mousemove', e => {
+            this.mouseX = e.clientX;
+            this.mouseY = e.clientY;
+          }, { passive: true });
+        }
+
+        this.draw();
+      }
+
+      resize() {
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        this.canvas.width = window.innerWidth * dpr;
+        this.canvas.height = window.innerHeight * dpr;
+        this.ctx.scale(dpr, dpr);
+        this.w = window.innerWidth;
+        this.h = window.innerHeight;
+      }
+
+      initParticles(count) {
+        const symbols = ['\u266A', '\u266B', '\u266C', '\u266D', '\u266E', '\u266F', '\uD834\uDD1E'];
+        for (let i = 0; i < count; i++) {
+          this.particles.push({
+            x: Math.random() * 1600,
+            y: Math.random() * 900,
+            vy: -(0.3 + Math.random() * 0.5),
+            vx: (Math.random() - 0.5) * 0.3,
+            size: 14 + Math.random() * 18,
+            symbol: symbols[Math.floor(Math.random() * symbols.length)],
+            opacity: 0.06 + Math.random() * 0.08,
+          });
+        }
+      }
+
+      draw() {
+        if (!this.running) return;
+        const { ctx, w, h } = this;
+        ctx.clearRect(0, 0, w, h);
+
+        // Draw waves
+        const amp = this.amplitudeMultiplier;
+        for (const wave of this.waves) {
+          wave.phase += wave.speed;
+          ctx.beginPath();
+          ctx.moveTo(0, h / 2);
+          for (let x = 0; x <= w; x += 4) {
+            const y = h / 2 + Math.sin(x * wave.freq + wave.phase) * wave.amp * amp;
+            ctx.lineTo(x, y);
+          }
+          ctx.strokeStyle = wave.color;
+          ctx.lineWidth = 2;
+          ctx.stroke();
+        }
+
+        // Draw particles
+        for (const p of this.particles) {
+          // Mouse repulsion (desktop only)
+          if (!isMobile) {
+            const dx = p.x - this.mouseX;
+            const dy = p.y - this.mouseY;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < 120 && dist > 0) {
+              const force = (120 - dist) / 120 * 2;
+              p.x += (dx / dist) * force;
+              p.y += (dy / dist) * force;
+            }
+          }
+
+          p.y += p.vy * (1 + (1 - amp) * 3); // accelerate when dampened
+          p.x += p.vx;
+
+          // Wrap around
+          if (p.y < -30) { p.y = h + 30; p.x = Math.random() * w; }
+          if (p.x < -30) p.x = w + 30;
+          if (p.x > w + 30) p.x = -30;
+
+          ctx.font = `${p.size}px serif`;
+          ctx.fillStyle = `rgba(93,92,255,${p.opacity * amp})`;
+          ctx.fillText(p.symbol, p.x, p.y);
+        }
+
+        requestAnimationFrame(() => this.draw());
+      }
+
+      setAmplitudeMultiplier(v) {
+        this.amplitudeMultiplier = Math.max(0, Math.min(1, v));
+      }
+    }
+
+    /* ================================================================== */
+    /*  2. TEXT SCRAMBLE                                                    */
+    /* ================================================================== */
+    class TextScramble {
+      constructor(el, finalText) {
+        this.el = el;
+        this.finalText = finalText;
+        this.charset = ['\u266A', '\u266B', '\u266C', '\u266D', '\u266E', '\u266F', '\u2669'];
+        this.entries = []; // { span, target, resolved }
+        this.frame = 0;
+      }
+
+      start() {
+        let html = '';
+        this.entries = [];
+        const words = this.finalText.split(' ');
+        words.forEach((word, wi) => {
+          html += '<span style="display:inline-block;white-space:nowrap">';
+          for (const ch of word) {
+            html += `<span class="char">${this.randomChar()}</span>`;
+            this.entries.push({ target: ch, resolved: false });
+          }
+          html += '</span>';
+          if (wi < words.length - 1) html += ' ';
+        });
+        this.el.innerHTML = html;
+        const spans = this.el.querySelectorAll('.char');
+        this.entries.forEach((e, i) => { e.span = spans[i]; });
+        this.resolveIndex = 0;
+
+        // Use setInterval for reliable timing
+        this.interval = setInterval(() => this.step(), 30);
+        // Safety: force-complete after 2s
+        this.timeout = setTimeout(() => this.finish(), 2000);
+      }
+
+      step() {
+        // Resolve 3 characters per tick for a fast, smooth reveal
+        for (let r = 0; r < 3 && this.resolveIndex < this.entries.length; r++) {
+          const e = this.entries[this.resolveIndex];
+          e.resolved = true;
+          e.span.textContent = e.target;
+          this.resolveIndex++;
+        }
+
+        // Cycle unresolved chars with random symbols
+        for (let i = this.resolveIndex; i < this.entries.length; i++) {
+          this.entries[i].span.textContent = this.randomChar();
+        }
+
+        // All resolved?
+        if (this.resolveIndex >= this.entries.length) {
+          this.finish();
+        }
+      }
+
+      finish() {
+        clearInterval(this.interval);
+        clearTimeout(this.timeout);
+        // Ensure all chars show final text
+        this.entries.forEach(e => { e.span.textContent = e.target; });
+      }
+
+      randomChar() {
+        return this.charset[Math.floor(Math.random() * this.charset.length)];
+      }
+    }
+
+    /* ================================================================== */
+    /*  3. PIANO KEYS                                                      */
+    /* ================================================================== */
+    class PianoKeys {
+      constructor(container) {
+        this.container = container;
+        this.audioCtx = null;
+        this.createKeys();
+      }
+
+      createKeys() {
+        const notes = [
+          { type: 'white', freq: 261.63, label: 'C' },
+          { type: 'black', freq: 277.18, label: 'C#' },
+          { type: 'white', freq: 293.66, label: 'D' },
+          { type: 'black', freq: 311.13, label: 'D#' },
+          { type: 'white', freq: 329.63, label: 'E' },
+          { type: 'white', freq: 349.23, label: 'F' },
+          { type: 'black', freq: 369.99, label: 'F#' },
+          { type: 'white', freq: 392.00, label: 'G' },
+          { type: 'black', freq: 415.30, label: 'G#' },
+          { type: 'white', freq: 440.00, label: 'A' },
+          { type: 'black', freq: 466.16, label: 'A#' },
+          { type: 'white', freq: 493.88, label: 'B' },
+          { type: 'white', freq: 523.25, label: 'C2' },
+        ];
+
+        const keysDiv = document.createElement('div');
+        keysDiv.className = 'piano-keys';
+
+        let whiteIndex = 0;
+        const whiteWidth = isMobile ? 38 : 52;
+        const blackWidth = isMobile ? 24 : 32;
+
+        notes.forEach(note => {
+          const key = document.createElement('button');
+          key.className = `piano-key piano-key--${note.type}`;
+          key.setAttribute('aria-label', `Play ${note.label}`);
+
+          if (note.type === 'white') {
+            key.style.left = (whiteIndex * whiteWidth) + 'px';
+            whiteIndex++;
+          } else {
+            key.style.left = (whiteIndex * whiteWidth - blackWidth / 2) + 'px';
+          }
+
+          const play = (e) => {
+            e.preventDefault();
+            this.playNote(note.freq);
+            key.classList.add('active');
+            setTimeout(() => key.classList.remove('active'), 400);
+          };
+          key.addEventListener('mousedown', play);
+          key.addEventListener('touchstart', play, { passive: false });
+
+          keysDiv.appendChild(key);
+        });
+
+        keysDiv.style.width = (whiteIndex * whiteWidth) + 'px';
+        keysDiv.style.position = 'relative';
+        this.container.appendChild(keysDiv);
+      }
+
+      playNote(freq) {
+        if (!this.audioCtx) {
+          this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        const ctx = this.audioCtx;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.frequency.value = freq;
+        osc.type = 'sine';
+        gain.gain.setValueAtTime(0.3, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.4);
+      }
+    }
+
+    /* ================================================================== */
+    /*  4. DIGIT FLIP (Stats)                                              */
+    /* ================================================================== */
+    function initDigitFlip() {
+      document.querySelectorAll('.stat-number[data-target]').forEach(el => {
+        const target = parseInt(el.dataset.target, 10);
+        const suffix = el.dataset.suffix || '';
+        const digits = String(target).split('');
+
+        let html = '';
+        digits.forEach((d, i) => {
+          html += `<span class="digit"><span class="digit-inner" data-target="${d}" style="transform: translateY(-${Math.floor(Math.random() * 10) * 1.2}em)">0</span></span>`;
+        });
+        html += `<span class="stat-suffix">${suffix}</span>`;
+        el.innerHTML = html;
+      });
+    }
+
+    function flipDigitsIn(el) {
+      el.querySelectorAll('.digit-inner').forEach((digit, i) => {
+        const target = parseInt(digit.dataset.target, 10);
+        setTimeout(() => {
+          digit.style.transform = `translateY(-${target * 1.2}em)`;
+          digit.textContent = '0\n1\n2\n3\n4\n5\n6\n7\n8\n9'.replace(/\n/g, '');
+
+          // Build stack of digits 0-9
+          let stack = '';
+          for (let n = 0; n <= 9; n++) {
+            stack += `<div style="height:1.2em;display:flex;align-items:center;justify-content:center">${n}</div>`;
+          }
+          digit.innerHTML = stack;
+          digit.style.transform = `translateY(-${target * 1.2}em)`;
+        }, i * 80);
+      });
+    }
+
+    /* ================================================================== */
+    /*  INIT                                                               */
+    /* ================================================================== */
+    // Canvas
+    let waveCanvas;
+    if (!prefersReduced) {
+      const canvas = document.getElementById('heroCanvas');
+      if (canvas) waveCanvas = new WaveCanvas(canvas);
+    }
+
+    // Text Scramble
+    const heroTitle = document.getElementById('heroTitle');
+    if (heroTitle) {
+      const text = heroTitle.dataset.text || '';
+      if (prefersReduced) {
+        heroTitle.textContent = text;
+      } else {
+        const scramble = new TextScramble(heroTitle, text);
+        setTimeout(() => scramble.start(), 300);
+      }
+    }
+
+    // Piano
+    const pianoContainer = document.getElementById('pianoContainer');
+    if (pianoContainer) new PianoKeys(pianoContainer);
+
+    // Digit flip init
+    initDigitFlip();
+
+    /* ================================================================== */
+    /*  GSAP + ScrollTrigger                                               */
+    /* ================================================================== */
     window.addEventListener('load', () => {
       if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
       gsap.registerPlugin(ScrollTrigger);
+      if (prefersReduced) return;
 
-      const isMobile = window.matchMedia('(max-width: 768px)').matches;
-      const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      if (prefersReduced) return; /* respect accessibility */
-
-      /* ── Hero entrance ──────────────────────────────────────────────── */
-      /* Split headline into word spans for 3D flip-in */
-      const heroTitle = document.getElementById('heroTitle');
-      if (heroTitle) {
-        const words = heroTitle.textContent.trim().split(/\s+/);
-        heroTitle.innerHTML = words.map(w =>
-          '<span class="word"><span class="word-inner" style="transform:translateY(105%) rotateX(-80deg);opacity:0">' + w + '</span></span>'
-        ).join(' ');
-
-        gsap.to('.hero h1 .word-inner', {
-          y: '0%',
-          rotateX: 0,
-          opacity: 1,
-          duration: 0.8,
-          stagger: 0.07,
-          ease: 'back.out(1.4)',
-          delay: 0.15,
+      /* ── Hero: scroll-linked wave dampening ─────────────────────────── */
+      if (waveCanvas) {
+        ScrollTrigger.create({
+          trigger: '#hero',
+          start: 'top top',
+          end: 'bottom top',
+          onUpdate: self => {
+            waveCanvas.setAmplitudeMultiplier(1 - self.progress);
+          },
         });
       }
 
-      /* Subtitle + CTA fade up */
+      /* ── Hero content parallax ──────────────────────────────────────── */
       gsap.from('#heroSubtitle', { y: 30, opacity: 0, duration: 0.7, ease: 'power3.out', delay: 0.5 });
       gsap.from('#heroCta', { y: 30, opacity: 0, duration: 0.7, ease: 'power3.out', delay: 0.65 });
+      gsap.to('#scrollRings', { opacity: 1, duration: 0.6, delay: 1.2 });
 
-      /* Scroll hint fade in */
-      gsap.to('#scrollHint', { opacity: 1, duration: 0.6, delay: 1.2 });
-
-      /* Hero parallax on scroll */
       if (!isMobile) {
         gsap.to('#heroContent', {
           scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: 1 },
@@ -375,50 +761,29 @@
           scale: 0.95,
           opacity: 0.3,
         });
-        gsap.utils.toArray('.hero-note').forEach((note, i) => {
-          gsap.to(note, {
-            scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: 1 + i * 0.2 },
-            y: -100 - i * 25,
-            rotation: i % 2 === 0 ? 25 : -25,
-          });
-        });
       }
 
-      /* ── Generic fade-up for section headers etc ────────────────────── */
-      document.querySelectorAll('[data-anim="fade-up"]').forEach(el => {
-        gsap.from(el, {
-          scrollTrigger: { trigger: el, start: 'top 88%', once: true },
-          y: 36,
-          opacity: 0,
-          duration: 0.65,
+      /* ── Feature bento cards: clip-path curtain wipe ────────────────── */
+      gsap.utils.toArray('.bento-card').forEach((card, i) => {
+        gsap.to(card, {
+          scrollTrigger: { trigger: card, start: 'top 85%', once: true },
+          clipPath: 'inset(0% 0 0 0)',
+          duration: 0.8,
+          delay: i * 0.15,
           ease: 'power3.out',
         });
       });
 
-      /* ── Feature cards: 3D flip-in stagger ─────────────────────────── */
-      gsap.from('[data-anim="flip-in"]', {
-        scrollTrigger: { trigger: '#features .features-grid', start: 'top 80%', once: true },
-        rotateY: isMobile ? 0 : 30,
-        x: isMobile ? 0 : 40,
-        y: 24,
-        opacity: 0,
-        duration: 0.85,
-        stagger: 0.15,
-        ease: 'back.out(1.3)',
-        transformPerspective: 800,
-        clearProps: 'all',
-      });
-
-      /* Mouse-tracking 3D tilt on feature cards (desktop only) */
+      /* Mouse tilt on bento cards (desktop) */
       if (!isMobile) {
-        document.querySelectorAll('.feature-card').forEach(card => {
+        document.querySelectorAll('.bento-card').forEach(card => {
           card.addEventListener('mousemove', e => {
             const r = card.getBoundingClientRect();
             const x = (e.clientX - r.left) / r.width - 0.5;
             const y = (e.clientY - r.top) / r.height - 0.5;
             card.style.setProperty('--mx', (x + 0.5) * 100 + '%');
             card.style.setProperty('--my', (y + 0.5) * 100 + '%');
-            gsap.to(card, { rotateY: x * 16, rotateX: -y * 16, transformPerspective: 800, duration: 0.3, ease: 'power2.out' });
+            gsap.to(card, { rotateY: x * 12, rotateX: -y * 12, transformPerspective: 800, duration: 0.3, ease: 'power2.out' });
           });
           card.addEventListener('mouseleave', () => {
             gsap.to(card, { rotateY: 0, rotateX: 0, duration: 0.5, ease: 'power2.out' });
@@ -426,71 +791,99 @@
         });
       }
 
-      /* ── Steps: tiles falling flat ─────────────────────────────────── */
-      gsap.from('[data-anim="tile-in"]', {
-        scrollTrigger: { trigger: '#how-it-works .steps', start: 'top 80%', once: true },
-        rotateX: isMobile ? 0 : 45,
-        y: 40,
-        opacity: 0,
-        duration: 0.85,
-        stagger: 0.18,
-        ease: 'back.out(1.2)',
-        transformPerspective: 800,
-        clearProps: 'all',
+      /* ── How It Works: Horizontal Scroll (desktop only) ─────────────── */
+      if (!isTablet) {
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: '#how-it-works',
+            pin: true,
+            scrub: 0.5,
+            start: 'center center',
+            end: '+=200%',
+          }
+        });
+        tl.to('#stepsTrack', { x: '-66.666%', ease: 'none' }, 0);
+        tl.to('#howProgressFill', { width: '100%', ease: 'none' }, 0);
+      } else {
+        // Mobile/tablet: simple fade-up for steps
+        gsap.utils.toArray('.step-panel').forEach(panel => {
+          gsap.from(panel, {
+            scrollTrigger: { trigger: panel, start: 'top 85%', once: true },
+            y: 40,
+            opacity: 0,
+            duration: 0.7,
+            ease: 'power3.out',
+          });
+        });
+      }
+
+      /* ── Stats: digit flip on scroll ────────────────────────────────── */
+      let statsDone = false;
+      ScrollTrigger.create({
+        trigger: '#statsGrid',
+        start: 'top 80%',
+        once: true,
+        onEnter: () => {
+          if (statsDone) return;
+          statsDone = true;
+          document.querySelectorAll('.stat-number[data-target]').forEach(el => flipDigitsIn(el));
+          gsap.from('.stat', {
+            scale: 0.85,
+            opacity: 0,
+            duration: 0.65,
+            stagger: 0.1,
+            ease: 'back.out(1.4)',
+          });
+        },
       });
 
-      /* ── Stats: scale-in + number count-up ─────────────────────────── */
-      let statsDone = false;
-      gsap.from('[data-anim="scale-in"]', {
-        scrollTrigger: {
-          trigger: '#statsGrid',
-          start: 'top 82%',
+      /* ── Testimonials: card fan ─────────────────────────────────────── */
+      if (!isTablet) {
+        const cards = ['#tCard0', '#tCard1', '#tCard2'];
+        const fanData = [
+          { rotation: -12, x: -220, zIndex: 1 },
+          { rotation: 0,   x: 0,    zIndex: 3 },
+          { rotation: 12,  x: 220,  zIndex: 1 },
+        ];
+
+        // Start stacked
+        cards.forEach((sel, i) => {
+          gsap.set(sel, { rotation: 0, x: 0, zIndex: 3 - i });
+        });
+
+        ScrollTrigger.create({
+          trigger: '#testimonialsDeck',
+          start: 'top 75%',
           once: true,
           onEnter: () => {
-            if (statsDone) return;
-            statsDone = true;
-            document.querySelectorAll('.stat-number[data-count]').forEach(el => {
-              const target = parseFloat(el.dataset.count);
-              const suffix = el.dataset.suffix || '';
-              gsap.fromTo({ val: 0 }, { val: target }, {
-                duration: 1.8, ease: 'power2.out',
-                onUpdate: function () {
-                  const v = Math.round(this.targets()[0].val);
-                  el.textContent = v.toLocaleString() + suffix;
-                }
+            cards.forEach((sel, i) => {
+              gsap.to(sel, {
+                rotation: fanData[i].rotation,
+                x: fanData[i].x,
+                zIndex: fanData[i].zIndex,
+                duration: 0.9,
+                delay: i * 0.1,
+                ease: 'back.out(1.2)',
               });
             });
           },
-        },
-        scale: 0.85,
-        opacity: 0,
-        duration: 0.65,
-        stagger: 0.1,
-        ease: 'back.out(1.4)',
-      });
+        });
+      } else {
+        // Mobile: staggered fade in
+        gsap.utils.toArray('.testimonial').forEach((card, i) => {
+          gsap.from(card, {
+            scrollTrigger: { trigger: card, start: 'top 85%', once: true },
+            y: 30,
+            opacity: 0,
+            duration: 0.6,
+            delay: i * 0.1,
+            ease: 'power3.out',
+          });
+        });
+      }
 
-      /* ── Testimonials: slide from sides ────────────────────────────── */
-      gsap.from('[data-anim="slide-left"]', {
-        scrollTrigger: { trigger: '#testimonialsGrid', start: 'top 82%', once: true },
-        x: isMobile ? 0 : -50,
-        rotateY: isMobile ? 0 : 12,
-        opacity: 0,
-        duration: 0.8,
-        ease: 'power3.out',
-        transformPerspective: 800,
-      });
-      gsap.from('[data-anim="slide-right"]', {
-        scrollTrigger: { trigger: '#testimonialsGrid', start: 'top 82%', once: true },
-        x: isMobile ? 0 : 50,
-        rotateY: isMobile ? 0 : -12,
-        opacity: 0,
-        duration: 0.8,
-        ease: 'power3.out',
-        transformPerspective: 800,
-      });
-
-      /* ── CTA box: scale in ─────────────────────────────────────────── */
-      gsap.from('.cta-box[data-anim="scale-in"]', {
+      /* ── CTA scale in ───────────────────────────────────────────────── */
+      gsap.from('.cta-box', {
         scrollTrigger: { trigger: '.cta-section', start: 'top 82%', once: true },
         scale: 0.92,
         y: 30,
@@ -498,7 +891,31 @@
         duration: 0.85,
         ease: 'back.out(1.2)',
       });
+
+      /* ── Generic fade-ups for section headers ───────────────────────── */
+      document.querySelectorAll('.section-header .eyebrow, .section-header h2, .section-header .subtitle').forEach(el => {
+        gsap.from(el, {
+          scrollTrigger: { trigger: el, start: 'top 88%', once: true },
+          y: 30,
+          opacity: 0,
+          duration: 0.6,
+          ease: 'power3.out',
+        });
+      });
+
+      /* FAQ items */
+      document.querySelectorAll('.faq-item').forEach((item, i) => {
+        gsap.from(item, {
+          scrollTrigger: { trigger: item, start: 'top 90%', once: true },
+          y: 20,
+          opacity: 0,
+          duration: 0.5,
+          delay: i * 0.05,
+          ease: 'power3.out',
+        });
+      });
     });
+  })();
   </script>
 </body>
 </html>
