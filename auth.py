@@ -6,7 +6,7 @@ import jwt
 import bcrypt
 from flask import Blueprint, request, redirect, url_for, render_template, g, make_response
 
-from db import get_user_by_email, get_user_by_id, create_user
+from db import get_user_by_email, get_user_by_id, create_user, get_or_create_guest_user
 
 auth_bp = Blueprint("auth_bp", __name__)
 
@@ -47,22 +47,11 @@ def get_current_user_from_cookie():
 # ── Decorator ─────────────────────────────────────────────────────────────────
 
 def login_required(f):
+    """No longer enforces login — falls back to a shared guest user
+    so routes that expect g.user keep working without an account."""
     @wraps(f)
     def decorated(*args, **kwargs):
-        token = request.cookies.get(TOKEN_COOKIE)
-        if not token:
-            return redirect(url_for("auth_bp.login"))
-        payload = _decode_token(token)
-        if not payload:
-            resp = redirect(url_for("auth_bp.login"))
-            resp.delete_cookie(TOKEN_COOKIE)
-            return resp
-        user = get_user_by_id(payload["user_id"])
-        if not user:
-            resp = redirect(url_for("auth_bp.login"))
-            resp.delete_cookie(TOKEN_COOKIE)
-            return resp
-        g.user = user
+        g.user = get_current_user_from_cookie() or get_or_create_guest_user()
         return f(*args, **kwargs)
     return decorated
 

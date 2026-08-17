@@ -83,6 +83,18 @@ def get_user_by_id(user_id):
     ).fetchone()
 
 
+GUEST_EMAIL = "guest@melodra.local"
+
+
+def get_or_create_guest_user():
+    """Return the shared guest user row, creating it if needed."""
+    user = get_user_by_email(GUEST_EMAIL)
+    if user:
+        return user
+    create_user("Guest", GUEST_EMAIL, "")
+    return get_user_by_email(GUEST_EMAIL)
+
+
 def create_project(user_id, title, proj_type, job_id, parts_json=None):
     """Insert a project row. Returns the project id."""
     db = get_db()
