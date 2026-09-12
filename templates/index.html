@@ -473,7 +473,14 @@
           if (!partSamplers[i]) {
             const sfName = partInstrumentNames[i] || guessInstrument(currentParts[i].part_name);
             partInstrumentNames[i] = sfName;
-            partSamplers[i] = await createSamplerPromise(sfName);
+            const sampler = await createSamplerPromise(sfName);
+            // This pre-load is slow enough that the user can pick a different
+            // instrument while it runs; don't clobber that newer choice.
+            if (!partSamplers[i] && partInstrumentNames[i] === sfName) {
+              partSamplers[i] = sampler;
+            } else {
+              try { sampler.dispose(); } catch (_) {}
+            }
           }
         }
       } else {
@@ -1314,19 +1321,21 @@
       playerPlayBtn.innerHTML = "Loading\u2026";
 
       // Load new sampler BEFORE disposing old one (prevents silence gap)
-      const newSoloSampler = await createSamplerPromise(sfName);
-      if (soloSampler) { try { soloSampler.dispose(); } catch (_) {} }
-      soloSampler = newSoloSampler;
-      soloSamplerInstrument = sfName;
+      const newSampler = await createSamplerPromise(sfName);
 
-      // If we're in ensemble mode, also update the sampler for the active tab
+      // Playback reads from partSamplers[activePartIdx] whenever parts are loaded
+      // — which is every score, including single-part ones. Assign there, not to
+      // soloSampler, or the newly chosen instrument is never actually heard.
+      // Use activePartIdx directly: single-part scores render no tab buttons, so
+      // looking the index up from the DOM yields -1 and silently does nothing.
       if (currentParts.length > 0) {
-        const idx = Array.from(partTabsEl.querySelectorAll("button")).findIndex(b => b.classList.contains("active"));
-        if (idx >= 0) {
-          const newPartSampler = await createSamplerPromise(sfName);
-          if (partSamplers[idx]) { try { partSamplers[idx].dispose(); } catch (_) {} }
-          partSamplers[idx] = newPartSampler;
-        }
+        if (partSamplers[activePartIdx]) { try { partSamplers[activePartIdx].dispose(); } catch (_) {} }
+        partSamplers[activePartIdx] = newSampler;
+        partInstrumentNames[activePartIdx] = sfName;
+      } else {
+        if (soloSampler) { try { soloSampler.dispose(); } catch (_) {} }
+        soloSampler = newSampler;
+        soloSamplerInstrument = sfName;
       }
 
       instrumentSel.disabled = false;
@@ -1621,6 +1630,17 @@
         partTabsEl.classList.add("hidden");
         partTabsEl.innerHTML = "";
         soundSection.classList.remove("hidden");
+        // Point the Sound dropdown at the instrument this part will actually use,
+        // so the selector reflects reality instead of always showing the first option.
+        if (currentParts.length === 1) {
+          if (!partInstrumentNames[0]) {
+            partInstrumentNames[0] = guessInstrument(currentParts[0].part_name);
+          }
+          const opt = instrumentSel.querySelector(
+            'option[value="' + partInstrumentNames[0] + '"]'
+          );
+          if (opt) instrumentSel.value = partInstrumentNames[0];
+        }
         return;
       }
       partTabsEl.innerHTML = "";
